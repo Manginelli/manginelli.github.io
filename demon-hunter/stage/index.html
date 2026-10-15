@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Fan-made Demon Hunter class for WoW Forever</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="description" content="Experience a Fan-made version of what a Demon Hunter could be in WoW Forever!">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/stage.css">
+
+<div id="app" class="stage">
+  <canvas id="world" tabindex="0" aria-label="Arena. Use WASD to move, Tab to target, 1 to 0 for abilities."></canvas>
+
+  <section id="frames">
+    <div class="unit" id="playerFrame">
+      <div class="portrait" aria-hidden="true"><img src="icons/portrait-demon-hunter.webp" alt=""></div>
+      <div class="unit-body">
+        <div class="unit-name" id="pName">Demon Hunter</div>
+        <div class="bar hp" id="pHp"><div class="fill"></div><span class="txt"></span></div>
+        <div class="bar mana" id="pMana"><div class="fill"></div><span class="txt"></span></div>
+      </div>
+    </div>
+    <div class="unit target" id="targetFrame" hidden>
+      <div class="unit-body">
+        <div class="unit-name" id="tName"></div>
+        <div class="bar hp" id="tHp"><div class="fill"></div><span class="txt"></span></div>
+        <div class="bar mana" id="tMana" hidden><div class="fill"></div><span class="txt"></span></div>
+        <div class="bar cast" id="tCast" hidden><div class="fill"></div><span class="txt"></span></div>
+        <div class="lock" id="tLock" hidden></div>
+      </div>
+    </div>
+    <div id="buffs"></div>
+  </section>
+
+  <div id="waveTracker" hidden>
+    <div class="wt-pips" id="wtPips"></div>
+    <div class="wt-name" id="wtName"></div>
+    <div class="wt-hint" id="wtHint"></div>
+    <div id="bossBar" hidden><div class="boss-head"><span id="bossName"></span><span id="bossPct"></span></div><div class="boss-track"><div id="bossFill"></div></div></div>
+  </div>
+  <div id="stageTimer" hidden>0:00</div>
+  <button type="button" id="fullscreenBtn" class="icon-btn" aria-label="Fullscreen" title="Fullscreen" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path class="enter" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><path class="exit" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg></button>
+  <aside id="stagePassives" aria-label="Passives"><div id="passiveList"></div><span class="label">Passives</span></aside>
+
+  <div id="prepBar" hidden>
+    <div class="prep-text"><span class="label" id="prepSpec"></span><span class="prep-how"><span class="how-label">HOW TO PLAY:</span> <span id="prepHow"></span></span><span>Test your skills at the training dummy. When you are ready, click on the Start button on the right. Don't worry, all your cooldowns and mana will be reset.</span></div>
+    <button type="button" class="primary" id="startBtn">Start</button>
+  </div>
+  <div id="banner" hidden><span class="b-kicker" id="bKicker"></span><span class="b-title" id="bTitle"></span></div>
+  <div id="errorMsg" role="status" aria-live="polite"></div>
+
+  <footer id="bottom">
+    <div class="bar cast channel" id="channelBar" hidden><div class="fill"></div><span class="txt"></span></div>
+    <div id="swingBars" class="swing-bars idle" aria-hidden="true"><div class="bar swing" id="swMain"><div class="fill"></div><span class="txt"></span></div><div class="bar swing off" id="swOff"><div class="fill"></div><span class="txt"></span></div></div>
+    <div class="bars"><div id="actionBar" aria-label="Action bar"></div><div class="passive-wrap"><span class="label">Potions</span><div id="potionBar" aria-label="Potions"></div></div></div>
+    <div class="keys">WASD to Move - Tab to target, or click an enemy - 1 to 0 to use your Action Bar - Q and E to drink your Health/Mana potions respectively - Esc to pause</div>
+  </footer>
+
+  <div id="tip" role="tooltip" hidden></div>
+
+  <div id="specOverlay" class="overlay">
+    <div class="card wide">
+      <span class="label">Danny's Tinker Lab · Fan-made class for WoW: Forever</span>
+      <h1>Burningwoods Hollow</h1>
+      <p class="lede" id="storyLine">An everburning, forgotten forest, Burningwoods Hollow still bears the scars of the Third War. Demons lurk within, commanded by a monstrous felguard. Keep your mind clear while your blood burns, demon hunter. It's time to hunt.</p>
+      <span class="label">Choose your specialization</span>
+      <div class="spec-cards" id="specCards"></div>
+      <p class="narrow-note">This stage needs a keyboard. Open it on a computer.</p>
+    </div>
+  </div>
+
+  <div id="bloodOverlay" class="overlay" hidden>
+    <div class="card wide">
+      <span class="label" id="bloodSpec"></span>
+      <h2 class="gold" id="bloodTitle">Drink a Demon Blood</h2>
+      <p id="bloodNote" class="blood-note"></p>
+      <div class="blood-list" id="bloodList"></div>
+      <div class="how compact">
+        <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>to Move</span></div>
+        <div><kbd>Tab</kbd><span>to target, or click an enemy</span></div>
+        <div><kbd>1</kbd> to <kbd>0</kbd><span>to use your Action Bar</span></div>
+        <div><kbd>Q</kbd> and <kbd>E</kbd><span>to drink your Health/Mana potions respectively</span></div>
+      </div>
+      <div class="actions">
+        <span id="bloodCount" class="blood-count"></span>
+        <button type="button" class="ghost" id="bloodBack">Back</button>
+        <button type="button" class="primary" id="enterBtn" disabled>Enter the Hollow</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pauseOverlay" class="overlay" hidden>
+    <div class="card pause">
+      <span class="label">Burningwoods Hollow</span>
+      <h2 class="gold">Paused</h2>
+      <div class="actions"><button type="button" class="primary" id="resumeBtn">Resume</button></div>
+    </div>
+  </div>
+
+  <div id="resultOverlay" class="overlay" hidden>
+    <div class="card result">
+      <span class="label">Burningwoods Hollow</span>
+      <h2 id="resTitle"></h2>
+      <p id="resLine"></p>
+      <dl class="res-stats" id="resStats"></dl>
+      <div class="actions">
+        <button type="button" class="ghost" id="resOther">Choose another spec</button>
+        <button type="button" class="primary" id="resAgain"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/core/engine.js"></script>
+<script src="js/core/effects.js"></script>
+<script src="js/core/ai.js"></script>
+<script src="js/content/demon-hunter.js"></script>
+<script src="js/content/burningwoods-hollow.js"></script>
+<script src="js/ui/render.js"></script>
+<script src="js/ui/hud.js"></script>
+<script src="js/stage.js"></script>
