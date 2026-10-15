@@ -1,25 +1,116 @@
-/* Home of the site (2026-10-15): Daniel's name on top, Danny's Tinker Lab as the collection of ideas. Minimal, on top of the Demon Hunter page's visual (tinker.css). */
-.todo { color: #f0c27a !important; font-style: italic; border: 1px dashed rgba(240,194,122,.55); background: rgba(240,194,122,.06); padding: 8px 12px; }
-.todo::before { content: "A escrever: "; opacity: .75; }
-
-.home { max-width: 760px; margin: 0 auto; padding: 14vh 24px 60px; min-height: 100vh; display: flex; flex-direction: column; }
-.home-head { text-align: center; margin-bottom: 56px; }
-.home-title { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(38px, 6vw, 62px); letter-spacing: .04em; color: var(--parchment); line-height: 1.05; }
-.home-role { margin: 10px 0 0; font-family: var(--font-display); font-size: 15px; letter-spacing: .22em; text-transform: uppercase; color: var(--brass-lit); }
-.home-line { margin: 18px auto 0; max-width: 60ch; color: var(--body-dim); }
-.lab-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 500; font-size: 24px; letter-spacing: .06em; color: var(--parchment); }
-.lab-line { margin: 0 0 18px; }
-
-.tinkerings { display: grid; gap: 16px; }
-.tinkering { display: flex; gap: 18px; align-items: center; padding: 18px 20px; text-decoration: none; color: var(--body);
-  border: 1px solid var(--brass-faint); background: rgba(10,8,6,.4); transition: border-color .15s, background .15s; }
-.tinkering:hover, .tinkering:focus-visible { border-color: var(--brass); background: rgba(10,8,6,.6); outline: none; }
-.tinkering-icon { width: 72px; height: 72px; flex: none; border: 2px solid #9848b3; border-radius: 50%; object-fit: cover; }
-.tinkering-text { display: grid; gap: 4px; min-width: 0; }
-.tinkering-kicker { font-family: var(--font-display); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--body-dim); }
-.tinkering-name { font-family: var(--font-display); font-size: 26px; letter-spacing: .05em; color: #c47ede; line-height: 1.1; }
-.tinkering-desc { font-size: 15.5px; }
-
-.home-foot { margin-top: auto; padding-top: 48px; font-size: 13.5px; color: var(--body-dim); text-align: center; }
-
-@media (max-width: 560px) { .tinkering { flex-direction: column; text-align: center; } }
+.todo {
+  color: #f0c27a !important;
+  font-style: italic;
+  border: 1px dashed rgba(240, 194, 122, .55);
+  background: rgba(240, 194, 122, .06);
+  padding: 8px 12px;
+}
+.home {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 14vh 24px 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.home-head {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.home-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(38px, 6vw, 62px);
+  letter-spacing: .04em;
+  color: var(--parchment);
+  line-height: 1.05;
+}
+.home-role {
+  margin: 10px 0 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--brass-lit);
+}
+.home-line {
+  margin: 18px auto 0;
+  max-width: 60ch;
+  color: var(--body-dim);
+}
+.lab-title {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: .06em;
+  color: var(--parchment);
+}
+.lab-line {
+  margin: 0 0 18px;
+}
+.tinkerings {
+  display: grid;
+  gap: 16px;
+}
+.tinkering {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 20px;
+  text-decoration: none;
+  color: var(--body);
+  border: 1px solid var(--brass-faint);
+  background: rgba(10, 8, 6, .4);
+  transition: border-color .15s, background .15s;
+}
+.tinkering:hover,
+.tinkering:focus-visible {
+  border-color: var(--brass);
+  background: rgba(10, 8, 6, .6);
+  outline: none;
+}
+.tinkering-icon {
+  width: 72px;
+  height: 72px;
+  flex: none;
+  border: 2px solid #9848b3;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.tinkering-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.tinkering-kicker {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--body-dim);
+}
+.tinkering-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: .05em;
+  color: #c47ede;
+  line-height: 1.1;
+}
+.tinkering-desc {
+  font-size: 15.5px;
+}
+.home-foot {
+  margin-top: auto;
+  padding-top: 48px;
+  font-size: 13.5px;
+  color: var(--body-dim);
+  text-align: center;
+}
+@media (max-width: 560px) {
+  .tinkering {
+    flex-direction: column;
+    text-align: center;
+  }
+}
