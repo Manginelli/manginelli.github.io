@@ -66,6 +66,10 @@
 section[id] {
   scroll-margin-top: 56px;
 }
+.intro-points strong {
+  color: var(--parchment);
+  font-weight: 400;
+}
 .alpha-badge {
   display: inline-block;
   margin-bottom: 14px;
