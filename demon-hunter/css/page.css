@@ -66,6 +66,11 @@
 section[id] {
   scroll-margin-top: 56px;
 }
+.stat-note {
+  font-size: 15px;
+  color: var(--body-dim);
+  font-style: italic;
+}
 .intro-points strong {
   color: var(--parchment);
   font-weight: 400;
