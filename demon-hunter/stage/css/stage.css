@@ -508,3 +508,9 @@
   z-index: 44;
   cursor: pointer;
 }
+.card.intro {
+  max-width: 520px;
+}
+.card.intro .actions {
+  justify-content: flex-start;
+}

@@ -282,7 +282,7 @@
     bannerUntil: 0
   };
   function show(id) {
-    for (const o of [ "#specOverlay", "#bloodOverlay", "#resultOverlay" ]) $(o).hidden = o !== id;
+    for (const o of [ "#introOverlay", "#specOverlay", "#bloodOverlay", "#resultOverlay" ]) $(o).hidden = o !== id;
   }
   const specCards = $("#specCards");
   for (const s of SPECS) {
@@ -680,6 +680,7 @@
     if (paused) {
       if ((e.code === "Enter" || e.code === "Space") && !e.repeat) {
         e.preventDefault();
+        if (wantFull && !fsEl() && !fsBtn.hidden) enterFullscreen(true);
         resume();
       }
       return;
@@ -807,14 +808,35 @@
   const fsBtn = $("#fullscreenBtn"), root = document.documentElement;
   const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
   fsBtn.hidden = !(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  let wantFull = false;
+  function enterFullscreen(quiet) {
+    const req = root.requestFullscreen || root.webkitRequestFullscreen, pr = req && req.call(root);
+    if (pr && pr.catch) pr.catch(() => {
+      if (!quiet) game.emit("error", "Fullscreen is not available");
+    });
+  }
   fsBtn.addEventListener("click", () => {
     if (fsEl()) (document.exitFullscreen || document.webkitExitFullscreen).call(document); else {
-      const req = root.requestFullscreen || root.webkitRequestFullscreen, pr = req && req.call(root);
-      if (pr && pr.catch) pr.catch(() => game.emit("error", "Fullscreen is not available"));
+      wantFull = true;
+      enterFullscreen();
     }
     if (canMove()) canvas.focus();
   });
-  for (const ev of [ "fullscreenchange", "webkitfullscreenchange" ]) document.addEventListener(ev, () => app.classList.toggle("is-fullscreen", !!fsEl()));
+  $("#playBtn").addEventListener("click", () => {
+    if (!fsBtn.hidden) {
+      wantFull = true;
+      enterFullscreen(true);
+    }
+    show("#specOverlay");
+  });
+  for (const ev of [ "fullscreenchange", "webkitfullscreenchange" ]) document.addEventListener(ev, () => {
+    const full = !!fsEl();
+    app.classList.toggle("is-fullscreen", full);
+    if (!full && wantFull) pause("fullscreen");
+  });
+  $("#pauseOverlay").addEventListener("click", () => {
+    if (wantFull && !fsEl() && !fsBtn.hidden) enterFullscreen(true);
+  });
   TL.stage = {
     run: run,
     tick: tick,
