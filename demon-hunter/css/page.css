@@ -8,12 +8,6 @@
   background: rgba(240, 194, 122, .06);
   padding: 10px 14px;
 }
-.todo::before {
-  content: "A escrever: ";
-  font-weight: 400;
-  letter-spacing: .04em;
-  opacity: .75;
-}
 .art-slot {
   display: grid;
   place-items: center;
