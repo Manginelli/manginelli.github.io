@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demon Hunter, a fan-made class for WoW: Forever</title>
+<meta name="description" content="Play the Demon Hunter, a fan-made class for WoW: Forever, in a four wave stage, and see its full kit, lore and Demon Bloods.">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Danny's Tinker Lab">
+<meta property="og:title" content="Demon Hunter, a fan-made class for WoW: Forever">
+<meta property="og:description" content="Play it in your browser: pick a specialization, drink a demon's blood and clear Burningwoods Hollow.">
+<meta property="og:url" content="https://manginelli.github.io/demon-hunter/">
+<meta property="og:image" content="https://manginelli.github.io/demon-hunter/og-demon-hunter.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="css/tinker.css">
+<link rel="stylesheet" href="css/page.css">
+</head>
+<body>
+
+<nav class="page-nav" aria-label="On this page">
+  <a href="#play">Play</a><a href="#lore">Lore</a><a href="#gameplay">Gameplay</a><a href="#skills">Skill Trees</a>
+  <a href="#bloods">Demon Bloods</a><a href="#world">World</a><a href="#next">What's next</a><a href="#process">Design process</a><a href="#feedback">Feedback</a>
+</nav>
+
+<section class="hero" id="top">
+  <figure class="class-visual">
+    <div class="art-slot"><span>Arte oficial: herói Demon Hunter do Warcraft III (Daniel escolhe e credita)</span></div>
+    <div class="stat-block">
+      <div class="stat"><span class="stat-label">Role</span><span class="stat-value">Melee damage</span></div>
+      <div class="stat"><span class="stat-label">Armor</span><span class="stat-value">Leather</span></div>
+      <div class="stat"><span class="stat-label">Resource</span><span class="stat-value stat-value--resource">Mana</span></div>
+      <div class="stat"><span class="stat-label">Races</span><span class="stat-value">Night Elf (Alliance), Orc (Horde)</span></div>
+      <div class="stat stat--wide"><span class="stat-label">Weapons</span><span class="stat-value">One-Handed Swords, Maces, Axes, Fist Weapons · Dual Wield from level 1</span></div>
+    </div>
+  </figure>
+
+  <div class="class-intro">
+    <span class="alpha-badge">Alpha · your feedback shapes the next version</span>
+    <h1 class="class-name"><span>DEMON HUNTER</span></h1>
+    <p class="value-phrase todo-inline">[Frase de valor: a antiga era &ldquo;Scorned by the world they refuse to abandon.&rdquo;]</p>
+    <hr class="accent-rule accent-rule--tight">
+    <div class="short-desc">
+      <p class="todo">Descrição curta (2 a 3 parágrafos): quem são os Demon Hunters e por que jogar com eles.</p>
+    </div>
+    <ul class="intro-points">
+      <li class="todo-inline">[Promessa 1: pressão constante e mobilidade (Relentless Pressure)]</li>
+      <li class="todo-inline">[Promessa 2: a única classe que queima mana e quebra conjuradores]</li>
+      <li class="todo-inline">[Promessa 3: Demon Bloods, um traço de demônio escolhido antes de cada caçada]</li>
+    </ul>
+    <a class="cta" href="#play">Play it now</a>
+  </div>
+</section>
+
+<section class="section" id="play">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Burningwoods Hollow</h2>
+      <p class="section-sub todo-inline">[Linha de instrução: escolha a spec, beba um sangue, sobreviva a quatro ondas]</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="stage-frame">
+      <iframe src="stage/" title="Burningwoods Hollow, a playable stage" allow="fullscreen" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <div class="stage-mobile">
+      <div class="art-slot art-slot--clip"><span>Clipe de gameplay (30 a 60 sec), para quem abre no celular</span></div>
+      <p>The stage needs a keyboard. Open this page on a computer to play it.</p>
+    </div>
+    <details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p class="todo">O que cada onda testa: encurtar distância e interromper; dano em área; dois conjuradores; o chefe com os adds e o Felstorm.</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="lore">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Lore</h2>
+      <p class="section-sub todo-inline">[Subtítulo da seção]</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="section-body">
+      <p class="todo">Introdução: párias raros, lendas contraditórias; quem não aguenta o ritual vira casca vazia ou demônio.</p>
+      <p class="todo">O Pacto da Guerra dos Antigos, liderado por Demetrius Darkheart (com Illidan entre eles); as runas para conter o poder.</p>
+      <p class="todo">O Ritual (o elixir de sangue de demônio queima os olhos; a visão espectral), a Maldição, a Primeira Mancha (Illidan) e os dez mil anos de exílio.</p>
+      <p class="todo">A Nova Geração: Demetrius, mortal desde a queda de Nordrassil, treina Night Elves e Orcs; os orcs sobrevivem melhor ao ritual; uma medida desesperada.</p>
+    </div>
+
+    <h3 class="sub-title">The two branches</h3>
+    <div class="branches">
+      <article class="branch branch--pactbound">
+        <h4>Pactbound</h4>
+        <p class="todo">A irmandade da nova geração Night Elf, unida pelas perdas desde a Terceira Guerra.</p>
+      </article>
+      <article class="branch branch--warblades">
+        <h4>Warblades</h4>
+        <p class="todo">A ordem orc de Warsong e Burning Blade, hierarquia de honra inspirada nos blademasters.</p>
+      </article>
+    </div>
+
+    <div class="lore-grid lore-grid--flip">
+      <div class="text-col"><div class="section-body">
+        <h3 class="sub-title">Demetrius Darkheart, The Last of the Pact</h3>
+        <p class="todo">Quem é Demetrius.</p>
+        <h3 class="sub-title">Gorthashi</h3>
+        <p class="todo">Quem é Gorthashi.</p>
+      </div></div>
+      <figure class="lore-art">
+        <div class="art-frame art-slot"><span>Arte oficial: Blademaster do Warcraft III (Daniel escolhe e credita)</span></div>
+        <p class="art-credit todo-inline">[Crédito da arte]</p>
+      </figure>
+    </div>
+    <details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p class="todo">Por que abrir a classe para a Horda pelos orcs (paridade de facções do Forever) e como a lore justifica isso.</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="gameplay">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Gameplay</h2>
+      <p class="section-sub todo-inline">[Subtítulo da seção]</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="section-body">
+      <h3 class="sub-title">Relentless Pressure</h3>
+      <p class="todo">O pilar de design (3.1 do doc).</p>
+    </div>
+    <div class="facets">
+      <article class="facet facet--martial">
+        <img src="icons/double-strike.webp" alt="" loading="lazy">
+        <h4>Martial Arts</h4>
+        <p class="facet-stats">Physical · Agility · the most mobile</p>
+        <p class="todo">Uma ou duas frases sobre a faceta.</p>
+      </article>
+      <article class="facet facet--spell">
+        <img src="icons/mana-strike.webp" alt="" loading="lazy">
+        <h4>Spellbreaker</h4>
+        <p class="facet-stats">Arcane · Intellect and Spell Power · breaks casters, the most fragile</p>
+        <p class="todo">Uma ou duas frases sobre a faceta.</p>
+      </article>
+      <article class="facet facet--fel">
+        <img src="icons/flame-strike.webp" alt="" loading="lazy">
+        <h4>Felblood</h4>
+        <p class="facet-stats">Fire from attack power · Strength · the toughest</p>
+        <p class="todo">Uma ou duas frases sobre a faceta.</p>
+      </article>
+    </div>
+    <div class="section-body">
+      <h3 class="sub-title">Moment to moment</h3>
+      <p class="todo">Cada árvore gira em torno do próprio strike; a mana como escolha (3.3).</p>
+      <h3 class="sub-title">Hybrid builds</h3>
+      <p class="todo">As combinações entre árvores (3.2).</p>
+    </div>
+    <div class="sw-grid">
+      <div class="sw-col sw-col--good">
+        <h3 class="sw-title sw-title--good">Strengths</h3>
+        <ul class="sw-list"><li class="todo-inline">[Força 1]</li><li class="todo-inline">[Força 2]</li><li class="todo-inline">[Força 3]</li></ul>
+      </div>
+      <div class="sw-col sw-col--bad">
+        <h3 class="sw-title sw-title--bad">Weaknesses</h3>
+        <ul class="sw-list"><li class="todo-inline">[Fraqueza 1]</li><li class="todo-inline">[Fraqueza 2]</li><li class="todo-inline">[Fraqueza 3]</li></ul>
+      </div>
+    </div>
+    <details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p class="todo">Por que mana e não energia ou fúria; por que três strikes em recargas separadas.</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="skills">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Skill Trees</h2>
+      <p class="section-sub todo-inline">[Subtítulo da seção]</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <p class="section-note">Abilities and key talents of each tree. Those marked <span class="tag-stage">In the stage</span> are in the playable stage above.</p>
+    <div class="tree-list">
+      <details class="tree tree--martial" open>
+        <summary>
+          <span class="icon icon--static icon--art" aria-hidden="true"><img src="icons/double-strike.webp" alt=""></span>
+          <span class="tree-name">Martial Arts</span>
+          <span class="tree-tag todo-inline">[Lema da árvore]</span>
+          <span class="tree-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="tree-body">
+          <p class="tree-intro todo">Introdução da árvore.</p>
+<h4 class="block-title">Key Spells &amp; Abilities</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/double-strike.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Double Strike</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Physical Damage</li><li>8 sec cooldown</li><li>Requires a main hand and an off-hand weapon</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Strikes twice in quick succession, first with your main hand and then with your off-hand weapon. Each strike causes 64% weapon damage plus a small amount of additional damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dive.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Dive</p><ul class="meta"><li>Instant</li><li>Very Low Mana</li><li>Single Target</li><li>7 to 20 yds</li><li class="is-school">Physical Damage</li><li>30 sec cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Dives at the target and lands on its other side, causing a small amount of damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/blade-dash.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Blade Dash</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Self</li><li class="is-school">Physical Damage</li><li>12 sec cooldown</li><li>Requires Melee Weapon</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Dashes 7 yds forward, striking all enemies in your path for 26% of your main hand and off-hand weapon damage plus a moderate amount of additional damage. Cannot miss, be dodged or be parried.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/wind-walk.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Wind Walk</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Self</li><li>30 sec cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Increases your movement speed by 40% and your chance to dodge attacks and spells by 40% for 5 sec. Using any ability or attacking ends the effect.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/battle-rhythm.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Battle Rhythm</p><ul class="meta"><li class="is-passive">Passive</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Each of your melee weapon hits that lands reduces the remaining cooldown of your Double Strike, Mana Strike and Flame Strike by 0.5 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/the-hunt.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">The Hunt</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Single Target</li><li>45 yds</li><li class="is-school">Physical Damage</li><li>3 min cooldown</li><li>Requires Melee Weapon</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Leaps at the target and stuns it for 1 sec. During the stun, you make 5 extra melee attacks, alternating between your main hand and off-hand weapons.</p></div></li>
+</ul>
+<h4 class="block-title">Key Talents</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Improved Reflexes <span class="rank">Tier 1 · 5 ranks</span></p><p class="ability-desc">Increases your chance to dodge by 1/2/3/4/5%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Multistrike <span class="rank">Tier 1 · 5 ranks</span></p><p class="ability-desc">Each hit of your Double Strike has a 1/2/3/4/5% chance to make it strike again 0.5 sec later for 50% of its damage, at no mana cost. Cannot trigger itself.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Dual Wield Mastery <span class="rank">Tier 2 · 5 ranks</span></p><ul class="meta"><li>Requires 5 points in Martial Arts Talents</li></ul><p class="ability-desc">Increases the damage done by your off-hand weapon by 10/20/30/40/50%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Eternal Pursuit <span class="rank">Tier 2 · 2 ranks</span></p><ul class="meta"><li>Requires 5 points in Martial Arts Talents</li></ul><p class="ability-desc">Reduces the duration of movement impairing and fear effects on you by 20/40%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/blade-dash.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Improved Blade Dash <span class="rank">Tier 2 · 2 ranks</span></p><ul class="meta"><li>Requires 5 points in Martial Arts Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Reduces the cooldown of your Blade Dash by 2/4 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Friend or Foe <span class="rank">Tier 3 · 1 rank</span></p><ul class="meta"><li>Requires 10 points in Martial Arts Talents</li></ul><p class="ability-desc">Your Dive can now also be used on friendly targets, causing no damage, and its cooldown is reduced by 5 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/muscle-memory.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Muscle Memory <span class="rank">Tier 3 · 5 ranks</span></p><ul class="meta"><li>Requires 10 points in Martial Arts Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Gives your melee auto attacks a 2/4/6/8/10% chance to make your next ability cost no mana. That ability does not interrupt your mana regeneration.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Battle Trance <span class="rank">Tier 4 · 5 ranks</span></p><ul class="meta"><li>Requires 15 points in Martial Arts Talents</li></ul><p class="ability-desc">Each of your melee auto attacks, Double Strike hits and Blade Dash hits that lands increases your haste and movement speed by 1%, stacking up to 2/4/6/8/10 times. One stack is lost for every 2.5 sec without landing a melee attack.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Fervor of the Hunt <span class="rank">Tier 4 · 1 rank</span></p><ul class="meta"><li>Requires 15 points in Martial Arts Talents</li></ul><p class="ability-desc">Your relentless pace inspires your allies, increasing the melee, ranged and spellcasting haste of all party members within 45 yards by 3%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/momentum.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Momentum <span class="rank">Tier 5 · 5 ranks</span></p><ul class="meta"><li>Requires 20 points in Martial Arts Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Each hit of your Double Strike that lands grants you a stack of Momentum, increasing your movement speed by 0.5/1/1.5/2/2.5%. Stacks up to 4 times. Lasts 30 sec. Your Blade Dash consumes up to 4 stacks of Momentum, increasing its damage by 20% for each stack consumed.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/the-hunt.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">The Hunt <span class="rank">Tier 5 · 1 rank</span></p><ul class="meta"><li>Requires 20 points in Martial Arts Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Teaches The Hunt.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dive.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Hunt Prey <span class="rank">Tier 7 · 1 rank</span></p><ul class="meta"><li>Requires 30 points in Martial Arts Talents</li><li>Requires 5 points in Momentum</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">When your Blade Dash consumes 4 stacks of Momentum, the cooldown of your Dive is reset and your next Dive within 5 sec has no minimum range, costs no mana, deals 500% additional damage and does not trigger the global cooldown.</p></div></li>
+</ul>
+</div>
+      </details>
+      <details class="tree tree--spell">
+        <summary>
+          <span class="icon icon--static icon--art" aria-hidden="true"><img src="icons/mana-strike.webp" alt=""></span>
+          <span class="tree-name">Spellbreaker</span>
+          <span class="tree-tag todo-inline">[Lema da árvore]</span>
+          <span class="tree-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="tree-body">
+          <p class="tree-intro todo">Introdução da árvore.</p>
+<h4 class="block-title">Key Spells &amp; Abilities</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-strike.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Strike</p><ul class="meta"><li>Instant</li><li>High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Arcane Damage</li><li>8 sec cooldown</li><li>Requires Melee Weapon</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">An instant strike that causes Arcane damage equal to 3 times your main hand weapon&#x27;s damage per second. If the target has mana, also burns mana equal to 100% of the damage dealt and causes 50% of that amount as additional Arcane damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/disrupt.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Disrupt</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Single Target</li><li>10 yds</li><li class="is-school">Arcane Damage</li><li>15 sec cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Interrupts the target&#x27;s spellcasting, burning mana equal to the interrupted spell&#x27;s cost and causing Arcane damage equal to 50% of the mana burned. Prevents any spell in that school from being cast for 4 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/shackle-demon.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Shackle Demon</p><ul class="meta"><li>Cast</li><li>High Mana</li><li>Single Target</li><li>25 yds</li><li>15 sec cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Shackles the target demon for up to 30 sec. The shackled demon is unable to move, attack or cast spells, and any spell it is casting is interrupted. You stop attacking the target until you click on it or attack it again. Any damage caused will break the effect. Only one target can be shackled at a time.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Mana Torrent</p><ul class="meta"><li>Instant</li><li>Very High Mana</li><li>All enemies within 20 yds</li><li>2 min cooldown</li></ul><p class="ability-desc">Releases a torrent of raw mana, silencing all enemies within 20 yards for 2 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Break Spell</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Self</li><li>20 sec cooldown</li></ul><p class="ability-desc">Surrounds you with a ward that negates the next spell cast on you and restores mana to you equal to the mana its caster spent on it. Lasts 5 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/deep-breaths.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Still Mind</p><ul class="meta"><li>Channeled</li><li>Self</li><li>3 min cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Try to focus your mind for 2 sec. While channeling, your mana regeneration is active and increased by 1400%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mirror-image.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mirror Image</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Self</li><li>5 min cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Splits your form into 3 images of yourself for 15 sec, causing enemies to lose track of you and removing all your threat. Each image has 25% of your maximum health, starting at the same share of health as you. The images surround your target, attack it and use Mana Strike. If you have Mana Charge, each Mana Strike they land grants you a stack of it.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-breaker.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Breaker</p><ul class="meta"><li>Instant</li><li>Very High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Arcane Damage</li><li>12 sec cooldown</li><li>Requires Melee Weapon</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Breaks the target&#x27;s defenses with a blade of arcane energy, causing Arcane damage equal to 6.75 times your main hand weapon&#x27;s damage per second and granting you 2 stacks of Mana Charge. If the target has mana, also burns mana equal to 100% of the damage dealt and causes 50% of that amount as additional Arcane damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-scar.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Scar</p><ul class="meta"><li>Cast</li><li>High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Arcane Damage</li><li>[cooldown]</li><li>Requires a main hand and an off-hand weapon</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Gathers your focus, then cuts the target twice in quick succession with blades of mana, first with your main hand and then with your off-hand weapon. Each cut causes Arcane damage equal to 12.6 times that weapon&#x27;s damage per second. Can only be used while you have 8 stacks of Mana Charge, and consumes them after the second cut.</p></div></li>
+</ul>
+<h4 class="block-title">Key Talents</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Improved Mana Strike <span class="rank">Tier 1 · 5 ranks</span></p><p class="ability-desc">Increases the damage of your Mana Strike by 2/4/6/8/10% and reduces its mana cost by 5/10/15/20/25%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Willpower <span class="rank">Tier 1 · 5 ranks</span></p><p class="ability-desc">Increases your Intellect and Spirit by 1/2/3/4/5%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Improved Arcane Ink <span class="rank">Tier 2 · 3 ranks</span></p><ul class="meta"><li>Requires 5 points in Spellbreaker Talents</li></ul><p class="ability-desc">Reduces all magic damage you take by 2/4/6%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Focused Mind <span class="rank">Tier 2 · 3 ranks</span></p><ul class="meta"><li>Requires 5 points in Spellbreaker Talents</li></ul><p class="ability-desc">Increases your chance to hit with all attacks and spells by 1/2/3%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mental-clarity.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mental Clarity <span class="rank">Tier 3 · 5 ranks</span></p><ul class="meta"><li>Requires 10 points in Spellbreaker Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Gives your melee auto attacks a 3/5/8/11/13% chance to restore mana equal to 5 sec of your mana regeneration.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Deep Meditation <span class="rank">Tier 4 · 5 ranks</span></p><ul class="meta"><li>Requires 15 points in Spellbreaker Talents</li><li>Requires 5 points in Mental Clarity</li></ul><p class="ability-desc">Your Mental Clarity effects have a 20/40/60/80/100% chance to also deal a small amount of Arcane damage to your target.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-weaving.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Weaving <span class="rank">Tier 5 · 1 rank</span></p><ul class="meta"><li>Requires 20 points in Spellbreaker Talents</li><li>Requires 5 points in Deep Meditation</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Each time your Deep Meditation deals damage, the cooldown of your Mana Strike is reset and your next Mana Strike costs 50% less mana.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-charge.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Charge <span class="rank">Tier 5 · 5 ranks</span></p><ul class="meta"><li>Requires 20 points in Spellbreaker Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Each of your Mana Strikes that lands has a 20/40/60/80/100% chance to grant you a stack of Mana Charge, increasing the magic damage you deal by 1%. Stacks up to 8 times. Lasts 15 sec, and each new stack refreshes the duration.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mirror-image.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mirror Image <span class="rank">Tier 5 · 1 rank</span></p><ul class="meta"><li>Requires 20 points in Spellbreaker Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Teaches Mirror Image.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-breaker.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Breaker <span class="rank">Tier 6 · 1 rank</span></p><ul class="meta"><li>Requires 25 points in Spellbreaker Talents</li><li>Requires 1 point in Mana Charge</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Teaches Mana Breaker.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-scar.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Scar <span class="rank">Tier 7 · 1 rank</span></p><ul class="meta"><li>Requires 30 points in Spellbreaker Talents</li><li>Requires 1 point in Mana Charge</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Teaches Mana Scar.</p></div></li>
+</ul>
+</div>
+      </details>
+      <details class="tree tree--fel">
+        <summary>
+          <span class="icon icon--static icon--art" aria-hidden="true"><img src="icons/flame-strike.webp" alt=""></span>
+          <span class="tree-name">Felblood</span>
+          <span class="tree-tag todo-inline">[Lema da árvore]</span>
+          <span class="tree-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="tree-body">
+          <p class="tree-intro todo">Introdução da árvore.</p>
+<h4 class="block-title">Key Spells &amp; Abilities</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/flame-strike.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Flame Strike</p><ul class="meta"><li>Instant</li><li>Medium Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Fire Damage</li><li>8 sec cooldown</li><li>Requires Melee Weapon</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">An instant strike that causes 36% weapon damage plus an additional small amount as Fire damage, and sets your weapons ablaze with Burning Blades, reducing your attack speed by 5% and causing your melee auto attacks to deal an additional 10% of weapon damage as Fire damage per stack. Can be applied up to 3 times. Lasts 9 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/immolation.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Immolation</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>All enemies in melee range</li><li class="is-school">Fire Damage</li><li>20 sec cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Engulfs you in flames, causing a very small amount of Fire damage every 1 sec to all enemies in melee range. Lasts 10 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Sense Demons</p><ul class="meta"><li>Instant</li><li>Self</li></ul><p class="ability-desc">Shows the location of all nearby demons on the minimap until cancelled. Only one type of tracking can be used at a time.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/brand-prey.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Brand Prey</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Single Target</li><li>Melee Range</li><li>30 sec cooldown</li></ul><p class="ability-desc">Brands the target with demon fire, increasing the damage it takes from you by 5%. Lasts 8 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Spectral Sight</p><ul class="meta"><li>Instant</li><li>Self</li><li>1 min cooldown</li></ul><p class="ability-desc">Opens your spectral sight, allowing you to see all invisible and stealthed units you could detect. Lasts 8 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/demonic-skin.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Demonic Skin</p><ul class="meta"><li>Instant</li><li>Self</li><li>3 min cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Hardens your skin with demonic power, reducing all damage you take by a moderate amount for 15 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/metamorphosis.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Metamorphosis</p><ul class="meta"><li>Instant</li><li>Self</li><li>5 min cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Transforms you into a half-demon, increasing your haste by 20%, armor by 50% and health by 25%. Lasts 15 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/eruption.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Eruption</p><ul class="meta"><li>1 sec cast</li><li>High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Fire Damage</li><li>No cooldown</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Makes the flames on your weapons erupt into the target, causing Fire damage equal to 32% of your attack power plus a large amount. Requires 3 stacks of Burning Blades, and consumes them.</p></div></li>
+</ul>
+<h4 class="block-title">Key Talents</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Improved Flame Strike <span class="rank">Tier 1 · 5 ranks</span></p><p class="ability-desc">Increases the damage of your Flame Strike by 5/10/15/20/25%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Hatred <span class="rank">Tier 1 · 5 ranks</span></p><p class="ability-desc">Increases your chance to get a critical strike with all attacks and spells by 1/2/3/4/5%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Vengeful Parry <span class="rank">Tier 1 · 5 ranks</span></p><p class="ability-desc">Increases your chance to parry an attack by 1/2/3/4/5%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Improved Immolation <span class="rank">Tier 2 · 2 ranks</span></p><ul class="meta"><li>Requires 5 points in Felblood Talents</li></ul><p class="ability-desc">Increases the duration of your Immolation by 1/2 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Infernal Constitution <span class="rank">Tier 2 · 5 ranks</span></p><ul class="meta"><li>Requires 5 points in Felblood Talents</li></ul><p class="ability-desc">Increases your Strength and Stamina by 1/2/3/4/5%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/demonic-thirst.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Demonic Thirst <span class="rank">Tier 3 · 3 ranks</span></p><ul class="meta"><li>Requires 10 points in Felblood Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Your Fire critical strikes restore mana equal to 1.3/2.7/4% of your base mana.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/immolation.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Infernal Release <span class="rank">Tier 4 · 1 rank</span></p><ul class="meta"><li>Requires 15 points in Felblood Talents</li><li>Requires 2 points in Improved Immolation</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">While your Immolation is active, using it again makes it explode for 50% of the total damage it deals to one target over its full duration, increased by 5% for each second it has been active, hitting all enemies within melee range. Ends the Immolation and does not trigger the global cooldown. If the Immolation ends on its own, it does not explode.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mixed-blood.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mixed Blood <span class="rank">Tier 4 · 1 rank</span></p><ul class="meta"><li>Requires 15 points in Felblood Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Allows you to have two Demon Bloods active at the same time.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/eruption.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Eruption <span class="rank">Tier 6 · 1 rank</span></p><ul class="meta"><li>Requires 25 points in Felblood Talents</li><li class="is-stage">In the stage</li></ul><p class="ability-desc">Teaches Eruption.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Demonic Strength <span class="rank">Tier 6 · 3 ranks</span></p><ul class="meta"><li>Requires 25 points in Felblood Talents</li></ul><p class="ability-desc">Increases your attack power by an amount equal to 33/66/100% of your Strength.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="#ead9b6"/></svg></span><div class="ability-main"><p class="ability-name">Infernal Metamorphosis <span class="rank">Tier 7 · 1 rank</span></p><ul class="meta"><li>Requires 30 points in Felblood Talents</li></ul><p class="ability-desc">Reduces the cooldown of your Metamorphosis by 1 min, and all damage you deal while transformed becomes Fire damage.</p></div></li>
+</ul>
+</div>
+      </details>
+    </div>
+    <details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p class="todo">As decisões de equipamento (cada árvore divide o couro com outra classe) e o que inspirou os talentos centrais (Momentum, Mana Charge e Mana Scar, Burning Blades em estágios e Eruption).</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="bloods">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Demon Bloods</h2>
+      <p class="section-sub todo-inline">[Subtítulo da seção]</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="section-body">
+      <p class="todo">As regras: um sangue por vez (dois com Mixed Blood), bebido antes do combate, sempre defensivo ou de utilidade; como se conquista cada um (quests de classe; caçar os menores, conquistar o sangue dos maiores).</p>
+    </div>
+<ul class="blood-list">
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/imps-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Imp&#x27;s Blood <span class="rank">Level 1</span></p><p class="ability-desc">Drinks the blood of an imp, increasing your Fire resistance by 30 and causing a very small amount of Fire damage to enemies that strike you in melee. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/satyrs-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Satyr&#x27;s Blood <span class="rank">Level 20</span></p><p class="ability-desc">Drinks the blood of a satyr, increasing your movement speed by 5% and your health regeneration rate by 50% out of combat. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/felhunters-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Felhunter&#x27;s Blood <span class="rank">Level 40</span></p><p class="ability-desc">Drinks the blood of a felhunter, increasing your resistance to all magic by 20, increasing your stealth detection and allowing 25% of your mana regeneration to continue while casting. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dreadlords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Dreadlord&#x27;s Blood <span class="rank">Level 50</span></p><p class="ability-desc">Drinks the blood of a dreadlord, causing your melee attacks to heal you for 3% of the damage they deal. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/pit-lords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Pit Lord&#x27;s Blood <span class="rank">Level 60</span></p><p class="ability-desc">Drinks the blood of a pit lord, reducing all damage you take by 2% for each enemy within 8 yds of you, up to 10%. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p></div></li>
+</ul>
+<details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p class="todo">A lição do Aspect of the Hawk: por que nenhum sangue dá dano bruto.</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="world">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Integration with the World</h2>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="cards-3">
+      <article class="card-plain"><h4>Reputations</h4><p class="todo">Pactbound e Warblades como reputações de facção, abertas a todas as classes.</p></article>
+      <article class="card-plain"><h4>Quests across Azeroth</h4><p class="todo">The hunt, the artifact, the fall.</p></article>
+      <article class="card-plain"><h4>A leveling area of their own</h4><p class="todo">Onde cada sangue é conquistado.</p></article>
+    </div>
+    <details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p class="todo">Por que a reputação é aberta a todas as classes (a diferença para Ravenholdt).</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="next">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">What&rsquo;s next</h2>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="section-body">
+      <p class="todo">Habilidades planejadas fora do estágio (Mana Torrent, Break Spell, Spectral Sight e Sense Demons; as fichas já estão nas árvores acima), a Felblood por Spell Power, sangues para os níveis 10 e 30, e perguntas abertas para a comunidade.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="process">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Design Process</h2>
+      <p class="section-sub todo-inline">[Subtítulo: o que foi descartado e por quê]</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="cards-3">
+      <article class="card-plain decision"><h4 class="todo-inline">[Decisão 1]</h4><dl><dt>Before</dt><dd class="todo">Como era.</dd><dt>After</dt><dd class="todo">Como ficou.</dd><dt>Why</dt><dd class="todo">Por quê.</dd></dl></article>
+      <article class="card-plain decision"><h4 class="todo-inline">[Decisão 2]</h4><dl><dt>Before</dt><dd class="todo">Como era.</dd><dt>After</dt><dd class="todo">Como ficou.</dd><dt>Why</dt><dd class="todo">Por quê.</dd></dl></article>
+      <article class="card-plain decision"><h4 class="todo-inline">[Decisão 3]</h4><dl><dt>Before</dt><dd class="todo">Como era.</dd><dt>After</dt><dd class="todo">Como ficou.</dd><dt>Why</dt><dd class="todo">Por quê.</dd></dl></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="feedback">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Feedback</h2>
+      <p class="section-sub todo-inline">[Convite ao feedback]</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="feedback-grid">
+      <form class="poll" id="poll" aria-label="Poll">
+        <h3 class="sub-title">Would you play it?</h3>
+        <label><input type="radio" name="vote" value="yes"> Yes</label>
+        <label><input type="radio" name="vote" value="maybe"> Maybe</label>
+        <label><input type="radio" name="vote" value="no"> No</label>
+        <h3 class="sub-title">Favorite specialization</h3>
+        <label><input type="radio" name="spec" value="martial"> Martial Arts</label>
+        <label><input type="radio" name="spec" value="spellbreaker"> Spellbreaker</label>
+        <label><input type="radio" name="spec" value="felblood"> Felblood</label>
+        <button type="submit" class="cta cta--small" disabled>Vote</button>
+        <p class="poll-total">Votes so far: <span id="pollTotal">-</span></p>
+      </form>
+      <form class="feedback-form" id="feedbackForm" aria-label="Feedback form">
+        <label>Specialization you played
+          <select name="spec"><option value="">-</option><option>Martial Arts</option><option>Spellbreaker</option><option>Felblood</option></select>
+        </label>
+        <label>Did you win? <select name="won"><option value="">-</option><option>Yes</option><option>No</option></select></label>
+        <label>What was best?<textarea name="best" rows="3"></textarea></label>
+        <label>What was worst?<textarea name="worst" rows="3"></textarea></label>
+        <label>Ideas<textarea name="ideas" rows="3"></textarea></label>
+        <label>Contact (optional)<input type="text" name="contact" autocomplete="email"></label>
+        <input type="text" name="website" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="hidden" name="run" id="runData">
+        <p class="run-note" id="runNote" hidden></p>
+        <button type="submit" class="cta cta--small" disabled>Send</button>
+      </form>
+    </div>
+    <p class="privacy todo">Linha de privacidade: o que é coletado (votos, respostas do formulário e os dados da partida) e para quê.</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <nav class="footer-site" aria-label="Site">
+    <a href="#top">Back to top</a><a class="footer-lab" href="../">Danny&rsquo;s Tinker Lab</a>
+  </nav>
+  <p class="todo">Créditos: arte oficial da Blizzard Entertainment (com a fonte de cada imagem); ícones originais de Warcraft (alguns com recolor); fontes Eczar, Spectral, Jost, Alegreya Sans, Barlow Condensed e Marcellus SC (SIL Open Font License).</p>
+  <p class="todo">Aviso de fã: projeto não afiliado à Blizzard Entertainment.</p>
+  <p class="footer-by todo">Linha de autoria, com link para a home (sugestão: "A Danny&rsquo;s Tinker Lab project by Daniel Manginelli"). Sem contato nem currículo aqui: isso fica na home.</p>
+</footer>
+
+<script src="js/page.js"></script>
+</body>
+</html>
