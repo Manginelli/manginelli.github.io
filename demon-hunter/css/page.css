@@ -514,3 +514,24 @@ section[id] {
   margin-top: 0;
   margin-bottom: 30px;
 }
+.source-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.source-head img {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  display: block;
+}
+.source-head h4 {
+  margin: 0;
+}
+.next-intro {
+  margin-top: 26px;
+}
+.next-abilities {
+  margin-top: 16px;
+}
