@@ -44,7 +44,9 @@
     const r = d.result, form = document.getElementById("feedbackForm");
     if (!form) return;
     document.getElementById("runData").value = JSON.stringify(r);
-    if (SPEC[r.spec]) form.elements.spec.value = SPEC[r.spec];
+    form.querySelectorAll('input[name="spec"]').forEach(c => {
+      if (c.value === SPEC[r.spec]) c.checked = true;
+    });
     form.elements.won.value = r.win ? "Yes" : "No";
     const note = document.getElementById("runNote");
     note.textContent = `Your last run is attached: ${SPEC[r.spec] || r.spec}, wave ${r.wave} of ${r.waves}, ${r.win ? "victory" : "defeat"}, ${r.dps} DPS.`;

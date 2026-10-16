@@ -134,8 +134,15 @@
         <ul class="sw-list"><li>No self-healing, apart from Dreadlord&rsquo;s Blood.</li><li>Few ways to hold enemies in place.</li></ul>
       </div>
     </div>
-    <div class="section-body mechanic">
-      <h3 class="sub-title">Unique mechanic: Battle Rhythm</h3>
+    </div>
+
+    <div class="part" id="battle-rhythm">
+      <div class="part-head">
+        <h3 class="part-title">Battle Rhythm</h3>
+        <p class="section-sub todo-inline wip" data-wip="85">Work in Progress 85</p>
+        <hr class="accent-rule accent-rule--tight">
+      </div>
+    <div class="section-body mechanic mechanic--first">
       <p>Battle Rhythm comes from Blizzard itself: in Heroes of the Storm, Illidan&rsquo;s basic attacks lower his cooldowns. That feeling stuck with me, and it fit a Demon Hunter who must stay on the offensive. At first, every ability had this reduction, but that would have made haste and weapon speed the only stats that mattered. So Battle Rhythm only touches the strikes, the engine of each build, while the rest of the kit keeps more standard cooldowns tied to weapon damage. Strikes never come back on a fully predictable timer, and that makes playing a Demon Hunter feel alive.</p>
       <p>Balancing it drew heavily on the Forever community&rsquo;s discussions about Warrior rage. Haste becomes the best stat for as long as mana holds, which creates a push and pull that mirrors the Demon Hunter itself: attack as hard as you can, but hold back enough to last the fight. Martial Arts sits most comfortably here, with haste already built in; the Spellbreaker wants haste to fuel its mana, competing with Mana Strike&rsquo;s own resets; and the Felblood, like the blademasters and fire across Warcraft, leans more on critical strikes while still finding haste valuable.</p>
     </div>
@@ -178,7 +185,11 @@
       <p>To his surprise, most Orc initiates survived the ritual, their bodies already adapted by years of corruption. His own people call it madness: these are the same Orcs who slew Cenarius and still fight the Kaldorei in Ashenvale. Rejected by their elven brethren, the Orc Demon Hunters began forging a code of their own, grounded in honor. Once drifters and outcasts, the Demon Hunters now stand as two orders.</p>
     </div>
 
-    <h3 class="sub-title">The two branches</h3>
+    <div class="part part--lore">
+      <div class="part-head">
+        <h3 class="part-title">The Two Branches</h3>
+        <hr class="accent-rule accent-rule--tight">
+      </div>
     <div class="branches">
       <article class="branch branch--pactbound">
         <h4>Pactbound</h4>
@@ -189,7 +200,13 @@
         <p>Founders of a new order, the Warblades answer for the sins of their clans. Most come from the Burning Blade, whose blademasters broke free of the demons while the rest of the clan became the cult that still lurks in Orgrimmar&rsquo;s shadows. To them, defiling their souls to protect their own is no sacrifice, but an honor. Led by Gorthashi Embersoul, the first Orc Demon Hunter, they earn respect rank by rank, from Initiate to Blademaster. They expect no welcome, and ask for none.</p>
       </article>
     </div>
+    </div>
 
+    <div class="part part--lore">
+      <div class="part-head">
+        <h3 class="part-title">The Two Masters</h3>
+        <hr class="accent-rule accent-rule--tight">
+      </div>
     <div class="lore-grid lore-grid--flip lore-char">
       <div class="text-col"><div class="section-body">
         <h3 class="sub-title">Demetrius Darkheart, The Last of the Pact</h3>
@@ -214,6 +231,7 @@
         <div class="art-frame art-frame--tip" tabindex="0" aria-describedby="artNote2"><img src="img/lore-blademaster2.webp" alt="" width="435" height="600" loading="lazy"><span class="tip art-tip" role="tooltip" id="artNote2">Image to represent each character&rsquo;s fantasy, but not their physical appearance.</span></div>
         <p class="art-credit">Orc Swordmaster concept by Samwise Didier, &copy; 1999 Blizzard Entertainment.</p>
       </figure>
+    </div>
     </div>
     <details class="commentary">
       <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
@@ -331,9 +349,12 @@
         <p class="poll-total">Votes so far: <span id="pollTotal">-</span></p>
       </form>
       <form class="feedback-form" id="feedbackForm" aria-label="Feedback form">
-        <label>Specialization you played
-          <select name="spec"><option value="">-</option><option>Martial Arts</option><option>Spellbreaker</option><option>Felblood</option></select>
-        </label>
+        <fieldset class="spec-pick">
+          <legend>Specializations you played</legend>
+          <label><input type="checkbox" name="spec" value="Martial Arts"> Martial Arts</label>
+          <label><input type="checkbox" name="spec" value="Spellbreaker"> Spellbreaker</label>
+          <label><input type="checkbox" name="spec" value="Felblood"> Felblood</label>
+        </fieldset>
         <label>Did you win? <select name="won"><option value="">-</option><option>Yes</option><option>No</option></select></label>
         <label>What was best?<textarea name="best" rows="3"></textarea></label>
         <label>What was worst?<textarea name="worst" rows="3"></textarea></label>
