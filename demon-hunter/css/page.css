@@ -535,3 +535,12 @@ section[id] {
 .next-abilities {
   margin-top: 16px;
 }
+@media (min-width: 901px) {
+  .blood-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 1120px;
+  }
+  .blood-list > .blood-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
