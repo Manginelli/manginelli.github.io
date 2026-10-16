@@ -19,8 +19,8 @@
 <body>
 
 <nav class="page-nav" aria-label="On this page">
-  <a href="#play">Play</a><a href="#lore">Lore</a><a href="#gameplay">Gameplay</a><a href="#skills">Skill Trees</a>
-  <a href="#bloods">Demon Bloods</a><a href="#world">World</a><a href="#next">What's next</a><a href="#process">Design process</a><a href="#feedback">Feedback</a>
+  <a href="#play">Play</a><a href="#design">Class Design</a><a href="#lore">Lore</a><a href="#abilities">Abilities</a>
+  <a href="#next">What's next</a><a href="#process">Design process</a><a href="#feedback">Feedback</a>
 </nav>
 
 <section class="hero" id="top">
@@ -71,6 +71,96 @@
       <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
       <div class="commentary-body"><p>This stage answers a question: how do you best present a class design to the public? My answer was to let you play it. Three level 40 Demon Hunter specs, as close to the design as I could make them, and a challenge to conquer with each. It grew out of an internal prototype built to test how the class feels and to rough out the balance of its core loop, where every hit brings your strikes back sooner.</p><p>Instead of reading pages and pages of documents, anyone can understand the class intuitively by playing it, inside a recreation of World of Warcraft&rsquo;s combat.</p><p>Turning that prototype into a stage meant balancing the three specs against each other and designing enemies that teach the class one piece at a time: a caster to learn the basics, a swarm to feel the Demon Hunter&rsquo;s area damage, two casters at once to test what you&rsquo;ve learned, and a Felguard that asks for real mastery. The waves also wear you down. Spent cooldowns, lost health and lost mana carry over, so how you win one wave decides how ready you are for the next.</p><p>I had a lot of fun making, balancing and playing this stage, and I hope you did too!</p></div>
     </details>
+  </div>
+</section>
+
+<section class="section" id="design">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Class Design</h2>
+      <p class="section-sub">How the class came to be, and where the idea came from.</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="section-body">
+      <p>The Demon Hunter is one of Warcraft&rsquo;s most iconic archetypes. For WoW: Forever, I wanted a version faithful to the Warcraft III hero, not the demonic form Illidan takes on. The hero unit already hinted at three specializations through its abilities: Evasion, Mana Burn and Immolation.</p>
+      <p>But every WoW class is a bundle of archetypes: the Warrior holds the footman, the knight, the blademaster and the mountain king. A class built from a single hero limits its own potential, and forces you to invent what&rsquo;s missing outside of established Warcraft. The Demon Hunter had to be bigger than the hero that inspired it.</p>
+    </div>
+    <h3 class="sub-title sub-title--center">Sources and inspirations</h3>
+    <div class="cards-3 sources">
+      <article class="card-plain"><h4>Warcraft III: the Demon Hunter</h4><p>The foundation of the whole class: the demonic powers, the aesthetic and the lore. Every other influence orbits this core and expands it.</p></article>
+      <article class="card-plain"><h4>Warcraft III: the Blademaster</h4><p>What the Blademaster archetype was missing: Wind Walk, Mirror Image, flaming blades, and above all, the feeling of a samurai and a code of honor.</p></article>
+      <article class="card-plain"><h4>Warcraft III: the Spellbreaker</h4><p>Another archetype fantasy I feel is not fully represented among WoW&rsquo;s classes, in Classic or Retail. A hunter who manipulates magic, burning mana and breaking spells, so that no demon can turn its own power against them.</p></article>
+    </div>
+    <div class="section-body bridge">
+      <p>From there, each ability tree became a consequence: the acrobatics of a trained body, anti-magic powers, and the demon&rsquo;s blood with its unique abilities. All three also mirror the class fantasy: a trained body and mind in control, against a demonic power that wants out.</p>
+    </div>
+
+    <div class="part" id="gameplay">
+      <div class="part-head">
+        <h3 class="part-title">Gameplay</h3>
+        <p class="section-sub">Built to stay on top of their prey.</p>
+        <hr class="accent-rule accent-rule--tight">
+      </div>
+    <div class="section-body">
+      <h3 class="sub-title">Relentless Pressure</h3>
+      <p>I feel like a Demon Hunter is a class that should never let go of its target, with the mobility to make that possible: abilities that close the distance, movement speed above other classes, and pressure that grows with every hit, through shorter cooldowns, burned mana and each tree&rsquo;s own spender. A Demon Hunter&rsquo;s defense should be to kill faster than it dies.</p>
+    </div>
+    <div class="facets">
+      <article class="facet facet--martial">
+        <img src="icons/double-strike.webp" alt="" loading="lazy">
+        <h4>Martial Arts</h4>
+        <p class="facet-stats">Physical · Agility · the most mobile</p>
+        <p class="facet-text">The agile Demon Hunter, always on the move and always striking. I built its combo around its movement abilities, so repositioning is part of the rotation: you are constantly cutting your way across the fight. It settles into a steady rhythm I find engaging, and as the simplest rotation of the three, it is naturally the fastest, cycling more often than any other spec.</p>
+      </article>
+      <article class="facet facet--spell">
+        <img src="icons/mana-strike.webp" alt="" loading="lazy">
+        <h4>Spellbreaker</h4>
+        <p class="facet-stats">Arcane · Intellect and Spell Power · breaks casters, the most fragile</p>
+        <p class="facet-text">This is where I leaned hardest on procs, drawing on my years as a Mage main. Geared for Intellect and spell power, the Spellbreaker has naturally weaker auto attacks, so I turned them into its engine: they restore mana and grant free Mana Strikes. Attacking fast and constantly speeds up the build-up to its final blow, which is also why Mana Scar needs so many charges: with free strikes feeding it, fewer would fire too soon. I also added Mana Breaker to give the player more to do than wait for the proc, and to lower the variance of depending on Mana Strike alone.</p>
+      </article>
+      <article class="facet facet--fel">
+        <img src="icons/flame-strike.webp" alt="" loading="lazy">
+        <h4>Felblood</h4>
+        <p class="facet-stats">Fire from attack power · Strength · the toughest</p>
+        <p class="facet-text">The hardest to pin down. I landed on a mix of demonic power and fire: here the Demon Hunter draws on the infernal side of demons, so there is no Shadow damage, which fits Immolation and Burning Blades best. The rotation is simple, but split in two: the blades stoke their flames toward Eruption, while Immolation burns around you, waiting to be detonated for extra damage. Neither line is complex on its own, but managing both at once gives the spec real depth.</p>
+      </article>
+    </div>
+    <div class="sw-grid">
+      <div class="sw-col sw-col--good">
+        <h3 class="sw-title sw-title--good">Strengths</h3>
+        <ul class="sw-list"><li class="todo-inline wip" data-wip="29">Work in Progress 29</li><li class="todo-inline wip" data-wip="30">Work in Progress 30</li><li class="todo-inline wip" data-wip="31">Work in Progress 31</li></ul>
+      </div>
+      <div class="sw-col sw-col--bad">
+        <h3 class="sw-title sw-title--bad">Weaknesses</h3>
+        <ul class="sw-list"><li class="todo-inline wip" data-wip="32">Work in Progress 32</li><li class="todo-inline wip" data-wip="33">Work in Progress 33</li><li class="todo-inline wip" data-wip="34">Work in Progress 34</li></ul>
+      </div>
+    </div>
+    <div class="section-body mechanic">
+      <h3 class="sub-title">Unique mechanic: Battle Rhythm</h3>
+      <p>Battle Rhythm comes from Blizzard itself: in Heroes of the Storm, Illidan&rsquo;s basic attacks lower his cooldowns. That feeling stuck with me, and it fit a Demon Hunter who must stay on the offensive. At first, every ability had this reduction, but that would have made haste and weapon speed the only stats that mattered. So Battle Rhythm only touches the strikes, the engine of each build, while the rest of the kit keeps more standard cooldowns tied to weapon damage. Strikes never come back on a fully predictable timer, and that makes playing a Demon Hunter feel alive.</p>
+      <p>Balancing it drew heavily on the Forever community&rsquo;s discussions about Warrior rage. Haste becomes the best stat for as long as mana holds, which creates a push and pull that mirrors the Demon Hunter itself: attack as hard as you can, but hold back enough to last the fight. Martial Arts sits most comfortably here, with haste already built in; the Spellbreaker wants haste to fuel its mana, competing with Mana Strike&rsquo;s own resets; and the Felblood, like the blademasters and fire across Warcraft, leans more on critical strikes while still finding haste valuable.</p>
+    </div>
+    </div>
+
+    <div class="part" id="bloods">
+      <div class="part-head">
+        <h3 class="part-title">Demon Bloods</h3>
+        <p class="section-sub">Each blood answers a different hunt.</p>
+        <hr class="accent-rule accent-rule--tight">
+      </div>
+    <div class="section-body mechanic mechanic--first">
+      <h3 class="sub-title">Unique mechanic: Demon Bloods</h3>
+      <p>Demon Bloods were born from the ritual: turning the idea of wielding demonic power into a mechanic. The inspiration came from the Warlock, who earns each demon through a quest and gets a specific tool from each one. But where the Warlock dominates demons from the outside, the Demon Hunter masters them from within and wields their traits.</p>
+      <p>I kept the bloods on the defensive and adventuring side: shorter downtime between fights, and each blood stronger against specific enemies. I want it to be an active choice based on what you are about to fight, and that would be far harder to design if the bloods dealt damage. Imp&rsquo;s Blood has an offensive edge, but it depends on the enemy attacking, not on the Demon Hunter.</p>
+    </div>
+<ul class="blood-list">
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/imps-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Imp&#x27;s Blood <span class="rank">Level 1</span></p><p class="ability-desc">Drinks the blood of an imp, increasing your Fire resistance by 30 and causing a very small amount of Fire damage to enemies that strike you in melee. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/satyrs-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Satyr&#x27;s Blood <span class="rank">Level 20</span></p><p class="ability-desc">Drinks the blood of a satyr, increasing your movement speed by 5% and your health regeneration rate by 50% out of combat. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/felhunters-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Felhunter&#x27;s Blood <span class="rank">Level 40</span></p><p class="ability-desc">Drinks the blood of a felhunter, increasing your resistance to all magic by 20, increasing your stealth detection and allowing 25% of your mana regeneration to continue while casting. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dreadlords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Dreadlord&#x27;s Blood <span class="rank">Level 50</span></p><p class="ability-desc">Drinks the blood of a dreadlord, causing your melee attacks to heal you for 3% of the damage they deal. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/pit-lords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Pit Lord&#x27;s Blood <span class="rank">Level 60</span></p><p class="ability-desc">Drinks the blood of a pit lord, reducing all damage you take by 2% for each enemy within 8 yds of you, up to 10%. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p></div></li>
+</ul>
+</div>
   </div>
 </section>
 
@@ -128,69 +218,18 @@
     </div>
     <details class="commentary">
       <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
-      <div class="commentary-body"><p class="todo wip" data-wip="21">Work in Progress 21</p></div>
+      <div class="commentary-body"><p>This lore had two problems to solve: how to bring Demon Hunters to the Horde, and why there are suddenly so many of them. I also wanted it rooted in the Warcraft III Demon Hunter, who wields and contains demonic power within, not the half-demon Illidan became, which is why Illidan stays out of this story.</p>
+        <p>Demon Hunters live in Kalimdor, which ruled out the Forsaken, and the Tauren and Skyborne didn&rsquo;t fit the fantasy. Between Orcs and Trolls, the Orcs&rsquo; history with demons and the blademaster tradition fit far better than the Trolls&rsquo; loa and voodoo. A WoW class is a bundle of archetypes, and the Blademaster was one Classic had only half delivered: the Arms Warrior holds a piece of it, without its samurai-rooted flavor. In the World of Warcraft RPG (2006), Demon Hunters can already set their blades aflame, just as the Burning Blade&rsquo;s blademasters did before battle. The clan became the heart of the Horde&rsquo;s Demon Hunters.</p>
+        <p>Demetrius holds the restrained core of the Warcraft III Demon Hunter, even as he breaks its traditions. Gorthashi pushes the order beyond it. An Orc seeking honor through sacrifice, a wandering samurai saving the world from a greater evil: once those pieces came together, my mind was buzzing, and there was no other way.</p>
+        <p>The rest was asking why, again and again. Why would Demetrius train new hunters? Why Orcs? Why are there so many on both sides? Why do they fight in the wars between Horde and Alliance? The lore answers each one, and leaves Azeroth with more conflict and more stories to tell.</p></div>
     </details>
   </div>
 </section>
 
-<section class="section" id="gameplay">
+<section class="section" id="abilities">
   <div class="panel">
     <div class="panel-head">
-      <h2 class="section-title">Gameplay</h2>
-      <p class="section-sub todo-inline wip" data-wip="22">Work in Progress 22</p>
-      <hr class="accent-rule accent-rule--tight">
-    </div>
-    <div class="section-body">
-      <h3 class="sub-title">Relentless Pressure</h3>
-      <p class="todo wip" data-wip="23">Work in Progress 23</p>
-    </div>
-    <div class="facets">
-      <article class="facet facet--martial">
-        <img src="icons/double-strike.webp" alt="" loading="lazy">
-        <h4>Martial Arts</h4>
-        <p class="facet-stats">Physical · Agility · the most mobile</p>
-        <p class="todo wip" data-wip="24">Work in Progress 24</p>
-      </article>
-      <article class="facet facet--spell">
-        <img src="icons/mana-strike.webp" alt="" loading="lazy">
-        <h4>Spellbreaker</h4>
-        <p class="facet-stats">Arcane · Intellect and Spell Power · breaks casters, the most fragile</p>
-        <p class="todo wip" data-wip="25">Work in Progress 25</p>
-      </article>
-      <article class="facet facet--fel">
-        <img src="icons/flame-strike.webp" alt="" loading="lazy">
-        <h4>Felblood</h4>
-        <p class="facet-stats">Fire from attack power · Strength · the toughest</p>
-        <p class="todo wip" data-wip="26">Work in Progress 26</p>
-      </article>
-    </div>
-    <div class="section-body">
-      <h3 class="sub-title">Moment to moment</h3>
-      <p class="todo wip" data-wip="27">Work in Progress 27</p>
-      <h3 class="sub-title">Hybrid builds</h3>
-      <p class="todo wip" data-wip="28">Work in Progress 28</p>
-    </div>
-    <div class="sw-grid">
-      <div class="sw-col sw-col--good">
-        <h3 class="sw-title sw-title--good">Strengths</h3>
-        <ul class="sw-list"><li class="todo-inline wip" data-wip="29">Work in Progress 29</li><li class="todo-inline wip" data-wip="30">Work in Progress 30</li><li class="todo-inline wip" data-wip="31">Work in Progress 31</li></ul>
-      </div>
-      <div class="sw-col sw-col--bad">
-        <h3 class="sw-title sw-title--bad">Weaknesses</h3>
-        <ul class="sw-list"><li class="todo-inline wip" data-wip="32">Work in Progress 32</li><li class="todo-inline wip" data-wip="33">Work in Progress 33</li><li class="todo-inline wip" data-wip="34">Work in Progress 34</li></ul>
-      </div>
-    </div>
-    <details class="commentary">
-      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
-      <div class="commentary-body"><p class="todo wip" data-wip="35">Work in Progress 35</p></div>
-    </details>
-  </div>
-</section>
-
-<section class="section" id="skills">
-  <div class="panel">
-    <div class="panel-head">
-      <h2 class="section-title">Skill Trees</h2>
+      <h2 class="section-title">Abilities</h2>
       <p class="section-sub todo-inline wip" data-wip="36">Work in Progress 36</p>
       <hr class="accent-rule accent-rule--tight">
     </div>
@@ -312,48 +351,6 @@
   </div>
 </section>
 
-<section class="section" id="bloods">
-  <div class="panel">
-    <div class="panel-head">
-      <h2 class="section-title">Demon Bloods</h2>
-      <p class="section-sub todo-inline wip" data-wip="44">Work in Progress 44</p>
-      <hr class="accent-rule accent-rule--tight">
-    </div>
-    <div class="section-body">
-      <p class="todo wip" data-wip="45">Work in Progress 45</p>
-    </div>
-<ul class="blood-list">
-<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/imps-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Imp&#x27;s Blood <span class="rank">Level 1</span></p><p class="ability-desc">Drinks the blood of an imp, increasing your Fire resistance by 30 and causing a very small amount of Fire damage to enemies that strike you in melee. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
-<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/satyrs-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Satyr&#x27;s Blood <span class="rank">Level 20</span></p><p class="ability-desc">Drinks the blood of a satyr, increasing your movement speed by 5% and your health regeneration rate by 50% out of combat. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
-<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/felhunters-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Felhunter&#x27;s Blood <span class="rank">Level 40</span></p><p class="ability-desc">Drinks the blood of a felhunter, increasing your resistance to all magic by 20, increasing your stealth detection and allowing 25% of your mana regeneration to continue while casting. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p><ul class="meta"><li class="is-stage">In the stage</li></ul></div></li>
-<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dreadlords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Dreadlord&#x27;s Blood <span class="rank">Level 50</span></p><p class="ability-desc">Drinks the blood of a dreadlord, causing your melee attacks to heal you for 3% of the damage they deal. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p></div></li>
-<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/pit-lords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Pit Lord&#x27;s Blood <span class="rank">Level 60</span></p><p class="ability-desc">Drinks the blood of a pit lord, reducing all damage you take by 2% for each enemy within 8 yds of you, up to 10%. Remains active until another Demon Blood is drunk. Cannot be used in combat.</p></div></li>
-</ul>
-<details class="commentary">
-      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
-      <div class="commentary-body"><p class="todo wip" data-wip="46">Work in Progress 46</p></div>
-    </details>
-  </div>
-</section>
-
-<section class="section" id="world">
-  <div class="panel">
-    <div class="panel-head">
-      <h2 class="section-title">Integration with the World</h2>
-      <hr class="accent-rule accent-rule--tight">
-    </div>
-    <div class="cards-3">
-      <article class="card-plain"><h4>Reputations</h4><p class="todo wip" data-wip="47">Work in Progress 47</p></article>
-      <article class="card-plain"><h4>Quests across Azeroth</h4><p class="todo wip" data-wip="48">Work in Progress 48</p></article>
-      <article class="card-plain"><h4>A leveling area of their own</h4><p class="todo wip" data-wip="49">Work in Progress 49</p></article>
-    </div>
-    <details class="commentary">
-      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
-      <div class="commentary-body"><p class="todo wip" data-wip="50">Work in Progress 50</p></div>
-    </details>
-  </div>
-</section>
-
 <section class="section" id="next">
   <div class="panel">
     <div class="panel-head">
@@ -363,6 +360,11 @@
     <div class="section-body">
       <p class="todo wip" data-wip="51">Work in Progress 51</p>
     </div>
+    <ul class="next-list">
+      <li><strong>Reputations.</strong> <span class="todo-inline wip" data-wip="47">Work in Progress 47</span></li>
+      <li><strong>Quests across Azeroth.</strong> <span class="todo-inline wip" data-wip="48">Work in Progress 48</span></li>
+      <li><strong>A leveling area of their own.</strong> <span class="todo-inline wip" data-wip="49">Work in Progress 49</span></li>
+    </ul>
   </div>
 </section>
 

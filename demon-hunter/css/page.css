@@ -218,8 +218,8 @@ section[id] {
 .facets {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  max-width: 110ch;
+  gap: 18px;
+  max-width: 1120px;
   margin: 30px auto;
 }
 .facet {
@@ -442,4 +442,75 @@ section[id] {
     min-height: 0;
     order: -1;
   }
+}
+.sub-title--center {
+  text-align: center;
+  margin: 40px 0 18px;
+}
+.sources {
+  max-width: 110ch;
+  margin: 0 auto;
+}
+.part {
+  margin-top: 56px;
+  padding-top: 44px;
+  border-top: 1px solid var(--brass-faint);
+}
+.part[id] {
+  scroll-margin-top: 56px;
+}
+.part-head {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.part-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--parchment);
+}
+@media (max-width: 900px) {
+  .part-title {
+    font-size: 24px;
+  }
+}
+.next-list {
+  max-width: 90ch;
+  margin: 26px auto 0;
+  padding: 0 0 0 20px;
+}
+.next-list li {
+  margin: 0 0 12px;
+}
+.next-list strong {
+  color: var(--parchment);
+  font-weight: 600;
+}
+.facet {
+  padding: 22px 22px 24px;
+}
+.facet-stats {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--brass-faint);
+}
+.facet-text {
+  margin: 14px 0 0;
+  text-align: left;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.sources .card-plain p {
+  margin: 0;
+}
+.bridge {
+  margin-top: 30px;
+}
+.mechanic {
+  margin-top: 40px;
+}
+.mechanic--first {
+  margin-top: 0;
+  margin-bottom: 30px;
 }
