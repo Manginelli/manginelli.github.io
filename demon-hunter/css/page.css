@@ -544,3 +544,8 @@ section[id] {
     grid-column: 1 / -1;
   }
 }
+@media (max-width: 620px) {
+  .class-visual {
+    min-height: 640px;
+  }
+}
