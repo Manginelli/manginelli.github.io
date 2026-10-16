@@ -184,6 +184,15 @@ section[id] {
     display: block;
   }
 }
+.section-quote .quote-by {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  font-style: normal;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
 .branches {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -273,6 +282,9 @@ section[id] {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+}
+.cards-3.cards-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .card-plain {
   border: 1px solid var(--brass-faint);
@@ -386,6 +398,7 @@ section[id] {
 @media (max-width: 900px) {
   .facets,
   .cards-3,
+  .cards-3.cards-2,
   .branches,
   .feedback-grid {
     grid-template-columns: 1fr;
