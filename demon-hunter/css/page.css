@@ -632,3 +632,18 @@ section[id] {
 .part--lore .branches {
   margin-bottom: 0;
 }
+.lore-char > .lore-art--model {
+  min-height: 460px;
+}
+.lore-art--model .art-frame {
+  min-height: 460px;
+}
+@media (max-width: 900px) {
+  .lore-char > .lore-art--model {
+    height: 420px;
+    min-height: 0;
+  }
+  .lore-art--model .art-frame {
+    min-height: 0;
+  }
+}
