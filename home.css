@@ -101,6 +101,26 @@
 .tinkering-desc {
   font-size: 15.5px;
 }
+.tinkering-icon--shot {
+  width: 109px;
+  height: 96px;
+  border-radius: 3px;
+  border-width: 1px;
+  object-fit: contain;
+}
+.tinkering-icon:not(.tinkering-icon--shot) {
+  margin: 0 18.5px;
+}
+.tinkering--ui .tinkering-icon {
+  border-color: #0cd29d;
+}
+.tinkering--ui .tinkering-name {
+  color: #35eebb;
+}
+.tinkering--ui:hover,
+.tinkering--ui:focus-visible {
+  border-color: #08a67b;
+}
 .home-foot {
   margin-top: auto;
   padding-top: 48px;
