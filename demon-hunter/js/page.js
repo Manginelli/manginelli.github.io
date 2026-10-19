@@ -54,7 +54,7 @@
     note.textContent = `Your last run is attached: ${SPEC[r.spec] || r.spec}, wave ${r.wave} of ${r.waves}, ${r.win ? "victory" : "defeat"}, ${r.dps} DPS.`;
     note.hidden = false;
   });
-  const ENDPOINT = "";
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbz1YrPKSUE5BigJiyEMTpjlz6ErRigVTsavYnHp0QjulcbakFY3CsqjCJx3Ka2mYm4I/exec";
   const store = {
     get(k) {
       try {
