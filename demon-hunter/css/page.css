@@ -503,6 +503,10 @@ section[id] {
     font-size: 24px;
   }
 }
+.accent-rule--part {
+  max-width: 160px;
+  margin: 12px auto 0;
+}
 .next-list {
   max-width: 90ch;
   margin: 26px auto 0;
