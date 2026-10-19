@@ -108,6 +108,17 @@
   color: var(--body-dim);
   text-align: center;
 }
+.home-foot a {
+  color: var(--body);
+  text-decoration: none;
+  border-bottom: 1px solid var(--brass-faint);
+}
+.home-foot a:hover,
+.home-foot a:focus-visible {
+  color: var(--brass-lit);
+  border-bottom-color: var(--brass);
+  outline: none;
+}
 @media (max-width: 560px) {
   .tinkering {
     flex-direction: column;
