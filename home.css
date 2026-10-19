@@ -117,10 +117,6 @@
 .tinkering--ui .tinkering-name {
   color: #35eebb;
 }
-.tinkering--ui:hover,
-.tinkering--ui:focus-visible {
-  border-color: #08a67b;
-}
 .home-foot {
   margin-top: auto;
   padding-top: 48px;
