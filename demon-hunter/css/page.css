@@ -348,6 +348,17 @@ section[id] {
   color: var(--body-dim);
   font-size: 14px;
 }
+.form-status {
+  font-size: 14px;
+  color: var(--body);
+  margin: 10px 0 0;
+}
+.form-status:empty {
+  display: none;
+}
+.form-status.is-error {
+  color: #e8a08a;
+}
 .privacy {
   max-width: 90ch;
   margin: 26px auto 0;

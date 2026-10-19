@@ -120,7 +120,7 @@
     </div>
     <div class="section-body mechanic">
       <h3 class="sub-title">Unique mechanic: Battle Rhythm</h3>
-      <p>Battle Rhythm comes from Heroes of the Storm: Illidan&rsquo;s basic attacks in that game lower his cooldowns.</p>
+      <p>Battle Rhythm comes from Heroes of the Storm: Illidan&rsquo;s basic attacks in that game lower his cooldowns, incentivizing the player to keep attacking as much as possible.</p>
       <p>That feeling stuck with me, and it fit a Demon Hunter who must stay on the offensive. At first, every ability had this reduction, but that would have made haste and weapon speed too desirable. So Battle Rhythm only applies to the strikes, the engine of each build, while the rest of the kit keeps a more standard cooldown. Strikes never come back on a fully predictable timer, and that makes playing a Demon Hunter feel alive.</p>
       <p>I believe haste still becomes the best stat, for as long as mana holds, which creates a push and pull that mirrors the Demon Hunter itself: attack as hard as you can, but hold back enough to last the fight. Martial Arts sits most comfortably here, with haste already built in; the Spellbreaker wants haste to fuel its mana, competing with Mana Strike&rsquo;s own resets; and the Felblood, like the blademasters and fire across Warcraft, leans more on critical strikes while still finding haste valuable.</p>
     </div>
@@ -235,10 +235,10 @@
     </div>
     <details class="commentary">
       <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
-      <div class="commentary-body"><p>This lore had two problems to solve: how to bring Demon Hunters to the Horde, and why there are suddenly so many of them. I also wanted it rooted in the Warcraft III Demon Hunter, who wields and contains demonic power within, not the half-demon Illidan became, which is why Illidan stays out of this story.</p>
-        <p>Demon Hunters live in Kalimdor, which ruled out the Forsaken, and the Tauren and Skyborne didn&rsquo;t fit the fantasy. Between Orcs and Trolls, the Orcs&rsquo; history with demons and the blademaster tradition fit far better than the Trolls&rsquo; loa and voodoo. A WoW class is a bundle of archetypes, and the Blademaster was one Classic had only half delivered: the Arms Warrior holds a piece of it, without its samurai-rooted flavor. In the World of Warcraft RPG (2006), Demon Hunters can already set their blades aflame, just as the Burning Blade&rsquo;s blademasters did before battle. The clan became the heart of the Horde&rsquo;s Demon Hunters.</p>
-        <p>Demetrius holds the restrained core of the Warcraft III Demon Hunter, even as he breaks its traditions. Gorthashi pushes the order beyond it. An Orc seeking honor through sacrifice, a wandering samurai saving the world from a greater evil: once those pieces came together, my mind was buzzing, and there was no other way.</p>
-        <p>The rest was asking why, again and again. Why would Demetrius train new hunters? Why Orcs? Why are there so many on both sides? Why do they fight in the wars between Horde and Alliance? The lore answers each one, and leaves Azeroth with more conflict and more stories to tell.</p></div>
+      <div class="commentary-body"><p>This lore had two problems to solve: how to bring Demon Hunters to the Horde, and why there are suddenly so many of them. I also wanted it to be completely agnostic to Illidan, to make it feel like Illidan is small compared to what Demon Hunters are in Azeroth, and not leash the class to a single figure.</p>
+        <p>For a Horde Demon Hunter, the Orcs&rsquo; history with demons and the blademaster tradition fit far better than the alternatives. In the World of Warcraft RPG (2006), Demon Hunters can already set their blades aflame, just as the Burning Blade&rsquo;s blademasters did before battle. The clan then became the heart of the Horde&rsquo;s Demon Hunters.</p>
+        <p>Demetrius holds the restrained core of the Warcraft III Demon Hunter, even as he breaks its traditions. Gorthashi pushes the order beyond it. An Orc seeking honor through sacrifice, a wandering samurai saving the world from a greater evil: once those pieces came together, my mind was buzzing.</p>
+        <p>The rest was asking why, again and again. Why would Demetrius train new hunters? Why Orcs? Why are there so many on both sides? Why do they fight in the wars between Horde and Alliance? The lore answers each one, and leaves Azeroth with more conflict and more room for stories to be told.</p></div>
     </details>
   </div>
 </section>
@@ -346,6 +346,7 @@
         <label><input type="radio" name="spec" value="spellbreaker"> Spellbreaker</label>
         <label><input type="radio" name="spec" value="felblood"> Felblood</label>
         <button type="submit" class="cta cta--small" disabled>Vote</button>
+        <p class="form-status" id="pollStatus" role="status" aria-live="polite"></p>
         <p class="poll-total">Votes so far: <span id="pollTotal">-</span></p>
       </form>
       <form class="feedback-form" id="feedbackForm" aria-label="Feedback form">
@@ -364,9 +365,10 @@
         <input type="hidden" name="run" id="runData">
         <p class="run-note" id="runNote" hidden></p>
         <button type="submit" class="cta cta--small" disabled>Send</button>
+        <p class="form-status" id="feedbackStatus" role="status" aria-live="polite"></p>
       </form>
     </div>
-    <p class="privacy todo wip" data-wip="66">Work in Progress 66</p>
+    <p class="privacy">Your vote, your answers and the stats of your last run (spec, Demon Bloods, wave reached, time and damage) are stored privately and used only to improve this design. Only vote totals appear on this page. Contact is optional and never shared.</p>
   </div>
 </section>
 
