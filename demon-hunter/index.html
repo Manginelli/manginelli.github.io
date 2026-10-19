@@ -15,6 +15,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="css/tinker.css">
 <link rel="stylesheet" href="css/page.css">
+<link rel="preload" href="fonts/spectral-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/eczar-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
 
@@ -24,7 +26,7 @@
 
 <section class="hero" id="top">
   <figure class="class-visual">
-    <img class="class-art" src="img/hero-demon-hunter.webp" alt="" width="800" height="800" style="object-position: 42% 40%">
+    <img class="class-art" src="img/hero-demon-hunter.webp" alt="" width="800" height="800" fetchpriority="high" style="object-position: 42% 40%">
     <div class="stat-block">
       <div class="stat"><span class="stat-label">Role</span><div class="icon-row"><span class="icon icon--art" tabindex="0" role="img" aria-label="Melee Damage Dealer"><img src="icons/stat-role-melee.webp" alt=""><span class="tip" role="tooltip">Melee Damage Dealer</span></span></div></div>
       <div class="stat"><span class="stat-label">Armor</span><div class="icon-row"><span class="icon icon--art" tabindex="0" role="img" aria-label="Leather"><img src="icons/stat-armor-leather.webp" alt=""><span class="tip" role="tooltip">Leather</span></span></div></div>
@@ -48,7 +50,9 @@
       <li><strong>Break their magic</strong>, burn their mana and leave casters fleeing in despair.</li>
       <li><strong>Burn them down</strong>, your body wreathed in fire, leaving only ash in your wake.</li>
     </ul>
-    <a class="cta" href="#play">Play it now</a>
+    <a class="cta cta--play" href="#play">Play it now</a>
+    <span class="cta cta--play-off" aria-disabled="true">Play it now</span>
+    <p class="cta-note">Playable on PC only.</p>
   </div>
 </section>
 
@@ -61,10 +65,6 @@
     </div>
     <div class="stage-frame">
       <iframe src="stage/" title="Burningwoods Hollow, a playable stage" allow="fullscreen" allowfullscreen loading="lazy"></iframe>
-    </div>
-    <div class="stage-mobile">
-      <div class="art-slot art-slot--clip wip" data-wip="8"><span>Work in Progress 8</span></div>
-      <p>The stage needs a keyboard. Open this page on a computer to play it.</p>
     </div>
     <details class="commentary">
       <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>

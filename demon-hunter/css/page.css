@@ -171,12 +171,28 @@ section[id] {
   color: var(--body-dim);
   font-style: italic;
 }
+.cta--play-off,
+.cta-note {
+  display: none;
+}
 @media (max-width: 760px) {
-  .stage-frame {
+  #play,
+  .page-nav a[href="#play"],
+  .cta--play {
     display: none;
   }
-  .stage-mobile {
+  .cta--play-off {
+    display: inline-block;
+    opacity: .45;
+    filter: grayscale(.7);
+    cursor: not-allowed;
+  }
+  .cta-note {
     display: block;
+    margin: 10px 0 0;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--body-dim);
   }
 }
 .section-quote .quote-by {
