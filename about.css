@@ -2,13 +2,22 @@
 
 .topnav a[aria-current="page"] { color: var(--brass-lit); border-bottom-color: var(--brass); }
 
-/* Opening: hello, one line about him, and a photo (2026-10-21) */
+/* Opening: round portrait, hello and one line about him (2026-10-21). The ring echoes the unit tokens in the Demon Hunter stage. */
 .ab-intro { padding-top: clamp(40px, 7vh, 80px); }
-.ab-hello { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: clamp(24px, 5vw, 64px); align-items: center; max-width: 900px; }
+.ab-hello { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: center; max-width: 1000px; }
+.ab-photo { margin: 0; position: relative; }
+.ab-photo::before { content: ""; position: absolute; inset: -28px; border-radius: 50%; z-index: -1;
+  background: radial-gradient(closest-side, rgba(224, 168, 72, .22), transparent 75%); }
+.ab-photo img { width: 100%; height: auto; border-radius: 50%; border: 2px solid var(--brass);
+  box-shadow: 0 0 0 6px var(--dark-0), 0 0 0 7px var(--brass-dim), 0 18px 50px rgba(0, 0, 0, .55); }
 .ab-hi { margin: 2px 0 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 60px); line-height: 1.05; letter-spacing: .02em; color: var(--parchment); }
 .ab-hi-sub { margin: 16px 0 0; max-width: 32em; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 21px); line-height: 1.45; color: var(--brass-lit); }
-.ab-photo { margin: 0; justify-self: end; width: 100%; }
-.ab-photo img { width: 100%; height: auto; border: 1px solid var(--brass-dim); box-shadow: 0 16px 44px rgba(0,0,0,.5); }
+
+/* Story with the childhood photo beside it (printed-photo style) */
+.ab-intro .ab-prose { max-width: none; display: grid; grid-template-columns: minmax(0, 720px) 160px; column-gap: 64px; align-items: start; }
+.ab-kid { margin: 6px 0 0; padding: 9px 9px 11px; background: #e9dcc2; box-shadow: 0 14px 34px rgba(0, 0, 0, .55); transform: rotate(2.2deg); }
+.ab-kid img { width: 100%; height: auto; display: block; }
+.ab-kid figcaption { margin-top: 7px; font-family: var(--font-display); font-size: 12.5px; line-height: 1.3; color: #3b2f22; text-align: center; }
 
 /* Readable prose column */
 .ab-prose { max-width: 720px; margin-top: 28px; }
@@ -41,9 +50,14 @@
 /* What's next */
 .ab-next-text { max-width: 720px; margin: 14px 0 0; font-size: 17.5px; line-height: 1.7; }
 
+@media (max-width: 1000px) {
+  .ab-intro .ab-prose { grid-template-columns: minmax(0, 1fr) 140px; column-gap: 32px; }
+}
 @media (max-width: 720px) {
-  .ab-hello { grid-template-columns: 1fr; }
-  .ab-photo { justify-self: start; max-width: 240px; }
+  .ab-hello { grid-template-columns: 1fr; gap: 22px; }
+  .ab-photo { max-width: 150px; }
+  .ab-intro .ab-prose { display: block; }
+  .ab-kid { width: 170px; margin: 6px auto 24px; transform: rotate(-1.5deg); }
 }
 @media (max-width: 640px) {
   .ab-timeline li { grid-template-columns: 1fr; gap: 4px; }
