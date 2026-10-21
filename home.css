@@ -10,22 +10,21 @@
   text-decoration: none; padding: 4px 0; border-bottom: 1px solid transparent; }
 .topnav a:hover, .topnav a:focus-visible { color: var(--brass-lit); border-bottom-color: var(--brass); outline: none; }
 
-/* Hero */
-.hm-hero { position: relative; min-height: min(78vh, 680px); display: flex; align-items: center;
-  background: var(--ink) url(img/home-hero.webp) left 45% / cover no-repeat; }
-.hm-hero::before { content: ""; position: absolute; inset: 0;
-  background: linear-gradient(0deg, var(--dark-0) 0%, rgba(27,22,19,0) 26%),
-              linear-gradient(90deg, rgba(10,8,6,.96) 0%, rgba(10,8,6,.9) 38%, rgba(10,8,6,.4) 66%, rgba(10,8,6,.2) 100%); }
-.hm-hero-inner { position: relative; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 72px clamp(16px, 4vw, 40px);
-  display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
-.hm-hero-inner > * { max-width: 660px; }
-.hm-hero-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(42px, 6.4vw, 72px); line-height: 1.02;
+/* Hero: text column and stage art column side by side, so the art never sits under the text at any width (2026-10-21) */
+.hm-hero { position: relative; overflow: hidden;
+  background: radial-gradient(60% 80% at 78% 50%, rgba(224, 168, 72, .10), transparent 70%); }
+.hm-hero-inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: clamp(48px, 9vh, 96px) clamp(16px, 4vw, 40px);
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.hm-hero-text { min-width: 0; }
+.hm-hero-art { aspect-ratio: 550 / 460; width: 100%; max-width: 520px; justify-self: center; mix-blend-mode: lighten;
+  background: url(img/home-hero-art.webp) center / cover no-repeat;
+  -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%); mask-image: radial-gradient(closest-side, #000 62%, transparent 100%); }
+.hm-hero-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 62px); line-height: 1.02;
   letter-spacing: .03em; color: var(--parchment); }
-.hm-hero-role { margin: 14px 0 0; font-family: var(--font-display); font-size: 14.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--brass-lit); }
-.hm-hero-tag { margin: 22px 0 0; font-family: var(--font-display); font-size: clamp(22px, 2.6vw, 28px); line-height: 1.25; color: var(--parchment); }
-.hm-hero-intro { margin: 14px 0 0; color: var(--body); font-size: 17px; }
-.hm-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: inherit; margin-top: 26px; }
-.hm-hero .hm-hero-actions { justify-content: flex-start; }
+.hm-hero-role { margin: 14px 0 0; font-family: var(--font-display); font-size: 14px; letter-spacing: .18em; text-transform: uppercase; color: var(--brass-lit); }
+.hm-hero-tag { margin: 22px 0 0; font-family: var(--font-display); font-size: clamp(21px, 2.2vw, 27px); line-height: 1.25; color: var(--parchment); }
+.hm-hero-intro { margin: 14px 0 0; color: var(--body); font-size: 17px; max-width: 34em; }
+.hm-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
 
 /* Buttons (same look as the Demon Hunter page call to action) */
 .btn { display: inline-block; padding: 13px 28px; font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .1em;
@@ -92,16 +91,14 @@ main { display: block; }
 
 /* Tablet and phone */
 @media (max-width: 900px) {
+  .hm-hero-inner { grid-template-columns: 1fr; }
+  .hm-hero-art { display: none; }
   .featured { grid-template-columns: 1fr; }
   .cards, .pillars { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .topbar { flex-direction: column; gap: 6px; padding: 10px 16px; }
   .topnav a { font-size: 12.5px; }
-  .hm-hero { min-height: 0; background-position: 30% center; }
-  .hm-hero::before { background: linear-gradient(0deg, var(--dark-0) 0%, rgba(10,8,6,.86) 30%, rgba(10,8,6,.82) 60%, rgba(10,8,6,.55) 100%); }
-  .hm-hero-inner { align-items: flex-start; text-align: left; padding: 56px 16px 40px; }
-  .hm-hero .hm-hero-actions { justify-content: flex-start; }
   .block { padding-top: 48px; }
   .tinkering { flex-direction: column; text-align: center; }
 }
