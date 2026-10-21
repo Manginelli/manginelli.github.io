@@ -52,6 +52,11 @@
 .ab-talk figcaption { margin-top: 7px; font-family: var(--font-display); font-size: 12.5px; line-height: 1.3; color: #3b2f22; text-align: center; }
 
 /* Awards and education */
+.ab-side { display: grid; grid-template-columns: minmax(0, 720px) 160px; column-gap: 64px; align-items: start; }
+.ab-side .ab-list { max-width: none; }
+.ab-paper { margin: 18px 0 0 -40px; width: calc(100% + 40px); padding: 9px 9px 11px; background: #e9dcc2; box-shadow: 0 14px 34px rgba(0, 0, 0, .55); transform: rotate(1.6deg); }
+.ab-paper img { width: 100%; height: auto; display: block; }
+.ab-paper figcaption { margin-top: 7px; font-family: var(--font-display); font-size: 12.5px; line-height: 1.3; color: #3b2f22; text-align: center; }
 .ab-list { margin: 16px 0 0; padding-left: 20px; max-width: 720px; }
 .ab-list li { margin: 6px 0; font-size: 16.5px; }
 .ab-list li::marker { color: var(--brass); }
@@ -60,11 +65,15 @@
 .ab-next-text { max-width: 720px; margin: 14px 0 0; font-size: 17.5px; line-height: 1.7; }
 
 @media (max-width: 1000px) {
+  .ab-side { grid-template-columns: minmax(0, 1fr) 140px; column-gap: 32px; }
+  .ab-paper { margin-left: 0; width: 100%; }
   .ab-career { grid-template-columns: minmax(0, 1fr) 140px; column-gap: 32px; }
   .ab-talk { margin-left: 0; width: 100%; }
   .ab-intro .ab-prose { grid-template-columns: minmax(0, 1fr) 140px; column-gap: 32px; }
 }
 @media (max-width: 720px) {
+  .ab-side { display: block; }
+  .ab-paper { width: 260px; margin: 22px auto 8px; transform: rotate(-1.2deg); }
   .ab-career { display: block; }
   .ab-talk { width: 220px; margin: 4px auto 8px; transform: rotate(1.2deg); }
   .ab-hello { grid-template-columns: 1fr; gap: 22px; }
