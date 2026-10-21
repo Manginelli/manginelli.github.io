@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Home (rebuilt 2026-10-21 from "Textos - Home e About.md", blocks H1 to H20). Daniel's personal showcase as a game designer;
      Danny's Tinker Lab is one section of it. Reuses the Demon Hunter visual (demon-hunter/css/tinker.css and its fonts).
-     About page comes next: when it is live, add it to the nav, the hero buttons and the "More about me" link (marked "about-link"). -->
+     About page live since 2026-10-21 (nav, hero button and "More about me" point to it). -->
 <title>Daniel Manginelli · Senior Game Designer</title>
 <meta name="description" content="Daniel Manginelli, senior game designer: systems, class and combat design. Turning fantasy into mechanics players can feel.">
-<!-- Kept out of search engines until the About page is live (plan of 2026-10-21, step 7). -->
-<meta name="robots" content="noindex">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Daniel Manginelli · Senior Game Designer">
 <meta property="og:description" content="Turning fantasy into mechanics players can feel.">
 <meta property="og:url" content="https://manginelli.github.io/">
+<meta property="og:image" content="https://manginelli.github.io/og-home.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="demon-hunter/css/tinker.css">
 <link rel="stylesheet" href="home.css">
 </head>
@@ -23,6 +23,7 @@
   <a class="brand" href="./">Daniel Manginelli</a>
   <nav class="topnav" aria-label="Site">
     <a href="#lab">Tinker Lab</a>
+    <a href="about/">About</a>
     <a href="resume.pdf">Résumé</a>
     <a href="#contact">Contact</a>
   </nav>
@@ -39,7 +40,7 @@
         <p class="hm-hero-tag">Turning fantasy into mechanics players can feel.</p>
         <p class="hm-hero-intro">I'm a game designer from Recife, Brazil, with seven years in games. I design systems, classes and progression, weaving mechanics, lore and context into worlds that feel coherent, and I prototype them until they hold up.</p>
         <div class="hm-hero-actions">
-          <a class="btn" href="demon-hunter/">Play the Demon Hunter</a>
+          <a class="btn" href="about/">About me</a>
           <a class="btn btn--ghost" href="resume.pdf">Résumé</a>
         </div>
       </div>
@@ -49,7 +50,7 @@
   </section>
 
   <!-- 2. Featured work (H6 to H9) -->
-  <section class="block featured" aria-labelledby="featured-title">
+  <section class="block featured" id="featured" aria-labelledby="featured-title">
     <a class="featured-media" href="demon-hunter/#play" aria-hidden="true" tabindex="-1">
       <img src="img/featured-demon-hunter.webp" alt="" width="800" height="500" loading="lazy">
     </a>
@@ -105,7 +106,7 @@
         <p>I build prototypes with AI-assisted development, so ideas can be felt, not just read.</p>
       </div>
     </div>
-    <!-- about-link: "More about me" goes here when the About page is live -->
+    <p class="more-link"><a href="about/">More about me &rarr;</a></p>
   </section>
 
   <!-- 5. Danny's Tinker Lab (H19) -->

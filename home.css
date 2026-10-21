@@ -43,6 +43,7 @@ main { display: block; }
 .kicker { display: block; margin: 0 0 6px; font-family: var(--font-display); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--body-dim); }
 
 /* Featured */
+.featured { scroll-margin-top: 80px; }
 .featured { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
 .featured-media { display: block; border: 1px solid var(--brass-faint); box-shadow: 0 18px 50px rgba(0,0,0,.45); }
 .featured-media img { width: 100%; height: auto; }
@@ -63,6 +64,10 @@ main { display: block; }
 .pillar { padding: 4px 0 0 18px; border-left: 2px solid var(--brass-dim); }
 .pillar-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 500; font-size: 20px; color: var(--brass-lit); }
 .pillar p { margin: 0; font-size: 15.5px; }
+
+.more-link { margin: 20px 0 0; }
+.more-link a { font-family: var(--font-display); font-size: 15px; letter-spacing: .1em; text-transform: uppercase; color: var(--brass-lit); text-decoration: none; border-bottom: 1px solid var(--brass-dim); }
+.more-link a:hover, .more-link a:focus-visible { border-bottom-color: var(--brass-lit); outline: none; }
 
 /* Tinker Lab (cards kept from the previous home) */
 .tinkerings { display: grid; gap: 14px; margin-top: 22px; }
