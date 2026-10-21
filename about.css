@@ -2,16 +2,19 @@
 
 .topnav a[aria-current="page"] { color: var(--brass-lit); border-bottom-color: var(--brass); }
 
+/* One centered column for the whole page (2026-10-21): every section shares the same left and right edges as the opening */
+main > .block { max-width: 1024px; }
+
 /* Opening: round portrait, hello and one line about him (2026-10-21). The ring echoes the unit tokens in the Demon Hunter stage. */
 .ab-intro { padding-top: clamp(40px, 7vh, 80px); }
-.ab-hello { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: center; max-width: 1000px; }
+.ab-hello { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: center; }
 .ab-photo { margin: 0; position: relative; }
 .ab-photo::before { content: ""; position: absolute; inset: -28px; border-radius: 50%; z-index: -1;
   background: radial-gradient(closest-side, rgba(224, 168, 72, .22), transparent 75%); }
 .ab-photo img { width: 100%; height: auto; border-radius: 50%; border: 2px solid var(--brass);
   box-shadow: 0 0 0 6px var(--dark-0), 0 0 0 7px var(--brass-dim), 0 18px 50px rgba(0, 0, 0, .55); }
 .ab-hi { margin: 2px 0 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 60px); line-height: 1.05; letter-spacing: .02em; color: var(--parchment); }
-.ab-hi-sub { margin: 16px 0 0; max-width: 32em; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 21px); line-height: 1.45; color: var(--brass-lit); }
+.ab-hi-sub { margin: 16px 0 0; max-width: 34em; text-wrap: balance; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 21px); line-height: 1.45; color: var(--brass-lit); }
 
 /* Story with the childhood photo beside it (printed-photo style) */
 .ab-intro .ab-prose { max-width: none; display: grid; grid-template-columns: minmax(0, 720px) 160px; column-gap: 64px; align-items: start; }
@@ -27,12 +30,12 @@
 .ab-coda { font-family: var(--font-display); font-size: 21px !important; color: var(--parchment); }
 
 /* Currently */
-.ab-now { list-style: none; margin: 18px 0 0; padding: 0; max-width: 760px; display: grid; gap: 12px; }
+.ab-now { list-style: none; margin: 18px 0 0; padding: 0; max-width: 720px; display: grid; gap: 12px; }
 .ab-now li { padding: 14px 18px; border: 1px solid var(--brass-faint); background: rgba(10, 8, 6, .4); font-size: 16px; }
 .ab-now-name { display: block; font-family: var(--font-display); font-size: 18px; color: var(--parchment); margin-bottom: 2px; }
 
 /* Career timeline */
-.ab-timeline { list-style: none; margin: 22px 0 0; padding: 0; max-width: 820px; }
+.ab-timeline { list-style: none; margin: 22px 0 0; padding: 0; max-width: 720px; }
 .ab-timeline li { display: grid; grid-template-columns: 130px 1fr; gap: 22px; padding: 0 0 22px; position: relative; }
 .ab-timeline li > div { padding-left: 22px; border-left: 1px solid var(--brass-dim); position: relative; }
 .ab-timeline li > div::before { content: ""; position: absolute; left: -5px; top: 9px; width: 9px; height: 9px; border-radius: 50%;
@@ -43,7 +46,7 @@
 .ab-timeline p:not(.ab-when) { margin: 0; font-size: 16px; }
 
 /* Awards and education */
-.ab-list { margin: 16px 0 0; padding-left: 20px; max-width: 760px; }
+.ab-list { margin: 16px 0 0; padding-left: 20px; max-width: 720px; }
 .ab-list li { margin: 6px 0; font-size: 16.5px; }
 .ab-list li::marker { color: var(--brass); }
 
