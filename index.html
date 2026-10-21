@@ -51,16 +51,18 @@
 
   <!-- 2. Featured work (H6 to H9) -->
   <section class="block featured" id="featured" aria-labelledby="featured-title">
-    <a class="featured-media" href="demon-hunter/#play" aria-hidden="true" tabindex="-1">
+    <a class="featured-media" href="demon-hunter/#play" data-touch-href="demon-hunter/" aria-hidden="true" tabindex="-1">
       <img src="img/featured-demon-hunter.webp" alt="" width="800" height="500" loading="lazy">
     </a>
     <div class="featured-text">
-      <p class="kicker">Featured · WoW: Forever · Playable in your browser</p>
+      <p class="kicker">Featured · WoW: Forever · <span class="only-pointer">Playable in your browser</span><span class="only-touch">Playable on PC</span></p>
       <h2 class="featured-title" id="featured-title">Demon Hunter: a class reimagining</h2>
       <p>A complete reimagining of the Demon Hunter for WoW: Forever, faithful to the Warcraft III hero. Three specializations, a combat rhythm where every hit brings your strikes back sooner, Demon Bloods earned by hunting demons, original lore that brings the class to the Horde, and a stage you can play right now.</p>
       <div class="hm-hero-actions">
-        <a class="btn btn--small" href="demon-hunter/#play">Play it now</a>
-        <a class="btn btn--small btn--ghost" href="demon-hunter/">Read the design</a>
+        <!-- Phones and tablets can't play the stage (same rule as the Demon Hunter page): there, "Read the design" becomes the lit button -->
+        <a class="btn btn--small only-pointer" href="demon-hunter/#play">Play it now</a>
+        <a class="btn btn--small btn--ghost only-pointer" href="demon-hunter/">Read the design</a>
+        <a class="btn btn--small only-touch" href="demon-hunter/">Read the design</a>
       </div>
     </div>
   </section>
@@ -144,6 +146,8 @@
   <p class="foot-fine">Fan projects, not affiliated with or endorsed by Blizzard Entertainment.</p>
 </footer>
 
+<!-- On phones and tablets the featured image opens the design instead of the stage -->
+<script>if (matchMedia('(hover: none) and (pointer: coarse)').matches) document.querySelectorAll('[data-touch-href]').forEach(a => a.href = a.dataset.touchHref);</script>
 <!-- Visit stats: GoatCounter, cookie-free (approved 2026-10-21). Counts only once manginelli.goatcounter.com exists. -->
 <script data-goatcounter="https://manginelli.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>

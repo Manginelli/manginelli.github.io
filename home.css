@@ -38,6 +38,13 @@
 .btn--ghost:hover, .btn--ghost:focus-visible { background: rgba(212, 161, 60, .08); filter: none; }
 .btn--small { padding: 10px 22px; font-size: 14px; }
 
+/* Phones and tablets can't play the Demon Hunter stage (same test as its page): swap the play buttons (2026-10-21) */
+.only-touch { display: none !important; }
+@media (hover: none) and (pointer: coarse) {
+  .only-pointer { display: none !important; }
+  .only-touch { display: inline-block !important; }
+}
+
 /* Sections */
 main { display: block; }
 .block { max-width: var(--page-w); margin: 0 auto; padding: 64px clamp(16px, 4vw, 40px) 8px; }
