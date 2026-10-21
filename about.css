@@ -2,9 +2,6 @@
 
 .topnav a[aria-current="page"] { color: var(--brass-lit); border-bottom-color: var(--brass); }
 
-/* One centered column for the whole page (2026-10-21): every section shares the same left and right edges as the opening */
-main > .block { max-width: 1024px; }
-
 /* Opening: round portrait, hello and one line about him (2026-10-21). The ring echoes the unit tokens in the Demon Hunter stage. */
 .ab-intro { padding-top: clamp(40px, 7vh, 80px); }
 .ab-hello { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: center; }

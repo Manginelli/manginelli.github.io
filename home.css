@@ -1,5 +1,8 @@
 /* Home (rebuilt 2026-10-21). Sits on top of the Demon Hunter visual (tinker.css: colors, fonts, paper texture). */
 
+/* Content width shared by every page except the Demon Hunter one (2026-10-21): same left and right edges on Home and About */
+:root { --page-w: 1024px; }
+
 /* Top bar */
 .topbar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 20px;
   padding: 14px clamp(16px, 4vw, 40px); background: rgba(16, 12, 9, .88); backdrop-filter: blur(6px);
@@ -13,16 +16,16 @@
 /* Hero: text column and stage art column side by side, so the art never sits under the text at any width (2026-10-21) */
 .hm-hero { position: relative; overflow: hidden;
   background: radial-gradient(60% 80% at 78% 50%, rgba(224, 168, 72, .10), transparent 70%); }
-.hm-hero-inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: clamp(48px, 9vh, 96px) clamp(16px, 4vw, 40px);
-  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.hm-hero-inner { position: relative; max-width: var(--page-w); margin: 0 auto; padding: clamp(48px, 9vh, 96px) clamp(16px, 4vw, 40px) clamp(4px, 1vh, 16px);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: clamp(24px, 4vw, 56px); align-items: center; }
 .hm-hero-text { min-width: 0; }
-.hm-hero-art { aspect-ratio: 550 / 460; width: 100%; max-width: 520px; justify-self: center; mix-blend-mode: lighten;
+.hm-hero-art { aspect-ratio: 550 / 460; width: 100%; max-width: 340px; justify-self: center; mix-blend-mode: lighten;
   background: url(img/home-hero-art.webp) center / cover no-repeat;
   -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%); mask-image: radial-gradient(closest-side, #000 62%, transparent 100%); }
 .hm-hero-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 62px); line-height: 1.02;
   letter-spacing: .03em; color: var(--parchment); }
-.hm-hero-role { margin: 14px 0 0; font-family: var(--font-display); font-size: 14px; letter-spacing: .18em; text-transform: uppercase; color: var(--brass-lit); }
-.hm-hero-tag { margin: 22px 0 0; font-family: var(--font-display); font-size: clamp(21px, 2.2vw, 27px); line-height: 1.25; color: var(--parchment); }
+.hm-hero-role { margin: 14px 0 0; text-wrap: balance; font-family: var(--font-display); font-size: 14px; letter-spacing: .18em; text-transform: uppercase; color: var(--brass-lit); }
+.hm-hero-tag { margin: 22px 0 0; text-wrap: balance; font-family: var(--font-display); font-size: clamp(21px, 2.2vw, 27px); line-height: 1.25; color: var(--parchment); }
 .hm-hero-intro { margin: 14px 0 0; color: var(--body); font-size: 17px; max-width: 34em; }
 .hm-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
 
@@ -37,7 +40,7 @@
 
 /* Sections */
 main { display: block; }
-.block { max-width: var(--maxw); margin: 0 auto; padding: 64px clamp(16px, 4vw, 40px) 8px; }
+.block { max-width: var(--page-w); margin: 0 auto; padding: 64px clamp(16px, 4vw, 40px) 8px; }
 .section-title { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(26px, 3vw, 32px); letter-spacing: .04em; color: var(--parchment); }
 .section-sub { margin: 6px 0 0; color: var(--body-dim); }
 .kicker { display: block; margin: 0 0 6px; font-family: var(--font-display); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--body-dim); }
@@ -54,9 +57,11 @@ main { display: block; }
 
 /* Shipped cards */
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }
-.card { padding: 22px 22px 20px; border: 1px solid var(--brass-faint); background: rgba(10, 8, 6, .4); }
-.card-title { margin: 0 0 8px; font-family: var(--font-display); font-weight: 500; font-size: 21px; line-height: 1.2; color: var(--parchment); }
+.card { padding: 22px 22px 20px; border: 1px solid var(--brass-faint); background: rgba(10, 8, 6, .4);
+  display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
+.card-title { margin: 0 0 2px; font-family: var(--font-display); font-weight: 500; font-size: 21px; line-height: 1.2; color: var(--parchment); }
 .card p:not(.kicker) { margin: 0; font-size: 15.5px; }
+.card .card-role { margin: 0 0 10px; font-family: var(--font-display); font-size: 15px; color: var(--brass-lit); }
 .cards-note { margin: 16px 0 0; color: var(--body-dim); font-size: 15px; font-style: italic; }
 
 /* Pillars */
@@ -87,7 +92,7 @@ main { display: block; }
 .tinkering--small .tinkering-desc { font-size: 14.5px; }
 
 /* Footer */
-.foot { max-width: var(--maxw); margin: 72px auto 0; padding: 28px clamp(16px, 4vw, 40px) 40px; border-top: 1px solid var(--brass-faint);
+.foot { max-width: var(--page-w); margin: 72px auto 0; padding: 28px clamp(16px, 4vw, 40px) 40px; border-top: 1px solid var(--brass-faint);
   text-align: center; font-size: 15px; color: var(--body-dim); }
 .foot p { margin: 0; }
 .foot-fine { margin-top: 6px !important; font-size: 13px; }
@@ -105,5 +110,9 @@ main { display: block; }
   .topbar { flex-direction: column; gap: 6px; padding: 10px 16px; }
   .topnav a { font-size: 12.5px; }
   .block { padding-top: 48px; }
-  .tinkering { flex-direction: column; text-align: center; }
+  .tinkering { gap: 14px; padding: 14px 16px; }
+  .tinkering-icon { width: 56px; height: 56px; margin: 0; }
+  .tinkering--small .tinkering-icon--shot, .tinkering-icon--shot { width: 56px; height: 49px; margin: 0; }
+  .tinkering-name { font-size: 22px; }
+  .tinkering--small .tinkering-name { font-size: 19px; }
 }
