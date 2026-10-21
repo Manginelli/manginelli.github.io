@@ -2,12 +2,13 @@
 
 .topnav a[aria-current="page"] { color: var(--brass-lit); border-bottom-color: var(--brass); }
 
-/* Opening statement */
-.ab-intro { padding-top: clamp(48px, 9vh, 96px); }
-.ab-intro .kicker { font-weight: 400; }
-.ab-statement { margin: 4px 0 0; max-width: 18em; font-family: var(--font-display); font-weight: 500; font-size: clamp(34px, 4.6vw, 56px);
-  line-height: 1.08; letter-spacing: .01em; color: var(--parchment); }
-.ab-statement-sub { margin: 18px 0 0; max-width: 36em; font-family: var(--font-display); font-size: clamp(18px, 1.9vw, 22px); line-height: 1.4; color: var(--brass-lit); }
+/* Opening: hello, one line about him, and a photo (2026-10-21) */
+.ab-intro { padding-top: clamp(40px, 7vh, 80px); }
+.ab-hello { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: clamp(24px, 5vw, 64px); align-items: center; max-width: 900px; }
+.ab-hi { margin: 2px 0 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 60px); line-height: 1.05; letter-spacing: .02em; color: var(--parchment); }
+.ab-hi-sub { margin: 16px 0 0; max-width: 32em; font-family: var(--font-display); font-size: clamp(18px, 1.8vw, 21px); line-height: 1.45; color: var(--brass-lit); }
+.ab-photo { margin: 0; justify-self: end; width: 100%; }
+.ab-photo img { width: 100%; height: auto; border: 1px solid var(--brass-dim); box-shadow: 0 16px 44px rgba(0,0,0,.5); }
 
 /* Readable prose column */
 .ab-prose { max-width: 720px; margin-top: 28px; }
@@ -40,6 +41,10 @@
 /* What's next */
 .ab-next-text { max-width: 720px; margin: 14px 0 0; font-size: 17.5px; line-height: 1.7; }
 
+@media (max-width: 720px) {
+  .ab-hello { grid-template-columns: 1fr; }
+  .ab-photo { justify-self: start; max-width: 240px; }
+}
 @media (max-width: 640px) {
   .ab-timeline li { grid-template-columns: 1fr; gap: 4px; }
   .ab-when { text-align: left; padding-left: 23px; }
