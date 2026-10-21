@@ -677,6 +677,10 @@
     };
   }
   window.addEventListener("keydown", e => {
+    if (paused && !$("#restartConfirm").hidden) {
+      if (e.code === "Escape") askRestart(false);
+      return;
+    }
     if (paused) {
       if ((e.code === "Enter" || e.code === "Space") && !e.repeat) {
         e.preventDefault();
@@ -779,9 +783,34 @@
     if (!paused) return;
     paused = false;
     $("#pauseOverlay").hidden = true;
+    askRestart(false);
     canvas.focus();
   }
-  $("#pauseOverlay").addEventListener("click", resume);
+  $("#pauseOverlay").addEventListener("click", e => {
+    if (!e.target.closest("#restartBtn, #restartConfirm")) resume();
+  });
+  function askRestart(on) {
+    $("#restartConfirm").hidden = !on;
+    $("#pauseActions").hidden = on;
+    if (on) $("#restartCancel").focus();
+  }
+  $("#restartBtn").addEventListener("click", () => askRestart(true));
+  $("#restartCancel").addEventListener("click", () => askRestart(false));
+  $("#restartYes").addEventListener("click", () => {
+    if (!fsBtn.hidden && !fsEl()) {
+      wantFull = true;
+      enterFullscreen(true);
+    }
+    clearTimeout(resultTimer);
+    paused = false;
+    $("#pauseOverlay").hidden = true;
+    askRestart(false);
+    run.state = "menu";
+    game.setTarget(null);
+    hideHud();
+    $("#prepBar").hidden = true;
+    show("#specOverlay");
+  });
   function releasePage() {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     try {
@@ -837,6 +866,8 @@
   $("#pauseOverlay").addEventListener("click", () => {
     if (wantFull && !fsEl() && !fsBtn.hidden) enterFullscreen(true);
   });
+  const pauseBtn = $("#pauseBtn");
+  pauseBtn.addEventListener("click", () => pause("button"));
   TL.stage = {
     run: run,
     tick: tick,
@@ -857,6 +888,7 @@
       game.update(dt);
       tick();
     }
+    pauseBtn.hidden = !playing();
     if (app.dataset.state !== run.state) app.dataset.state = run.state;
     if (onScreen) {
       renderer.draw(paused ? 0 : dt);

@@ -1,143 +1,107 @@
-.todo {
-  color: #f0c27a !important;
-  font-style: italic;
-  border: 1px dashed rgba(240, 194, 122, .55);
-  background: rgba(240, 194, 122, .06);
-  padding: 8px 12px;
+/* Home (rebuilt 2026-10-21). Sits on top of the Demon Hunter visual (tinker.css: colors, fonts, paper texture). */
+
+/* Top bar */
+.topbar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 14px clamp(16px, 4vw, 40px); background: rgba(16, 12, 9, .88); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--brass-faint); }
+.brand { font-family: var(--font-display); font-weight: 500; font-size: 19px; letter-spacing: .04em; color: var(--parchment); text-decoration: none; }
+.topnav { display: flex; gap: clamp(12px, 2.4vw, 28px); }
+.topnav a { font-family: var(--font-display); font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--body);
+  text-decoration: none; padding: 4px 0; border-bottom: 1px solid transparent; }
+.topnav a:hover, .topnav a:focus-visible { color: var(--brass-lit); border-bottom-color: var(--brass); outline: none; }
+
+/* Hero */
+.hm-hero { position: relative; min-height: min(78vh, 680px); display: flex; align-items: center;
+  background: var(--ink) url(img/home-hero.webp) left 45% / cover no-repeat; }
+.hm-hero::before { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(0deg, var(--dark-0) 0%, rgba(27,22,19,0) 26%),
+              linear-gradient(90deg, rgba(10,8,6,.96) 0%, rgba(10,8,6,.9) 38%, rgba(10,8,6,.4) 66%, rgba(10,8,6,.2) 100%); }
+.hm-hero-inner { position: relative; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 72px clamp(16px, 4vw, 40px);
+  display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+.hm-hero-inner > * { max-width: 660px; }
+.hm-hero-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(42px, 6.4vw, 72px); line-height: 1.02;
+  letter-spacing: .03em; color: var(--parchment); }
+.hm-hero-role { margin: 14px 0 0; font-family: var(--font-display); font-size: 14.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--brass-lit); }
+.hm-hero-tag { margin: 22px 0 0; font-family: var(--font-display); font-size: clamp(22px, 2.6vw, 28px); line-height: 1.25; color: var(--parchment); }
+.hm-hero-intro { margin: 14px 0 0; color: var(--body); font-size: 17px; }
+.hm-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: inherit; margin-top: 26px; }
+.hm-hero .hm-hero-actions { justify-content: flex-start; }
+
+/* Buttons (same look as the Demon Hunter page call to action) */
+.btn { display: inline-block; padding: 13px 28px; font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none; color: var(--ink); background: linear-gradient(var(--brass-lit), var(--brass));
+  box-shadow: 0 0 0 1px #0a0806, 0 6px 22px rgba(212, 161, 60, .3); }
+.btn:hover, .btn:focus-visible { filter: brightness(1.08); outline: 2px solid var(--brass-lit); outline-offset: 3px; }
+.btn--ghost { color: var(--brass-lit); background: transparent; box-shadow: inset 0 0 0 1px var(--brass-dim); }
+.btn--ghost:hover, .btn--ghost:focus-visible { background: rgba(212, 161, 60, .08); filter: none; }
+.btn--small { padding: 10px 22px; font-size: 14px; }
+
+/* Sections */
+main { display: block; }
+.block { max-width: var(--maxw); margin: 0 auto; padding: 64px clamp(16px, 4vw, 40px) 8px; }
+.section-title { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(26px, 3vw, 32px); letter-spacing: .04em; color: var(--parchment); }
+.section-sub { margin: 6px 0 0; color: var(--body-dim); }
+.kicker { display: block; margin: 0 0 6px; font-family: var(--font-display); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--body-dim); }
+
+/* Featured */
+.featured { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
+.featured-media { display: block; border: 1px solid var(--brass-faint); box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+.featured-media img { width: 100%; height: auto; }
+.featured-media:hover { border-color: var(--brass-dim); }
+.featured-title { margin: 0 0 12px; font-family: var(--font-display); font-weight: 500; font-size: clamp(26px, 3vw, 34px); line-height: 1.15; color: #c47ede; }
+.featured-text p:not(.kicker) { margin: 0; }
+.featured .hm-hero-actions { justify-content: flex-start; }
+
+/* Shipped cards */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }
+.card { padding: 22px 22px 20px; border: 1px solid var(--brass-faint); background: rgba(10, 8, 6, .4); }
+.card-title { margin: 0 0 8px; font-family: var(--font-display); font-weight: 500; font-size: 21px; line-height: 1.2; color: var(--parchment); }
+.card p:not(.kicker) { margin: 0; font-size: 15.5px; }
+.cards-note { margin: 16px 0 0; color: var(--body-dim); font-size: 15px; font-style: italic; }
+
+/* Pillars */
+.pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
+.pillar { padding: 4px 0 0 18px; border-left: 2px solid var(--brass-dim); }
+.pillar-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 500; font-size: 20px; color: var(--brass-lit); }
+.pillar p { margin: 0; font-size: 15.5px; }
+
+/* Tinker Lab (cards kept from the previous home) */
+.tinkerings { display: grid; gap: 14px; margin-top: 22px; }
+.tinkering { display: flex; gap: 18px; align-items: center; padding: 18px 20px; text-decoration: none; color: var(--body);
+  border: 1px solid var(--brass-faint); background: rgba(10, 8, 6, .4); transition: border-color .15s, background .15s; }
+.tinkering:hover, .tinkering:focus-visible { border-color: var(--brass); background: rgba(10, 8, 6, .6); outline: none; }
+.tinkering-icon { width: 72px; height: 72px; flex: none; border: 2px solid #9848b3; border-radius: 50%; object-fit: cover; margin: 0 18.5px; }
+.tinkering-text { display: grid; gap: 2px; min-width: 0; }
+.tinkering-name { font-family: var(--font-display); font-size: 26px; letter-spacing: .05em; color: #c47ede; line-height: 1.1; }
+.tinkering-desc { font-size: 15.5px; }
+.tinkering-icon--shot { width: 109px; height: 96px; border-radius: 3px; border-width: 1px; object-fit: contain; margin: 0; }
+.tinkering--ui .tinkering-icon { border-color: #0cd29d; }
+.tinkering--ui .tinkering-name { color: #35eebb; }
+.tinkering--small { padding: 12px 20px; }
+.tinkering--small .tinkering-icon--shot { width: 82px; height: 72px; margin: 0 13.5px; }
+.tinkering--small .tinkering-name { font-size: 21px; }
+.tinkering--small .tinkering-desc { font-size: 14.5px; }
+
+/* Footer */
+.foot { max-width: var(--maxw); margin: 72px auto 0; padding: 28px clamp(16px, 4vw, 40px) 40px; border-top: 1px solid var(--brass-faint);
+  text-align: center; font-size: 15px; color: var(--body-dim); }
+.foot p { margin: 0; }
+.foot-fine { margin-top: 6px !important; font-size: 13px; }
+.foot a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--brass-faint); }
+.foot a:hover, .foot a:focus-visible { color: var(--brass-lit); border-bottom-color: var(--brass); outline: none; }
+
+/* Tablet and phone */
+@media (max-width: 900px) {
+  .featured { grid-template-columns: 1fr; }
+  .cards, .pillars { grid-template-columns: 1fr; }
 }
-.home {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 14vh 24px 60px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.home-head {
-  text-align: center;
-  margin-bottom: 56px;
-}
-.home-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(38px, 6vw, 62px);
-  letter-spacing: .04em;
-  color: var(--parchment);
-  line-height: 1.05;
-}
-.home-role {
-  margin: 10px 0 0;
-  font-family: var(--font-display);
-  font-size: 15px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--brass-lit);
-}
-.home-line {
-  margin: 18px auto 0;
-  max-width: 60ch;
-  color: var(--body-dim);
-}
-.lab-title {
-  margin: 0 0 6px;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 24px;
-  letter-spacing: .06em;
-  color: var(--parchment);
-}
-.lab-line {
-  margin: 0 0 18px;
-}
-.tinkerings {
-  display: grid;
-  gap: 16px;
-}
-.tinkering {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  padding: 18px 20px;
-  text-decoration: none;
-  color: var(--body);
-  border: 1px solid var(--brass-faint);
-  background: rgba(10, 8, 6, .4);
-  transition: border-color .15s, background .15s;
-}
-.tinkering:hover,
-.tinkering:focus-visible {
-  border-color: var(--brass);
-  background: rgba(10, 8, 6, .6);
-  outline: none;
-}
-.tinkering-icon {
-  width: 72px;
-  height: 72px;
-  flex: none;
-  border: 2px solid #9848b3;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.tinkering-text {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-.tinkering-kicker {
-  font-family: var(--font-display);
-  font-size: 12.5px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--body-dim);
-}
-.tinkering-name {
-  font-family: var(--font-display);
-  font-size: 26px;
-  letter-spacing: .05em;
-  color: #c47ede;
-  line-height: 1.1;
-}
-.tinkering-desc {
-  font-size: 15.5px;
-}
-.tinkering-icon--shot {
-  width: 109px;
-  height: 96px;
-  border-radius: 3px;
-  border-width: 1px;
-  object-fit: contain;
-}
-.tinkering-icon:not(.tinkering-icon--shot) {
-  margin: 0 18.5px;
-}
-.tinkering--ui .tinkering-icon {
-  border-color: #0cd29d;
-}
-.tinkering--ui .tinkering-name {
-  color: #35eebb;
-}
-.home-foot {
-  margin-top: auto;
-  padding-top: 48px;
-  font-size: 13.5px;
-  color: var(--body-dim);
-  text-align: center;
-}
-.home-foot a {
-  color: var(--body);
-  text-decoration: none;
-  border-bottom: 1px solid var(--brass-faint);
-}
-.home-foot a:hover,
-.home-foot a:focus-visible {
-  color: var(--brass-lit);
-  border-bottom-color: var(--brass);
-  outline: none;
-}
-@media (max-width: 560px) {
-  .tinkering {
-    flex-direction: column;
-    text-align: center;
-  }
+@media (max-width: 640px) {
+  .topbar { flex-direction: column; gap: 6px; padding: 10px 16px; }
+  .topnav a { font-size: 12.5px; }
+  .hm-hero { min-height: 0; background-position: 30% center; }
+  .hm-hero::before { background: linear-gradient(0deg, var(--dark-0) 0%, rgba(10,8,6,.86) 30%, rgba(10,8,6,.82) 60%, rgba(10,8,6,.55) 100%); }
+  .hm-hero-inner { align-items: flex-start; text-align: left; padding: 56px 16px 40px; }
+  .hm-hero .hm-hero-actions { justify-content: flex-start; }
+  .block { padding-top: 48px; }
+  .tinkering { flex-direction: column; text-align: center; }
 }

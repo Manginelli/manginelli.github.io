@@ -3,39 +3,124 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Daniel Manginelli · Game Designer</title>
-<meta name="description" content="Daniel Manginelli, game designer. Danny&#39;s Tinker Lab: design ideas for the games I love, each with a playable prototype.">
+<!-- Home (rebuilt 2026-10-21 from "Textos - Home e About.md", blocks H1 to H20). Daniel's personal showcase as a game designer;
+     Danny's Tinker Lab is one section of it. Reuses the Demon Hunter visual (demon-hunter/css/tinker.css and its fonts).
+     About page comes next: when it is live, add it to the nav, the hero buttons and the "More about me" link (marked "about-link"). -->
+<title>Daniel Manginelli · Senior Game Designer</title>
+<meta name="description" content="Daniel Manginelli, senior game designer: systems, class and combat design. Turning fantasy into mechanics players can feel.">
+<!-- Kept out of search engines until the About page is live (plan of 2026-10-21, step 7). -->
 <meta name="robots" content="noindex">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Daniel Manginelli · Game Designer">
+<meta property="og:title" content="Daniel Manginelli · Senior Game Designer">
+<meta property="og:description" content="Turning fantasy into mechanics players can feel.">
 <meta property="og:url" content="https://manginelli.github.io/">
 <link rel="stylesheet" href="demon-hunter/css/tinker.css">
 <link rel="stylesheet" href="home.css">
 </head>
 <body>
-<main class="home">
-  <header class="home-head">
-    <h1 class="home-title">Daniel Manginelli</h1>
-    <p class="home-role">Game Designer</p>
-    <p class="home-line">Game designer who co-founded an indie studio and built its development process from scratch. I design classes, systems and progression, and prototype them until they hold up. Looking for my next role.</p>
-  </header>
 
-  <section class="lab" aria-labelledby="lab-title">
-    <h2 class="lab-title" id="lab-title">Danny&rsquo;s Tinker Lab</h2>
-    <p class="lab-line">Design ideas for the games I love, from playable prototypes to full interfaces.</p>
+<header class="topbar">
+  <a class="brand" href="./">Daniel Manginelli</a>
+  <nav class="topnav" aria-label="Site">
+    <a href="#lab">Tinker Lab</a>
+    <a href="resume.pdf">Résumé</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- 1. Hero (H1 to H5) -->
+  <section class="hm-hero">
+    <div class="hm-hero-inner">
+      <h1 class="hm-hero-name">Daniel Manginelli</h1>
+      <p class="hm-hero-role">Senior Game Designer · Systems, Class &amp; Combat Design</p>
+      <p class="hm-hero-tag">Turning fantasy into mechanics players can feel.</p>
+      <p class="hm-hero-intro">I'm a game designer from Recife, Brazil, with seven years in games. I design systems, classes and progression, weaving mechanics, lore and context into worlds that feel coherent, and I prototype them until they hold up.</p>
+      <div class="hm-hero-actions">
+        <a class="btn" href="demon-hunter/">Play the Demon Hunter</a>
+        <a class="btn btn--ghost" href="resume.pdf">Résumé</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Featured work (H6 to H9) -->
+  <section class="block featured" aria-labelledby="featured-title">
+    <a class="featured-media" href="demon-hunter/#play" aria-hidden="true" tabindex="-1">
+      <img src="img/featured-demon-hunter.webp" alt="" width="800" height="500" loading="lazy">
+    </a>
+    <div class="featured-text">
+      <p class="kicker">Featured · WoW: Forever · Playable in your browser</p>
+      <h2 class="featured-title" id="featured-title">Demon Hunter: a class reimagining</h2>
+      <p>A complete reimagining of the Demon Hunter for WoW: Forever, faithful to the Warcraft III hero. Three specializations, a combat rhythm where every hit brings your strikes back sooner, Demon Bloods earned by hunting demons, original lore that brings the class to the Horde, and a stage you can play right now.</p>
+      <div class="hm-hero-actions">
+        <a class="btn btn--small" href="demon-hunter/#play">Play it now</a>
+        <a class="btn btn--small btn--ghost" href="demon-hunter/">Read the design</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Shipped work (H10 to H14) -->
+  <section class="block" aria-labelledby="shipped-title">
+    <h2 class="section-title" id="shipped-title">Shipped work</h2>
+    <p class="section-sub">Games I designed, from mobile to Steam.</p>
+    <div class="cards">
+      <article class="card">
+        <p class="kicker">Steam · 2024 · Combat, enemies and bosses</p>
+        <h3 class="card-title">Across the Abyss: Voidborn</h3>
+        <p>Designed the combat, where defeated enemies become bombs that chain through the crowd, an elemental system with unique interactions, and every boss and enemy, balanced across both stages.</p>
+      </article>
+      <article class="card">
+        <p class="kicker">Steam · Q1 2027 · Lead design</p>
+        <h3 class="card-title">Mars Incremental</h3>
+        <p>Leading the design of a short, active incremental game about terraforming Mars, where each building turns an RPG system into idle mechanics.</p>
+      </article>
+      <article class="card">
+        <p class="kicker">Google Play · 2022 to 2024 · Lead design</p>
+        <h3 class="card-title">Mobile games at Hoplon</h3>
+        <p>Lead designer on five shipped mobile games, including Mutant Combat Merge and Hex Conquest, from high concept and GDD through implementation to post-launch balancing.</p>
+      </article>
+    </div>
+    <p class="cards-note">Before that, economies, combat, content and levels for NDA-protected projects at PUGA Studios.</p>
+  </section>
+
+  <!-- 4. How I design (H15 to H18) -->
+  <section class="block" aria-labelledby="design-title">
+    <h2 class="section-title" id="design-title">How I design</h2>
+    <div class="pillars">
+      <div class="pillar">
+        <h3 class="pillar-title">Holistic</h3>
+        <p>Mechanics, lore and context are designed together, so every system belongs to its world.</p>
+      </div>
+      <div class="pillar">
+        <h3 class="pillar-title">Circular</h3>
+        <p>Mechanics, lore and feel push on each other, round after round, until everything fits.</p>
+      </div>
+      <div class="pillar">
+        <h3 class="pillar-title">Playable</h3>
+        <p>I build prototypes with AI-assisted development, so ideas can be felt, not just read.</p>
+      </div>
+    </div>
+    <!-- about-link: "More about me" goes here when the About page is live -->
+  </section>
+
+  <!-- 5. Danny's Tinker Lab (H19) -->
+  <section class="block lab" id="lab" aria-labelledby="lab-title">
+    <h2 class="section-title" id="lab-title">Danny&rsquo;s Tinker Lab</h2>
+    <p class="section-sub">Design ideas for the games I love, shared with their communities.</p>
     <div class="tinkerings">
       <a class="tinkering" href="demon-hunter/">
         <img class="tinkering-icon" src="demon-hunter.webp" alt="" width="72" height="72">
         <span class="tinkering-text">
-          <span class="tinkering-kicker">WoW: Forever &middot; Fan-made class &middot; Playable</span>
+          <span class="kicker">WoW: Forever · Class reimagining · Playable</span>
           <span class="tinkering-name">Demon Hunter</span>
-          <span class="tinkering-desc">A fan-made class for WoW: Forever, playable in your browser.</span>
+          <span class="tinkering-desc">A class reimagining for WoW: Forever, playable in your browser.</span>
         </span>
       </a>
-      <a class="tinkering tinkering--ui" href="https://ellesmereui.com/mangiui" target="_blank" rel="noopener">
+      <a class="tinkering tinkering--ui tinkering--small" href="https://ellesmereui.com/mangiui" target="_blank" rel="noopener">
         <img class="tinkering-icon tinkering-icon--shot" src="mangiui.webp" alt="" width="109" height="96">
         <span class="tinkering-text">
-          <span class="tinkering-kicker">WoW: Forever &middot; UI preset &middot; EllesmereUI</span>
+          <span class="kicker">WoW: Forever · UI preset · EllesmereUI</span>
           <span class="tinkering-name">MangiUI</span>
           <span class="tinkering-desc">A minimal, elegant interface for WoW: Forever, built for ultrawide screens.</span>
         </span>
@@ -43,9 +128,15 @@
     </div>
   </section>
 
-  <footer class="home-foot">
-    <p>Contact: <a href="mailto:daniel.manginelli.o@gmail.com">daniel.manginelli.o@gmail.com</a> &middot; <a href="https://www.linkedin.com/in/danielmanginellio/" target="_blank" rel="noopener">LinkedIn</a>.<br>Fan projects, not affiliated with or endorsed by Blizzard Entertainment.</p>
-  </footer>
 </main>
+
+<!-- 6. Footer (H20) -->
+<footer class="foot" id="contact">
+  <p>Contact: <a href="mailto:daniel.manginelli.o@gmail.com">daniel.manginelli.o@gmail.com</a> · <a href="https://www.linkedin.com/in/danielmanginellio/" target="_blank" rel="noopener">LinkedIn</a> · <a href="resume.pdf">Résumé</a></p>
+  <p class="foot-fine">Fan projects, not affiliated with or endorsed by Blizzard Entertainment.</p>
+</footer>
+
+<!-- Visit stats: GoatCounter, cookie-free (approved 2026-10-21). Counts only once manginelli.goatcounter.com exists. -->
+<script data-goatcounter="https://manginelli.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

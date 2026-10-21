@@ -41,6 +41,7 @@
   </div>
   <div id="stageTimer" hidden>0:00</div>
   <button type="button" id="fullscreenBtn" class="icon-btn" aria-label="Fullscreen" title="Fullscreen" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path class="enter" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><path class="exit" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg></button>
+  <button type="button" id="pauseBtn" class="icon-btn" aria-label="Pause" title="Pause" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg></button>
   <aside id="stagePassives" aria-label="Passives"><div id="passiveList"></div><span class="label">Passives</span></aside>
 
   <div id="prepBar" hidden>
@@ -106,7 +107,11 @@
     <div class="card pause">
       <span class="label">Burningwoods Hollow</span>
       <h2 class="gold">Paused</h2>
-      <div class="actions"><button type="button" class="primary" id="resumeBtn">Resume</button></div>
+      <div class="actions" id="pauseActions"><button type="button" class="danger" id="restartBtn">Restart</button><button type="button" class="primary" id="resumeBtn">Resume</button></div>
+      <div class="confirm" id="restartConfirm" hidden>
+        <p>Restart the run? This fight will be lost and you will choose your specialization again.</p>
+        <div class="actions"><button type="button" class="ghost" id="restartCancel">Cancel</button><button type="button" class="danger" id="restartYes">Restart</button></div>
+      </div>
     </div>
   </div>
 

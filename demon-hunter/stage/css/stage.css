@@ -494,7 +494,13 @@
   display: inline;
 }
 #stageTimer {
-  right: 60px;
+  right: 106px;
+}
+#pauseBtn {
+  right: 56px;
+}
+#fullscreenBtn[hidden] ~ #pauseBtn {
+  right: 14px;
 }
 .card.pause {
   max-width: 420px;
@@ -507,6 +513,31 @@
 #pauseOverlay {
   z-index: 44;
   cursor: pointer;
+}
+.danger {
+  background: #8e2a20;
+  color: #fff;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-weight: 700;
+  font-size: 16px;
+}
+.danger:hover,
+.danger:focus-visible {
+  background: #a83427;
+}
+.card.pause .confirm {
+  cursor: default;
+}
+.card.pause .confirm p {
+  margin: 0 0 16px;
+  color: var(--text);
+}
+.card.pause .confirm .ghost {
+  padding: 11px 20px;
+  font-size: 16px;
+  border-radius: 8px;
 }
 .card.intro {
   max-width: 520px;
