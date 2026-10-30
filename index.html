@@ -182,35 +182,12 @@
   <section class="section" id="lab" aria-labelledby="lab-title">
     <div class="section-head"><h2 id="lab-title">Danny&rsquo;s Tinker Lab</h2><p class="sub">What I make in my free time: designs and tools I share with the community of each game.</p></div>
     <div class="bar" role="toolbar" aria-label="Tinker Lab projects">
-      <button class="slot" type="button" data-pick="dh" aria-pressed="true" style="--pc:var(--dh)" aria-controls="lab-dh" aria-label="Demon Hunter"><img src="demon-hunter.webp" alt="" width="144" height="144"><kbd>1</kbd></button>
-      <button class="slot" type="button" data-pick="lab" aria-pressed="false" style="--pc:var(--lab)" aria-controls="lab-lab" aria-label="Forever Class Lab"><img src="forever-class-lab.webp" alt="" width="144" height="144"><kbd>2</kbd></button>
-      <button class="slot" type="button" data-pick="mangi" aria-pressed="false" style="--pc:var(--mangi)" aria-controls="lab-mangi" aria-label="MangiUI"><img src="img/mangi-crop.webp" alt="" width="250" height="111"><kbd>3</kbd></button>
+      <button class="slot" type="button" data-pick="lab" aria-pressed="true" style="--pc:var(--lab)" aria-controls="lab-lab" aria-label="Forever Class Lab"><img src="forever-class-lab.webp" alt="" width="144" height="144"><kbd>1</kbd></button>
+      <button class="slot" type="button" data-pick="mangi" aria-pressed="false" style="--pc:var(--mangi)" aria-controls="lab-mangi" aria-label="MangiUI"><img src="img/mangi-crop.webp" alt="" width="250" height="111"><kbd>2</kbd></button>
+      <button class="slot" type="button" data-pick="dh" aria-pressed="false" style="--pc:var(--dh)" aria-controls="lab-dh" aria-label="Demon Hunter"><img src="demon-hunter.webp" alt="" width="144" height="144"><kbd>3</kbd></button>
       <span class="slot empty" aria-hidden="true"><kbd>4</kbd></span>
     </div>
-    <p class="bar-names"><button type="button" data-pick="dh">1 Demon Hunter</button><button type="button" data-pick="lab">2 Forever Class Lab</button><button type="button" data-pick="mangi">3 MangiUI</button><span>4 Next idea</span></p>
-
-    <article class="lab-item" id="lab-dh" style="--pc:var(--dh)">
-      <div class="tt">
-        <h3 class="tt-title">Demon Hunter: a class reimagining</h3>
-        <div class="tt-row"><span>WoW: Forever</span><span>Unofficial</span></div>
-        <div class="tt-role">Class reimagining</div>
-        <p class="tt-body">A complete reimagining of the Demon Hunter for WoW: Forever, faithful to the Warcraft III hero. Three specializations, a combat rhythm where every hit brings your strikes back sooner, Demon Bloods earned by hunting demons, original lore that brings the class to the Horde, and a stage you can play right now.</p>
-        <p class="tt-use only-pointer">Use: Play the stage in your browser.</p>
-        <p class="tt-use only-touch">Use: Play the stage on a PC.</p>
-        <!-- Phones and tablets can't play the stage (same rule as the Demon Hunter page): there, "Read the design" becomes the lit button -->
-        <div class="tt-actions">
-          <a class="btn btn-primary only-pointer" href="demon-hunter/#play">Play it now</a>
-          <a class="btn only-pointer" href="demon-hunter/">Read the design</a>
-          <a class="btn btn-primary only-touch" href="demon-hunter/">Read the design</a>
-        </div>
-      </div>
-      <div>
-        <a class="media" href="demon-hunter/#play" data-touch-href="demon-hunter/" aria-hidden="true" tabindex="-1">
-          <video data-autoplay data-cast="dh" muted loop playsinline preload="metadata" poster="img/featured-demon-hunter-poster.webp" width="960" height="600"><source src="video/featured-demon-hunter.mp4" type="video/mp4"></video>
-        </a>
-        <div class="cast" id="cast-dh" aria-hidden="true"><i></i><span><span>Demon Hunter</span><b>0.0</b></span></div>
-      </div>
-    </article>
+    <p class="bar-names"><button type="button" data-pick="lab">1 Forever Class Lab</button><button type="button" data-pick="mangi">2 MangiUI</button><button type="button" data-pick="dh">3 Demon Hunter</button><span>4 Next idea</span></p>
 
     <!-- Loop: an Arcane Mage damage test -->
     <article class="lab-item" id="lab-lab" style="--pc:var(--lab)">
@@ -224,7 +201,7 @@
       </div>
       <div>
         <a class="media" href="forever-class-lab/" aria-hidden="true" tabindex="-1">
-          <video data-autoplay data-cast="lab" muted loop playsinline preload="none" poster="img/featured-class-lab-poster.webp" width="960" height="600"><source src="video/featured-class-lab.mp4" type="video/mp4"></video>
+          <video data-autoplay data-cast="lab" muted loop playsinline preload="metadata" poster="img/featured-class-lab-poster.webp" width="960" height="600"><source src="video/featured-class-lab.mp4" type="video/mp4"></video>
         </a>
         <div class="cast" id="cast-lab" aria-hidden="true"><i></i><span><span>Forever Class Lab</span><b>0.0</b></span></div>
       </div>
@@ -244,6 +221,29 @@
         <a class="media" href="https://ellesmereui.com/mangiui" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">
           <img class="contain" src="mangiui.webp" alt="" width="330" height="291" loading="lazy">
         </a>
+      </div>
+    </article>
+
+    <article class="lab-item" id="lab-dh" style="--pc:var(--dh)">
+      <div class="tt">
+        <h3 class="tt-title">Demon Hunter: a class reimagining</h3>
+        <div class="tt-row"><span>WoW: Forever</span><span>Unofficial</span></div>
+        <div class="tt-role">Class reimagining, playable prototype</div>
+        <p class="tt-body">A playable prototype of a Demon Hunter class for WoW: Forever, faithful to the Warcraft III hero. Three specializations, a combat rhythm where every hit brings your strikes back sooner, Demon Bloods earned by hunting demons, original lore that brings the class to the Horde, and a stage you can play right now.</p>
+        <p class="tt-use only-pointer">Use: Play the stage in your browser.</p>
+        <p class="tt-use only-touch">Use: Play the stage on a PC.</p>
+        <!-- Phones and tablets can't play the stage (same rule as the Demon Hunter page): there, "Read the design" becomes the lit button -->
+        <div class="tt-actions">
+          <a class="btn btn-primary only-pointer" href="demon-hunter/#play">Play it now</a>
+          <a class="btn only-pointer" href="demon-hunter/">Read the design</a>
+          <a class="btn btn-primary only-touch" href="demon-hunter/">Read the design</a>
+        </div>
+      </div>
+      <div>
+        <a class="media" href="demon-hunter/#play" data-touch-href="demon-hunter/" aria-hidden="true" tabindex="-1">
+          <video data-autoplay data-cast="dh" muted loop playsinline preload="none" poster="img/featured-demon-hunter-poster.webp" width="960" height="600"><source src="video/featured-demon-hunter.mp4" type="video/mp4"></video>
+        </a>
+        <div class="cast" id="cast-dh" aria-hidden="true"><i></i><span><span>Demon Hunter</span><b>0.0</b></span></div>
       </div>
     </article>
   </section>
@@ -277,7 +277,7 @@
       it.querySelectorAll('video').forEach(v => { if (on) { v.preload = 'metadata'; } else v.pause(); });
     });
   };
-  pick('dh');
+  pick('lab');
   picks.forEach(s => s.addEventListener('click', () => pick(s.dataset.pick)));
   document.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey || e.target.closest('input, textarea, select')) return;
