@@ -1,0 +1,15 @@
+/* Fonts hosted with the site, so the page makes no request to Google. Latin subset, SIL Open Font License (assets/fonts/OFL-*.txt).
+   The page uses the Tinker Lab fonts (Eczar, Jost, Spectral); the game area uses Marcellus, a free
+   stand-in for the game's Friz Quadrata, and Barlow Condensed for numbers. */
+@font-face { font-family: 'Eczar'; font-style: normal; font-weight: 400; font-display: swap; src: url(../assets/fonts/eczar-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Eczar'; font-style: normal; font-weight: 500; font-display: swap; src: url(../assets/fonts/eczar-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Eczar'; font-style: normal; font-weight: 600; font-display: swap; src: url(../assets/fonts/eczar-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Jost'; font-style: normal; font-weight: 400; font-display: swap; src: url(../assets/fonts/jost-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Jost'; font-style: normal; font-weight: 500; font-display: swap; src: url(../assets/fonts/jost-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Spectral'; font-style: normal; font-weight: 300; font-display: swap; src: url(../assets/fonts/spectral-latin-300-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Spectral'; font-style: normal; font-weight: 400; font-display: swap; src: url(../assets/fonts/spectral-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Spectral'; font-style: italic; font-weight: 400; font-display: swap; src: url(../assets/fonts/spectral-latin-400-italic.woff2) format('woff2'); }
+@font-face { font-family: 'Marcellus'; font-style: normal; font-weight: 400; font-display: swap; src: url(../assets/fonts/marcellus-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 500; font-display: swap; src: url(../assets/fonts/barlow-condensed-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 600; font-display: swap; src: url(../assets/fonts/barlow-condensed-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-style: normal; font-weight: 700; font-display: swap; src: url(../assets/fonts/barlow-condensed-latin-700-normal.woff2) format('woff2'); }

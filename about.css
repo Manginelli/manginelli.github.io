@@ -1,0 +1,75 @@
+/* About. Shared look in ui.css; only About pieces here.
+   Long reading lives on the world ground, not in black panels (a HUD tires in long text); panels only for short blocks:
+   the photos and the markers. */
+
+/* Layout: a readable column with a narrow photo column beside it */
+.ab-cols { display: grid; grid-template-columns: minmax(0, 700px) 180px; column-gap: clamp(32px, 6vw, 72px); align-items: start; }
+.ab-prose p { margin: 0 0 16px; font-size: 18px; line-height: 1.7; color: var(--text); }
+.ab-prose p:last-child { margin-bottom: 0; }
+.ab-prose .dim { color: var(--dim); }
+.ab-more { margin-top: 4px; }
+.ab-more a { color: var(--text); text-underline-offset: 3px; }
+
+/* 1. Hello: a portrait in a black frame with name and city, like a character on a select screen.
+   The Home keeps the round token; the About shows the person.
+   The portrait shares the column's left edge with the text below, and the heading block sits on the portrait's
+   bottom line. */
+.ab-hello { padding-top: clamp(40px, 7vw, 80px); display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: clamp(24px, 4vw, 52px); align-items: end; }
+.ab-hello > div { padding-bottom: 34px; }  /* lines the text up with the photo's bottom edge, above the caption */
+.ab-portrait { margin: 0; background: #000; border: 1px solid #000; padding: 6px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 18px 40px rgba(0, 0, 0, 0.45); }
+.ab-portrait img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+.ab-portrait figcaption { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 4px 2px; font: 500 13px/1.2 var(--f-num); letter-spacing: 0; color: var(--dim); }
+.ab-portrait figcaption b { color: var(--text); font: 600 16px/1.2 var(--f-ui); }
+.ab-label { font: 600 12px/1 var(--f-num); letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+.ab-hi { margin-top: 8px; font-weight: 600; font-size: clamp(38px, 5vw, 56px); line-height: 1.05; }
+.ab-hi-sub { margin-top: 14px; max-width: 32em; font-size: clamp(18px, 1.9vw, 21px); line-height: 1.45; color: var(--dim); text-wrap: balance; }
+.ab-story { margin-top: clamp(28px, 4vw, 40px); }
+.ab-coda { color: var(--flavor) !important; font-size: 20px !important; }
+
+/* Photos: straight, in a black frame with a caption. The childhood photo stays a printed photo, slightly tilted */
+.ab-photo { margin: 0; background: #000; border: 1px solid var(--edge); padding: 6px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05); }
+.ab-photo img { width: 100%; height: auto; }
+.ab-photo figcaption { padding: 8px 2px 2px; font-size: 13.5px; line-height: 1.35; color: var(--dim); }
+.ab-kid { margin: 6px 0 0; padding: 9px 9px 11px; background: #eeece6; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55); transform: rotate(2.2deg); }
+.ab-kid img { width: 100%; height: auto; }
+.ab-kid figcaption { margin-top: 7px; font-size: 13px; line-height: 1.3; color: #33363b; text-align: center; }
+
+/* 3. Career: years in condensed numbers, a 1px line, square markers */
+.ab-timeline { list-style: none; margin: 0; padding: 0; }
+.ab-timeline li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 22px; }
+.ab-when { padding-top: 2px; font: 500 14.5px/1.3 var(--f-num); letter-spacing: 0; color: var(--dim); text-align: right; }
+.ab-timeline li > div { position: relative; padding: 0 0 26px 22px; border-left: 1px solid rgba(255, 255, 255, 0.16); }
+.ab-timeline li:last-child > div { padding-bottom: 0; }
+.ab-timeline li > div::before { content: ""; position: absolute; left: -4px; top: 8px; width: 7px; height: 7px; background: var(--accent); box-shadow: 0 0 0 2px #000; }
+.ab-role { font-weight: 600; font-size: 19px; line-height: 1.3; }
+.ab-role span { color: var(--dim); font-weight: 400; }
+.ab-timeline p:not(.ab-when) { margin-top: 4px; color: var(--dim); }
+
+/* 4. Awards and education */
+.ab-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.ab-list li { position: relative; padding-left: 18px; }
+.ab-list li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 6px; background: var(--accent); }
+.ab-list small { display: block; color: var(--dim); font-size: 15.5px; }
+
+/* 5. What's next */
+.ab-next { max-width: 700px; font-size: 18px; line-height: 1.7; }
+.avail { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 4px 18px; font: 500 14px/1.4 var(--f-num); letter-spacing: 0; color: var(--use); }
+.avail span + span { color: var(--dim); }
+.ab-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+@media (max-width: 900px) {
+  .ab-cols { grid-template-columns: minmax(0, 1fr) 150px; column-gap: 32px; }
+}
+@media (max-width: 720px) {
+  .ab-cols { display: block; }
+  .ab-cols > figure { width: 240px; margin: 28px auto 0; }
+  .ab-cols > .ab-kid { width: 170px; transform: rotate(-1.5deg); }
+  .ab-hello { grid-template-columns: minmax(0, 1fr); justify-items: start; align-items: start; }
+  .ab-hello > div { padding-bottom: 0; }
+  .ab-portrait { width: min(240px, 70vw); }
+}
+@media (max-width: 560px) {
+  .ab-timeline li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .ab-when { text-align: left; padding-left: 23px; }
+  .ab-prose p, .ab-next { font-size: 17px; }
+}

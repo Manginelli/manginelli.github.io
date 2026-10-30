@@ -1,0 +1,43 @@
+/* Previous site base (colors, fonts, paint texture). Fonts live in /fonts (Eczar and Spectral, SIL Open Font License). */
+
+@font-face { font-family: "Eczar"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/eczar-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Eczar"; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/eczar-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Eczar"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/eczar-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Spectral"; font-style: normal; font-weight: 300; font-display: swap; src: url(fonts/spectral-latin-300-normal.woff2) format("woff2"); }
+@font-face { font-family: "Spectral"; font-style: italic; font-weight: 300; font-display: swap; src: url(fonts/spectral-latin-300-italic.woff2) format("woff2"); }
+@font-face { font-family: "Spectral"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/spectral-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Spectral"; font-style: italic; font-weight: 400; font-display: swap; src: url(fonts/spectral-latin-400-italic.woff2) format("woff2"); }
+
+:root {
+  --dark-0: #1b1613;
+  --ink: #0a0806;
+  --brass: #d4a13c;
+  --brass-lit: #f0cd7e;
+  --brass-dim: rgba(212, 161, 60, .34);
+  --brass-faint: rgba(212, 161, 60, .14);
+  --parchment: #ead9b6;
+  --body: #d3c6b4;
+  --body-dim: #a2947f;
+  --font-display: "Eczar", Georgia, serif;
+  --font-body: "Spectral", Georgia, "Times New Roman", serif;
+  --paint: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.018' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='600' height='600' filter='url(%23p)' opacity='.85'/%3E%3C/svg%3E");
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: var(--font-body); font-weight: 300; color: var(--body); background: var(--dark-0);
+  font-size: 16px; line-height: 1.62; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: var(--paint); background-size: 900px 900px; opacity: .30; mix-blend-mode: overlay; }
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(90% 60% at 14% -6%, rgba(224, 168, 72, .16), transparent 62%); }
+body > * { position: relative; z-index: 1; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+::selection { background: var(--brass); color: var(--ink); }
+
+.section-sub { font-size: 17px; font-style: italic; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}

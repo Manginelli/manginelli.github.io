@@ -1,0 +1,130 @@
+/* Home. Shared identity in ui.css; only Home pieces here.
+   Order: hero, Games I designed, How I design, Danny's Tinker Lab, Let's talk. */
+
+/* 1. Hero: the designer as a unit on the arena floor (the Class Lab's token and range ring), with his tooltip beside him */
+.hero { padding-block: clamp(40px, 7vw, 80px) 0; display: grid; grid-template-columns: auto minmax(0, 520px); gap: clamp(20px, 3vw, 36px); align-items: center; justify-content: start; }
+.token { position: relative; width: clamp(150px, 20vw, 230px); aspect-ratio: 1; display: grid; place-items: center; }
+.token::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px dashed rgba(255, 255, 255, 0.16); }
+.token img { width: 56%; height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); box-shadow: 0 0 0 2px #000, 0 10px 30px rgba(0, 0, 0, 0.5); }
+.token i { position: absolute; left: calc(50% + 28% + 4px); top: 50%; width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 14px solid var(--accent); transform: translateY(-50%); filter: drop-shadow(0 0 1px #000); }
+.hero .tt { font-size: 16px; }
+.hero .tt-title { font-size: clamp(28px, 3.4vw, 36px); }
+/* Hover: the hero tooltip lights in the personal accent, white, since it has no project color */
+.hero .tt { transition: border-color .16s, box-shadow .16s; }
+.hero .tt:hover { border-color: var(--accent); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 34px -2px rgba(244, 242, 236, 0.32); }
+
+/* 2. Games I designed: cover on top, tooltip under it */
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.cards .cover { aspect-ratio: 460 / 215; width: 100%; object-fit: cover; border: 1px solid var(--edge); transition: border-color .16s; }
+/* Hover: neutral at rest; the card's own edges light up in the game's title color
+   (around the card and on the line between cover and text, never a second line outside) with a glow behind.
+   The seam is the cover's bottom edge, so the tooltip drops its top edge and nothing moves on hover. */
+.cards > article { transition: box-shadow .16s; }
+.cards .tt { border-top-color: transparent; transition: border-color .16s; }
+.cards > article:hover { box-shadow: 0 0 34px -2px color-mix(in srgb, var(--pc) 55%, transparent); }
+.cards > article:hover .cover { border-color: var(--pc); }
+.cards > article:hover .tt { border-color: var(--pc); border-top-color: transparent; }
+.cards-note { margin-top: 14px; color: var(--dim); }
+
+/* 3. How I design: the loop, three decisions (problem, decision, result), the team, the design areas */
+.hid-lead { font-size: clamp(18px, 1.9vw, 20px); line-height: 1.55; max-width: 32em; }
+.hid-lead + .hid-lead { margin-top: 14px; color: var(--dim); font-size: 17px; }
+.pillars { margin-top: clamp(28px, 4vw, 40px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+.pillars .tt-title { font-size: 20px; color: var(--text); }
+.pillars .tt-use { margin-top: 2px; }
+.proj { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--hair); font: 600 14px/1.3 var(--f-num); letter-spacing: 0; color: var(--pc); }
+.dec { margin: 4px 0 0; display: grid; gap: 2px; }
+.dec dt { margin-top: 6px; font: 600 11px/1.2 var(--f-num); letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+.dec dd { margin: 0; color: var(--dim); }
+.dec dd.res { color: var(--text); }
+.team { margin-top: 16px; gap: 6px; }
+.team .tt-title { font-size: 20px; }
+.team > ul { margin: 4px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; }
+.team > ul > li { position: relative; padding-left: 16px; color: var(--dim); }
+.team > ul > li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 6px; background: var(--accent); }
+.design-areas { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--hair); display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.design-areas h4 { font-size: 15.5px; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.chips li { padding: 1px 9px; font: 500 14px/24px var(--f-num); letter-spacing: 0; color: var(--text); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--edge); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06); }
+.hid-coda { margin-top: 16px; color: var(--flavor); font-size: 17px; }
+.more { margin-top: 10px; }
+.more a { color: var(--text); text-underline-offset: 3px; }
+
+/* 4. Danny's Tinker Lab: one action bar, one detail panel. Without JavaScript every panel shows, one under the other. */
+.bar { display: flex; gap: 4px; padding: 4px; background: var(--panel); border: 1px solid var(--edge); width: max-content; max-width: 100%; }
+.bar .slot { width: 72px; height: 72px; cursor: pointer; }
+.bar .slot[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--accent); }
+.bar .slot[aria-pressed="true"]::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 18px rgba(244, 242, 236, 0.5); pointer-events: none; }
+.bar .slot:not([aria-pressed="true"]) img { filter: saturate(0.7) brightness(0.75); }
+.bar .slot:hover img { filter: none; }
+/* A slot under the mouse lights in its project color, like a usable button in the game */
+.bar .slot { transition: border-color .12s, box-shadow .12s; }
+.bar .slot:not(.empty):hover { z-index: 1; border-color: var(--pc); box-shadow: 0 0 16px -1px color-mix(in srgb, var(--pc) 70%, transparent); }
+.bar .slot[aria-pressed="true"]:hover { box-shadow: inset 0 0 0 2px var(--accent), 0 0 16px -1px color-mix(in srgb, var(--pc) 70%, transparent); }
+.bar .slot.empty { cursor: default; background: rgba(255, 255, 255, 0.03); }
+.bar .slot.empty kbd { color: var(--faint); }
+/* Names under the bar, so nobody has to guess what the icons are; each name picks its project too */
+.bar-names { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 15px; color: var(--faint); }
+.bar-names button { padding: 0; font: inherit; color: var(--dim); background: none; border: 0; border-bottom: 1px solid transparent; cursor: pointer; }
+.bar-names button:hover { color: var(--text); }
+.bar-names button[aria-pressed="true"] { color: var(--text); border-bottom-color: var(--accent); }
+.no-js .bar, .no-js .bar-names { display: none; }
+.lab-item { margin-top: 14px; display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: clamp(16px, 3vw, 32px); align-items: start; }
+.lab-item[hidden] { display: none; }
+/* Hover: only the piece under the mouse lights, the tooltip or the loop, never both,
+   so the panel follows the visitor's input instead of flashing as a whole */
+.lab-item .tt, .lab-item .media { transition: border-color .16s, box-shadow .16s; }
+.lab-item .tt:hover, .lab-item .media:hover { border-color: var(--pc); box-shadow: 0 0 34px -2px color-mix(in srgb, var(--pc) 55%, transparent); }
+
+/* 5. Let's talk */
+.contact { display: flex; flex-wrap: wrap; gap: 10px; }
+.contact-mail { margin-top: 10px; color: var(--dim); }
+.avail { margin: -8px 0 18px; display: flex; flex-wrap: wrap; gap: 4px 18px; font: 500 14px/1.4 var(--f-num); letter-spacing: 0; color: var(--use); }
+.avail span + span { color: var(--dim); }
+
+@media (max-width: 860px) {
+  .hero, .lab-item { grid-template-columns: minmax(0, 1fr); }
+  .hero { justify-items: start; }
+  .token { width: 140px; }
+  .cards, .pillars, .team > ul { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .bar .slot { width: 60px; height: 60px; }
+  .design-areas { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}
+
+/* The proof strip under the hero and the How I work process strip. Numbers and step outputs use the editor mono. */
+.stats { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: #000; border: 1px solid #000; max-width: 792px; }
+.stats li { background: rgba(0, 0, 0, 0.55); padding: 12px 16px; display: grid; gap: 2px; }
+.stats b { font: 600 22px/1.15 var(--f-num); color: var(--text); }
+.stats span { font-size: 14.5px; color: var(--dim); }
+.process { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.process li { position: relative; display: grid; gap: 4px; align-content: start; }
+.process li + li::before { content: ""; position: absolute; left: -10px; top: 26px; width: 10px; height: 1px; background: rgba(255, 255, 255, 0.35); }
+.process .step { font: 600 11.5px/1 var(--f-num); letter-spacing: 0.06em; color: var(--faint); }
+.process h3 { font-size: 18px; font-weight: 600; }
+.process p { color: var(--dim); font-size: 15px; }
+.process .out { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--hair); font: 600 13px/1.2 var(--f-num); color: var(--use); }
+.process li:nth-child(n+3) { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 -2px 0 rgba(255, 209, 0, 0.5); }  /* the three looping steps */
+.loopnote { margin-top: 10px; color: var(--flavor); font-size: 15.5px; }
+@media (max-width: 860px) {
+  .process { grid-template-columns: minmax(0, 1fr); }
+  .process li + li::before { display: none; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Design samples: one wide card, cover and tooltip in one frame, glowing in the project color on hover
+   (the game cards' hover rule, laid out side by side). */
+.sample-card { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); max-width: 1000px; transition: box-shadow .16s; }
+.sample-card .cover { display: block; width: 100%; height: 100%; aspect-ratio: 1600 / 667; object-fit: cover; border: 1px solid var(--edge); border-right-color: transparent; transition: border-color .16s; }
+.sample-card .tt { border-left-color: transparent; transition: border-color .16s; }
+.sample-card:hover { box-shadow: 0 0 34px -2px color-mix(in srgb, var(--pc) 55%, transparent); }
+.sample-card:hover .cover { border-color: var(--pc); border-right-color: transparent; }
+.sample-card:hover .tt { border-color: var(--pc); border-left-color: transparent; }
+@media (max-width: 760px) {
+  .sample-card { grid-template-columns: minmax(0, 1fr); }
+  .sample-card .cover { height: auto; border-right-color: var(--edge); border-bottom-color: transparent; }
+  .sample-card .tt { border-left-color: var(--edge); border-top-color: transparent; }
+  .sample-card:hover .cover { border-right-color: var(--pc); border-bottom-color: transparent; }
+  .sample-card:hover .tt { border-left-color: var(--pc); border-top-color: transparent; }
+}

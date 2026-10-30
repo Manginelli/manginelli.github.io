@@ -1,0 +1,133 @@
+/* Previous Home layout. Sits on top of site.css (colors, fonts, paper texture). */
+
+/* Content width shared by every page except the Demon Hunter one: same left and right edges on Home and About */
+:root { --page-w: 1024px; }
+
+/* Top bar */
+.topbar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 14px clamp(16px, 4vw, 40px); background: rgba(16, 12, 9, .88); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--brass-faint); }
+.brand { font-family: var(--font-display); font-weight: 500; font-size: 19px; letter-spacing: .04em; color: var(--parchment); text-decoration: none; }
+.topnav { display: flex; gap: clamp(12px, 2.4vw, 28px); }
+.topnav a { font-family: var(--font-display); font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--body);
+  text-decoration: none; padding: 4px 0; border-bottom: 1px solid transparent; }
+.topnav a:hover, .topnav a:focus-visible { color: var(--brass-lit); border-bottom-color: var(--brass); outline: none; }
+
+/* Hero: text column and stage art column side by side, so the art never sits under the text at any width */
+.hm-hero { position: relative; overflow: hidden;
+  background: radial-gradient(60% 80% at 78% 50%, rgba(224, 168, 72, .10), transparent 70%); }
+.hm-hero-inner { position: relative; max-width: var(--page-w); margin: 0 auto; padding: clamp(48px, 9vh, 96px) clamp(16px, 4vw, 40px) clamp(4px, 1vh, 16px);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.hm-hero-text { min-width: 0; }
+.hm-hero-art { aspect-ratio: 550 / 460; width: 100%; max-width: 340px; justify-self: center; mix-blend-mode: lighten;
+  background: url(img/home-hero-art.webp) center / cover no-repeat;
+  -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%); mask-image: radial-gradient(closest-side, #000 62%, transparent 100%); }
+.hm-hero-name { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(40px, 5vw, 62px); line-height: 1.02;
+  letter-spacing: .03em; color: var(--parchment); }
+.hm-hero-role { margin: 14px 0 0; text-wrap: balance; font-family: var(--font-display); font-size: 14px; letter-spacing: .18em; text-transform: uppercase; color: var(--brass-lit); }
+.hm-hero-tag { margin: 22px 0 0; text-wrap: balance; font-family: var(--font-display); font-size: clamp(21px, 2.2vw, 27px); line-height: 1.25; color: var(--parchment); }
+.hm-hero-intro { margin: 14px 0 0; color: var(--body); font-size: 17px; max-width: 34em; }
+.hm-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
+
+/* Buttons (same look as the Demon Hunter page call to action) */
+.btn { display: inline-block; padding: 13px 28px; font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; text-decoration: none; color: var(--ink); background: linear-gradient(var(--brass-lit), var(--brass));
+  box-shadow: 0 0 0 1px #0a0806, 0 6px 22px rgba(212, 161, 60, .3); }
+.btn:hover, .btn:focus-visible { filter: brightness(1.08); outline: 2px solid var(--brass-lit); outline-offset: 3px; }
+.btn--ghost { color: var(--brass-lit); background: transparent; box-shadow: inset 0 0 0 1px var(--brass-dim); }
+.btn--ghost:hover, .btn--ghost:focus-visible { background: rgba(212, 161, 60, .08); filter: none; }
+.btn--small { padding: 10px 22px; font-size: 14px; }
+
+/* Phones and tablets can't play the Demon Hunter stage (same test as its page): swap the play buttons */
+.only-touch { display: none !important; }
+@media (hover: none) and (pointer: coarse) {
+  .only-pointer { display: none !important; }
+  .only-touch { display: inline-block !important; }
+}
+
+/* Sections */
+main { display: block; }
+.block { max-width: var(--page-w); margin: 0 auto; padding: 64px clamp(16px, 4vw, 40px) 8px; }
+.section-title { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(26px, 3vw, 32px); letter-spacing: .04em; color: var(--parchment); }
+.section-sub { margin: 6px 0 0; color: var(--body-dim); }
+.kicker { display: block; margin: 0 0 6px; font-family: var(--font-display); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--body-dim); }
+
+/* Featured: two projects, the second with the image on the right */
+.featured-list { scroll-margin-top: 64px; display: grid; gap: clamp(48px, 7vw, 72px); }
+.featured { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
+.featured--flip { grid-template-columns: 1fr 1.1fr; }
+.featured--flip .featured-media { order: 2; }
+.featured--lab .featured-title { color: #69ccf0; }
+.featured--lab .featured-media { border-color: rgba(105, 204, 240, .22); }
+.featured--lab .featured-media:hover { border-color: rgba(105, 204, 240, .5); }
+.featured-media { display: block; border: 1px solid var(--brass-faint); box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+.featured-media img, .featured-media video { width: 100%; height: auto; display: block; background: #0d0b09; }
+.featured-media:hover { border-color: var(--brass-dim); }
+.featured-title { margin: 0 0 12px; font-family: var(--font-display); font-weight: 500; font-size: clamp(26px, 3vw, 34px); line-height: 1.15; color: #c47ede; }
+.featured-text p:not(.kicker) { margin: 0; }
+.featured .hm-hero-actions { justify-content: flex-start; }
+
+/* Shipped cards */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }
+.card { padding: 22px 22px 20px; border: 1px solid var(--brass-faint); background: rgba(10, 8, 6, .4);
+  display: grid; grid-row: span 5; grid-template-rows: subgrid; row-gap: 0; align-content: start; overflow: hidden; }
+/* Cover on top of each card, edge to edge, Steam capsule ratio */
+.card-cover { width: calc(100% + 44px); height: auto; max-width: none; margin: -22px -22px 16px; aspect-ratio: 460 / 215; object-fit: cover; border-bottom: 1px solid var(--brass-faint); }
+.card-title { margin: 0 0 2px; font-family: var(--font-display); font-weight: 500; font-size: 21px; line-height: 1.2; color: var(--parchment); }
+.card p:not(.kicker) { margin: 0; font-size: 15.5px; }
+.card .card-role { margin: 0 0 10px; font-family: var(--font-display); font-size: 15px; color: var(--brass-lit); }
+.cards-note { margin: 16px 0 0; color: var(--body-dim); font-size: 15px; font-style: italic; }
+
+/* Pillars */
+.pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
+.pillar { padding: 4px 0 0 18px; border-left: 2px solid var(--brass-dim); }
+.pillar-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 500; font-size: 20px; color: var(--brass-lit); }
+.pillar p { margin: 0; font-size: 15.5px; }
+
+.more-link { margin: 20px 0 0; }
+.more-link a { font-family: var(--font-display); font-size: 15px; letter-spacing: .1em; text-transform: uppercase; color: var(--brass-lit); text-decoration: none; border-bottom: 1px solid var(--brass-dim); }
+.more-link a:hover, .more-link a:focus-visible { border-bottom-color: var(--brass-lit); outline: none; }
+
+/* Tinker Lab (cards kept from the previous home) */
+.tinkerings { display: grid; gap: 14px; margin-top: 22px; }
+.tinkering { display: flex; gap: 18px; align-items: center; padding: 18px 20px; text-decoration: none; color: var(--body);
+  border: 1px solid var(--brass-faint); background: rgba(10, 8, 6, .4); transition: border-color .15s, background .15s; }
+.tinkering:hover, .tinkering:focus-visible { border-color: var(--brass); background: rgba(10, 8, 6, .6); outline: none; }
+.tinkering-icon { width: 72px; height: 72px; flex: none; border: 2px solid #9848b3; border-radius: 50%; object-fit: cover; margin: 0 18.5px; }
+.tinkering-text { display: grid; gap: 2px; min-width: 0; }
+.tinkering-name { font-family: var(--font-display); font-size: 26px; letter-spacing: .05em; color: #c47ede; line-height: 1.1; }
+.tinkering-desc { font-size: 15.5px; }
+.tinkering-icon--shot { width: 109px; height: 96px; border-radius: 3px; border-width: 1px; object-fit: contain; margin: 0; }
+.tinkering--ui .tinkering-icon { border-color: #0cd29d; }
+.tinkering--ui .tinkering-name { color: #35eebb; }
+.tinkering--small { padding: 12px 20px; }
+.tinkering--small .tinkering-icon--shot { width: 82px; height: 72px; margin: 0 13.5px; }
+.tinkering--small .tinkering-name { font-size: 21px; }
+.tinkering--small .tinkering-desc { font-size: 14.5px; }
+
+/* Footer */
+.foot { max-width: var(--page-w); margin: 72px auto 0; padding: 28px clamp(16px, 4vw, 40px) 40px; border-top: 1px solid var(--brass-faint);
+  text-align: center; font-size: 15px; color: var(--body-dim); }
+.foot p { margin: 0; }
+.foot-fine { margin-top: 6px !important; font-size: 13px; }
+.foot a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--brass-faint); }
+.foot a:hover, .foot a:focus-visible { color: var(--brass-lit); border-bottom-color: var(--brass); outline: none; }
+
+/* Tablet and phone */
+@media (max-width: 900px) {
+  .hm-hero-inner { grid-template-columns: 1fr; }
+  .hm-hero-art { display: none; }
+  .featured, .featured--flip { grid-template-columns: 1fr; }
+  .featured--flip .featured-media { order: 0; }
+  .cards, .pillars { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .topbar { flex-direction: column; gap: 6px; padding: 10px 16px; }
+  .topnav a { font-size: 12.5px; }
+  .block { padding-top: 48px; }
+  .tinkering { gap: 14px; padding: 14px 16px; }
+  .tinkering-icon { width: 56px; height: 56px; margin: 0; }
+  .tinkering--small .tinkering-icon--shot, .tinkering-icon--shot { width: 56px; height: 49px; margin: 0; }
+  .tinkering-name { font-size: 22px; }
+  .tinkering--small .tinkering-name { font-size: 19px; }
+}

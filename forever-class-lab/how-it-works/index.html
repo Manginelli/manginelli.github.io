@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- How it works: where the data comes from, what is simulated, what is estimated and what is not in the lab yet. -->
+  <title>How it works · Forever Class Lab</title>
+  <meta name="description" content="Where the Forever Class Lab gets its WoW: Forever data, what it simulates, what it estimates and what is not in it yet.">
+  <link rel="canonical" href="https://manginelli.github.io/forever-class-lab/how-it-works/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Danny's Tinker Lab">
+  <meta property="og:title" content="How the Forever Class Lab works">
+  <meta property="og:description" content="Where the data comes from, what is simulated, what is estimated and what is not in the lab yet.">
+  <meta property="og:url" content="https://manginelli.github.io/forever-class-lab/how-it-works/">
+  <meta property="og:image" content="https://manginelli.github.io/forever-class-lab/og-class-lab.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../../favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+  <link rel="stylesheet" href="../css/fonts.css">
+  <style>
+    :root { color-scheme: dark; --ground: #1b1613; --panel: #241d17; --line: rgba(212, 161, 60, 0.14); --text: #d3c6b4; --head: #ead9b6; --muted: #a2947f; --gold: #f0cd7e; --brass: #d4a13c;
+      --f-display: "Eczar", Georgia, serif; --f-body: "Spectral", Georgia, serif; --f-ui: "Jost", "Century Gothic", sans-serif; --f-num: "Barlow Condensed", "Arial Narrow", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--ground); color: var(--text); font-family: var(--f-body); font-weight: 300; font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--gold); }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+    .top { border-bottom: 1px solid var(--line); background: var(--panel); font-family: var(--f-ui); }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
+    .brand { font-family: var(--f-display); font-weight: 500; color: var(--head); font-size: 21px; text-decoration: none; }
+    .brand em { font-style: normal; font-family: var(--f-ui); font-size: 11px; color: var(--brass); border: 1px solid rgba(212, 161, 60, 0.34); border-radius: 2px; padding: 0 5px; margin-left: 8px; vertical-align: 3px; }
+    .btn { display: inline-block; color: var(--muted); text-decoration: none; font-size: 15px; white-space: nowrap; }
+    .btn:hover { color: var(--head); }
+    h1 { font-family: var(--f-display); font-weight: 500; color: var(--head); font-size: clamp(30px, 6vw, 42px); line-height: 1.15; margin: 40px 0 12px; }
+    .lead { font-size: 20px; color: var(--head); margin: 0 0 8px; }
+    h2 { font-family: var(--f-display); font-weight: 500; color: var(--head); font-size: 25px; margin: 40px 0 10px; padding-top: 18px; border-top: 1px solid var(--line); }
+    ul { padding-left: 20px; margin: 0; }
+    li { margin: 0 0 9px; }
+    li b, p b { color: var(--head); font-weight: 500; }
+    .muted { color: var(--muted); }
+    .stat { font-family: var(--f-num); font-weight: 600; color: var(--gold); font-size: 1.1em; }
+    .foot { margin-top: 48px; border-top: 1px solid var(--line); background: var(--panel); font-family: var(--f-ui); font-size: 13px; color: var(--muted); }
+    .foot .wrap { padding-top: 14px; padding-bottom: 18px; }
+    .foot p { margin: 0 0 6px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="../">Forever Class Lab<em>beta</em></a>
+      <a class="btn" href="../">Back to the lab</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>How the Forever Class Lab works</h1>
+    <p class="lead">The lab is a talent calculator with a class tester. Build your talents and action bar, then play your class in a test made for its role.</p>
+    <p class="muted">It shows how a class plays, not how much it does. There are no DPS, HPS or threat numbers on screen: simulated numbers would not tell you how a class does in the real game, but the rhythm, the procs and the decisions of a class do carry over.</p>
+
+    <h2>Where the data comes from</h2>
+    <ul>
+      <li><b>Public beta data.</b> Every ability and talent comes from the public data of the WoW: Forever beta, build 1.60.1.70685 (October 28, 2026), as <a href="https://foreverchanges.pro" target="_blank" rel="noopener">ForeverChanges</a> shows it: costs, cast times, cooldowns, ranges, tooltips, talent trees and ranks.</li>
+      <li><b>Spell tables.</b> Spell power coefficients and the minimum time between procs come from the beta's spell tables, as published on <a href="https://wago.tools" target="_blank" rel="noopener">wago.tools</a>.</li>
+      <li><b>Checked automatically.</b> A script compares every ability in the lab with that data: cost, cast time, cooldown, range, and the numbers of its tooltip and of its effects. It runs again whenever the data changes, including at launch on November 4.</li>
+      <li><b>Suggested builds.</b> Each spec starts from my own build of that spec.</li>
+    </ul>
+
+    <h2>The three tests</h2>
+    <ul>
+      <li><b>Damage</b> (every class): one or five Training Dummies that never hit back, with a level 63 raid boss's armor, and you on the hit cap. Their health goes down and comes back full at zero, so low-health abilities like Execute come up on their own. Infinite mana is an option for mana users.</li>
+      <li><b>Tank</b> (Warrior, Paladin, Druid and Shaman): a Molten Core level boss that hits back, a Rogue racing you for threat and a Priest healing you both. If the Rogue pulls the boss, taunt it back before he dies. You can remove either of them or turn on immortal.</li>
+      <li><b>Healing</b> (Priest, Paladin, Druid and Shaman): a Warrior tank and a Mage in your group. The boss hits the tank, burns everyone with a Flame Wave and puts on a debuff that a dispel on your action bar can remove (no dispel on the bar, no debuffs). Infinite mana, everyone immortal and the debuffs are options.</li>
+      <li><b>Gear.</b> Everyone plays in Molten Core level gear, approximate stats for each class and role. Advanced, in Gear and options, changes the tier or every stat by hand.</li>
+    </ul>
+
+    <h2>What is simulated</h2>
+    <ul>
+      <li><span class="stat">308</span> of the <span class="stat">402</span> abilities and <span class="stat">399</span> of the <span class="stat">464</span> talents of the nine classes. Anything that is not simulated says so in its tooltip, and still costs its resource and takes its time.</li>
+      <li><b>Classic 1.12 combat, unless Forever changed it:</b> the attack table against a level 63 boss, glancing blows, armor, spell misses and crits, rage, energy, mana and the five-second rule, threat, and the delay when you are hit while casting.</li>
+      <li><b>The kit of each class:</b> forms, stances, auras, seals, totems, pets, procs, heals over time, shields, dispels, taunts.</li>
+      <li><b>Buffs at the start:</b> each class starts the fight with its own buffs, the ones that suit the spec (Arcane Intellect, Battle Shout, Blessings, Mark of the Wild, shields and armors).</li>
+    </ul>
+
+    <h2>What is estimated</h2>
+    <ul>
+      <li><b>Proc rates.</b> The game keeps them on the server, so the public data doesn't have them. Omen of Clarity, Seal of Command (7 times a minute), Vindication, Frostbrand and Maelstrom Weapon use Classic values; the minimum time between procs comes from the public data.</li>
+      <li><b>"A chance", "high threat".</b> Where a Forever tooltip gives no number, the lab uses the Classic value.</li>
+      <li><b>Bosses and bots.</b> They are generic stand-ins, tuned so a class played well succeeds and a careless one struggles. They are not real encounters.</li>
+      <li><b>Gear.</b> The presets are typical stats for each tier, not real items.</li>
+    </ul>
+
+    <h2>Not in the lab yet</h2>
+    <ul>
+      <li>Real raid bosses, adds and PvP.</li>
+      <li>Abilities that need an Undead, Demon or Humanoid target (Exorcism, Holy Wrath, Chastise) are off for now.</li>
+      <li>Racial spells only for the Priest, who picks a race on the race bar before the fight.</li>
+      <li>The tester on phones and tablets: it needs a keyboard and mouse. The talent calculator works everywhere.</li>
+    </ul>
+
+    <h2>Help make it closer to the game</h2>
+    <p>If something does not feel like your class, or a number looks wrong, use <b>Feedback</b> in the lab. It attaches your class, your build and the test you were in, so I can open exactly what you saw. Every message is read, and messages from players who played the class in the beta help the most.</p>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>Fan-made project, not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Warcraft are trademarks of Blizzard Entertainment, Inc.</p>
+      <p><a href="https://manginelli.github.io/">A Danny's Tinker Lab project by Daniel Manginelli</a></p>
+    </div>
+  </footer>
+  <!-- Visit stats: GoatCounter, cookie-free. -->
+  <script data-goatcounter="https://manginelli.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

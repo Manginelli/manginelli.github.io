@@ -1,0 +1,74 @@
+/* Side art for wide screens. A fixed layer in the empty sides of the page,
+   built by side.js only on screens with a mouse and enough room, and never over the content column.
+   Pieces leave one at a time as the window narrows: A (arena floor), the D readout, C (minimap and quests), the D ruler.
+   A: small scenes on the arena floor, every number with a cause. C: the page as a minimap and a quest tracker.
+   D: rulers on the column edges aligned to the 56 px floor grid, and a position readout. */
+.side { position: fixed; left: 0; right: 0; bottom: 0; top: var(--side-top, 57px); z-index: 2; pointer-events: none; overflow: hidden; }
+.side > * { position: absolute; }
+/* A. Arena floor: small scenes that tell a story (two DPS on a training dummy, a tank holding a demon while a
+   healer keeps him up, a passive cow wandering). Units face their target, numbers come from someone, and the floor
+   drifts slower than the page (parallax), as if the site were a HUD over the world. */
+.side .scene { width: 0; height: 0; }
+.side .u { position: absolute; width: 0; height: 0; }
+.side .u .ring { position: absolute; border-radius: 50%; border: 2px dashed rgba(255,255,255,.12); transform: translate(-50%,-50%); }
+.side .u .body { position: absolute; left: 0; top: 0; }
+.side .u .tok { position: absolute; width: 40px; height: 40px; border-radius: 50%; transform: translate(-50%,-50%); background: radial-gradient(circle at 40% 35%, #3a3f47, #15181c 70%); border: 3px solid var(--c); box-shadow: 0 0 0 2px #000, 0 8px 18px rgba(0,0,0,.5); }
+.side .u .face { position: absolute; left: 0; top: 0; width: 0; height: 0; transform: rotate(var(--a, 0deg)); }
+.side .u .face::after { content: ""; position: absolute; left: 22px; top: -6px; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 9px solid var(--c); }
+.side .u .np { position: absolute; left: 0; top: -30px; transform: translate(-50%, -100%); width: 112px; white-space: nowrap; text-align: center; font: 600 12.5px/1.1 var(--f-ui); color: var(--nc, #fff); text-shadow: var(--outline); }
+.side .u .np i { display: block; width: 112px; margin: 3px auto 0; height: 6px; background: #000; border: 1px solid #000; }
+.side .u .np i::before { content: ""; display: block; height: 100%; width: var(--hp, 100%); background: var(--hpc, #c0392b); }
+.side .u .np i::before { transition: width .25s ease-out; }
+.side .u .tok { transition: filter .4s, opacity .4s; }
+.side .u.casting .tok { box-shadow: 0 0 0 2px #000, 0 0 16px 3px var(--c); }
+.side .u.dead .tok { filter: grayscale(1) brightness(.55); }
+.side .u.dead .np { opacity: .35; }
+.side .u.gone { opacity: 0; transition: opacity .6s; }
+.side .u.hit .body { animation: lunge .32s ease-out; }
+@keyframes lunge { 0%, 100% { transform: translate(0, 0); } 45% { transform: translate(var(--lx), var(--ly)); } }
+.side .u.flinch .tok { animation: flinch .25s ease-out; }
+@keyframes flinch { 0%, 100% { transform: translate(-50%,-50%); } 40% { transform: translate(calc(-50% + var(--fx, 0px)), calc(-50% + var(--fy, 0px))); } }
+.side .u.wander .body { animation: wander 16s ease-in-out infinite; }
+.side .u.wander .face { animation: turn 16s steps(1) infinite; }
+@keyframes wander { 0%, 100% { transform: translate(0, 0); } 45%, 55% { transform: translate(46px, 10px); } }
+@keyframes turn { 0%, 54% { transform: rotate(10deg); } 55%, 99% { transform: rotate(190deg); } }
+.side .beam { position: absolute; height: 3px; transform-origin: 0 50%; background: linear-gradient(90deg, rgba(62,224,64,.15), rgba(62,224,64,.95)); opacity: 0; transition: opacity .12s; border-radius: 2px; }
+.side .beam.on { opacity: 1; box-shadow: 0 0 10px rgba(62,224,64,.6); }
+.side .bolt { position: absolute; z-index: 2; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--c), 0 0 14px 4px var(--c); transition: transform .4s cubic-bezier(.45, 0, .9, .6); }
+.side .ct { position: absolute; font: 600 21px/1 var(--f-ui); color: #fff; text-shadow: var(--outline); white-space: nowrap; animation: rise 1.4s ease-out forwards; pointer-events: none; }
+.side .ct.crit { font-size: 27px; color: #ffd100; }
+.side .ct.taken { color: #ff5a4f; font-size: 18px; }
+.side .ct.heal { color: #3ee040; }
+.side .ct.emote { font: 500 13px/1.2 var(--f-ui); color: #fff; animation-duration: 2.6s; }
+@keyframes rise { 0% { transform: translate(-50%, 0) scale(1.25); opacity: 0; } 10% { opacity: 1; transform: translate(-50%, -6px) scale(1); } 70% { opacity: .85; } 100% { transform: translate(-50%, -46px); opacity: 0; } }
+
+/* C. Minimap and quest tracker: the page as a map, your place on it, and objectives that tick as you read */
+.side .mm { width: 210px; display: grid; gap: 8px; justify-items: center; }
+.side .mm .zone { font: 600 14.5px/1 var(--f-ui); color: #ffd100; text-shadow: var(--outline); }
+.side .mm .disc { position: relative; width: 190px; height: 190px; border-radius: 50%; overflow: hidden; background:
+  linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px) 0 0 / 19px 19px,
+  linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px) 0 0 / 19px 19px, #101317;
+  border: 2px solid #000; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 8px 24px rgba(0,0,0,.5); }
+.side .mm .road { position: absolute; left: 50%; width: 10px; margin-left: -5px; background: rgba(255,255,255,.07); }
+.side .mm .poi { position: absolute; left: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; transform: rotate(45deg); background: var(--c); border: 1px solid #000; }
+.side .mm .me { position: absolute; left: 50%; top: 50%; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 16px solid #fff; transform: translate(-50%, -60%); filter: drop-shadow(0 0 2px #000); }
+.side .qt { width: 300px; display: grid; gap: 4px; font-size: 15px; }
+.side .qt .qh { font: 600 16px/1.2 var(--f-ui); color: #ffd100; text-shadow: var(--outline); margin-bottom: 2px; }
+.side .qt .o { color: #eceae4; text-shadow: var(--outline); padding-left: 14px; position: relative; }
+.side .qt .o::before { content: "-"; position: absolute; left: 2px; color: var(--dim); }
+.side .qt .o.done { color: var(--faint); }
+.side .qt .o.done::before { content: "✓"; color: var(--use); }
+
+/* D. Designer's rulers: tick marks along the column edges, the floor grid labelled, and the scroll position */
+.side .ruler { width: 34px; }
+.side .ruler .tk { position: absolute; right: 0; height: 1px; background: rgba(255,255,255,.22); }
+.side .ruler .tk.big { background: rgba(255,255,255,.4); }
+.side .ruler .tl { position: absolute; right: 30px; font: 500 11px/1 var(--f-num); letter-spacing: 0; color: var(--faint); transform: translateY(-50%); white-space: nowrap; } /* past the end of the long tick, with a gap */
+.side .ruler.r .tk { left: 0; right: auto; }
+.side .ruler.r .tl { left: 30px; right: auto; }
+.side .readout { font: 500 13px/1.5 var(--f-num); letter-spacing: 0; color: var(--dim); background: rgba(0,0,0,.55); border: 1px solid #000; padding: 8px 12px; }
+.side .readout b { color: var(--text); font-weight: 600; }
+.side .guide { background: rgba(244,242,236,.10); }
+
+
+@media (prefers-reduced-motion: reduce) { .side .u.wander .body, .side .u.wander .face { animation: none; } }

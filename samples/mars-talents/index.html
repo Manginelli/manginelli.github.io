@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Design sample: the Mars Incremental talent system as a feature spec. Values are illustrative. -->
+<title>Mars Incremental: the talent system · Daniel Manginelli</title>
+<meta name="description" content="Design sample by Daniel Manginelli: the talent system of Mars Incremental, from goals and rules to a tree up close and the balance method that keeps every point felt.">
+<meta name="theme-color" content="#161a1f">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Daniel Manginelli">
+<meta property="og:title" content="Mars Incremental: the talent system">
+<meta property="og:description" content="A design sample: how a talent tree turned every prestige into a choice about how to play.">
+<meta property="og:url" content="https://manginelli.github.io/samples/mars-talents/">
+<meta property="og:image" content="https://manginelli.github.io/samples/mars-talents/img/mars-talents-panel.webp">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="stylesheet" href="../../ui.css">
+<link rel="stylesheet" href="sample.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar"><div class="wrap">
+  <a class="brand" href="../../">Daniel Manginelli</a>
+  <nav class="nav" aria-label="Site">
+    <a href="../../#games">Work</a>
+    <a href="../../#lab">Tinker Lab</a>
+    <a href="../../about/">About</a>
+    <a class="hide-s" href="../../resume.pdf">Résumé</a>
+  </nav>
+</div></header>
+
+<main class="wrap" id="main">
+
+  <!-- Header: the sample's own tooltip -->
+  <section class="sp-hero" aria-label="Design sample">
+    <p class="sp-back"><a href="../../#samples">&larr; Design samples</a></p>
+    <div class="tt">
+      <h1 class="tt-title">Mars Incremental: the talent system</h1>
+      <div class="tt-row"><span>Feature spec and balance method</span><span>Design sample</span></div>
+      <div class="tt-role">Lead game designer</div>
+      <p class="tt-use">Use: See how a talent tree turned every prestige into a choice about how to play.</p>
+      <p class="tt-body">The goals, rules, trees and numbers behind the Frontier Technology Panel, the game's talent screen. Values on this page are illustrative and a few names are changed to avoid spoilers. The structure, targets and method are the real ones.</p>
+      <div class="tt-actions"><a class="btn" href="https://store.steampowered.com/app/4179880/Mars_Incremental/" target="_blank" rel="noopener">Wishlist on Steam</a></div>
+    </div>
+  </section>
+
+  <!-- Reading map: the page reads top to bottom as game, problem, goals, system, one tree, numbers, role -->
+  <nav class="toc" aria-label="In this sample">
+    <span class="toc-l">In this sample</span>
+    <a href="#game">The game</a><a href="#problem">The problem</a><a href="#goals">Goals</a><a href="#system">The system</a><a href="#tree">Speed up close</a><a href="#balance">Balance</a><a href="#role">My part in the game</a>
+  </nav>
+
+  <!-- 0. The game in one minute: everything the rest of the page assumes -->
+  <section class="section" id="game" aria-labelledby="game-title">
+    <div class="section-head"><h2 id="game-title">The game in one minute</h2><p class="sub">Everything the rest of this page builds on.</p></div>
+    <div class="sp-prose">
+      <p>Mars Incremental is an incremental game about terraforming Mars. You run a base: a row of buildings with drones working inside them, each building producing a resource such as power, gas or water. New buildings unlock as the planet progresses, and a full game is projected at about four hours.</p>
+      <p class="dim">Resources buy more drones and upgrades, and push three planetary meters: temperature, atmosphere and humidity. As the meters fill, the planet gains terraforming levels, the main measure of progress. Growth is fast at first and then slows down. When it slows enough, the player resets the base and starts a new one, stronger than the last. That reset is where the talents live.</p>
+    </div>
+    <figure class="fig sp-wide"><img src="img/mars-talents-base.webp" alt="A Mars Incremental base mid-run: buildings on the Martian ground, resources on the left, the terraforming level and its three meters at the top" width="1600" height="675" loading="lazy">
+      <figcaption>A base mid-run. Resources on the left, buildings along the ground, and at the top the terraforming level (17) with its three meters.</figcaption></figure>
+    <h3 class="sp-h3">Words used on this page</h3>
+    <dl class="codex">
+      <div class="tt"><dt>Base</dt><dd>One run, from a fresh start to the reset.</dd></div>
+      <div class="tt"><dt>Building</dt><dd>Produces one resource, one delivery at a time. Drones work inside it, and more drones mean more output.</dd></div>
+      <div class="tt"><dt>Drone core</dt><dd>What the player spends to buy drones.</dd></div>
+      <div class="tt"><dt>Production speed</dt><dd>How often a building delivers. Every speed bonus a building gets is added to the same total.</dd></div>
+      <div class="tt"><dt>Holding a building</dt><dd>Keeping the mouse pressed on a building speeds it up, a small reward for active play.</dd></div>
+      <div class="tt"><dt>Reactor</dt><dd>A special upgrade that belongs to one building. A base collects several of them.</dd></div>
+      <div class="tt"><dt>Terraforming level</dt><dd>The planet's progress, raised by the three meters. Balance measures time in these levels.</dd></div>
+      <div class="tt"><dt>Terraforming stage</dt><dd>At certain levels the planet moves to its next stage, and the background changes with it.</dd></div>
+      <div class="tt"><dt>Prestige</dt><dd>The genre's name for resetting: the base starts over, stronger than before.</dd></div>
+      <div class="tt"><dt>Talent</dt><dd>A permanent bonus bought between bases. Each rank of a talent costs one point.</dd></div>
+      <div class="tt"><dt>Tree and Major</dt><dd>A tree opens with its Major, a bigger talent, and grows into smaller talents from there.</dd></div>
+      <div class="tt"><dt>Build</dt><dd>The set of talents a player picks for the next bases.</dd></div>
+    </dl>
+  </section>
+
+  <!-- 1. Problem -->
+  <section class="section" id="problem" aria-labelledby="problem-title">
+    <div class="section-head"><h2 id="problem-title">The problem</h2></div>
+    <div class="sp-prose">
+      <p>Like every incremental game, Mars hits a wall: production slows down until starting over is faster than pushing on. That reset had to pay off.</p>
+      <p class="dim">Inside a base, the upgrades follow a mostly linear path. So the reset had to bring what the base couldn't: power that carries over between bases, choices that belong to the player, and a place where min-maxers can plan their builds.</p>
+    </div>
+  </section>
+
+  <!-- 2. Experience goals -->
+  <section class="section" id="goals" aria-labelledby="goals-title">
+    <div class="section-head"><h2 id="goals-title">Experience goals</h2><p class="sub">What the player should feel. Every rule and number below answers to these four.</p></div>
+    <div class="goals">
+      <article class="tt">
+        <h3 class="tt-title">Choose how you play</h3>
+        <p class="tt-use">A real choice changes how you play, not which number grows.</p>
+        <p class="tt-body">Picking +100% of X or +100% of Y is a calculation, not a decision. Each tree changes a rule instead: chance, timing, drone count, how resources feed each other.</p>
+      </article>
+      <article class="tt">
+        <h3 class="tt-title">Every point is felt</h3>
+        <p class="tt-use">Each point brings the next terraforming levels 6 to 12% sooner.</p>
+        <p class="tt-body">Even the smallest rank has to be felt where the player is looking: the road to the next level. Opening a tree has to hit harder: its Major talent changes how the base feels to play.</p>
+      </article>
+      <article class="tt">
+        <h3 class="tt-title">Active or idle, there is a build</h3>
+        <p class="tt-use">Some talents reward your hands, others reward your absence.</p>
+        <p class="tt-body">Holding the mouse on a building pays off for active players. Other talents pay off for players who check in from time to time. The Speed tree, below, has one of each.</p>
+      </article>
+      <article class="tt">
+        <h3 class="tt-title">Room for min-maxers</h3>
+        <p class="tt-use">Refunds turn every prestige into an experiment.</p>
+        <p class="tt-body">Points can be refunded between bases, so players are free to try a build and change their minds. Min-maxers get room to find the most efficient routes of talents and resets.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 3. The system: loop, rules and trees -->
+  <section class="section" id="system" aria-labelledby="system-title">
+    <div class="section-head"><h2 id="system-title">The system</h2><p class="sub">Where talents enter the loop, and the rules engineering and art built from.</p></div>
+    <ol class="loop">
+      <li class="tt"><span class="step">1</span><h3>Grow the base</h3><p>Drones, buildings and resources.</p></li>
+      <li class="tt"><span class="step">2</span><h3>Terraform</h3><p>Each terraforming level grants <span class="pt">1 Specialization point</span>.</p></li>
+      <li class="tt"><span class="step">3</span><h3>Hit the wall</h3><p>Growth slows until a reset is the faster path.</p></li>
+      <li class="tt"><span class="step">4</span><h3>Prestige</h3><p>Reset the base and spend the points on talents. They carry over to every base that follows.</p></li>
+      <li class="tt"><span class="step">5</span><h3>New base</h3><p>Starts faster and goes further than the last one.</p></li>
+    </ol>
+    <p class="loop-back">Then back to step 1. Each time the planet reaches its next terraforming stage, the player also earns a Breakthrough point to open a new tree.</p>
+
+    <h3 class="sp-h3">The rules</h3>
+    <dl class="rules" style="margin-top:14px">
+      <dt>Specialization points</dt><dd>1 per terraforming level. <span>Spent on talent ranks.</span></dd>
+      <dt>Breakthrough points</dt><dd>1 each time the planet reaches its next terraforming stage. <span>Opens a new tree of the player's choice by buying its Major talent. The Terraform tree starts open.</span></dd>
+      <dt>Trees</dt><dd>7 trees, each with 1 Major and 6 to 9 talents. <span>Around 20 ranks to spend per tree.</span></dd>
+      <dt>Prerequisites</dt><dd>A talent must be maxed before the next one in its chain opens. <span>Talents touching the Major open with the tree.</span></dd>
+      <dt>Value budget</dt><dd>Each rank brings the next 3 terraforming levels 6 to 12% sooner. <span>Checked, with a second measure for the whole game, in the balance model below.</span></dd>
+      <dt>Refund</dt><dd>Points can be refunded in the panel, between bases.</dd>
+    </dl>
+
+    <h3 class="sp-h3">Seven trees, seven ways to play</h3>
+    <p class="sp-note">Each tree changes a different rule of the base, which is what makes the choice between them a real one.</p>
+    <ul class="trees" aria-label="The seven trees">
+      <li style="--c:#ff9a4a"><i></i><b>Terraform</b><span>Open from the start, so the first points have somewhere to go before the first terraforming stage. Makes every level worth more resources, and starter packages let new bases begin with buildings in place.</span></li>
+      <li style="--c:#b9d86a"><i></i><b>Quantity</b><span>More drones for the cores: extra drones when buying, and bulky drones that cost more and produce more.</span></li>
+      <li style="--c:#d37cf0"><i></i><b>Speed</b><span>Every drone speeds up its building. Rewards holding a building, or letting it run.</span></li>
+      <li style="--c:#5f97e8"><i></i><b>Surge</b><span>Any delivery has a chance to Surge into a bigger one. Ranks raise the chance and the size.</span></li>
+      <li style="--c:#e0457a"><i></i><b>Multi</b><span>Any delivery has a chance to repeat right away, and repeats can chain.</span></li>
+      <li style="--c:#2fbf5a"><i></i><b>Nature</b><span>The planet's plants and animals help each other grow. Missions bring extra rewards.</span></li>
+      <li style="--c:#f2c63c"><i></i><b>Unity</b><span>Cheaper plants and animals, and bonuses that link buildings together.</span></li>
+    </ul>
+    <div class="figs">
+      <figure class="fig"><img src="img/mars-talents-board.webp" alt="The team's planning board: seven colored talent trees on a hex grid" width="763" height="763" loading="lazy">
+        <figcaption>Planning board. M is each tree's Major; the numbers are its talents.</figcaption></figure>
+      <figure class="fig"><img src="img/mars-talents-panel.webp" alt="The Frontier Technology Panel in game, with three talent trees open" width="1600" height="667" loading="lazy">
+        <figcaption>The same trees in the game, in the Frontier Technology Panel, three of them open.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 4. A tree up close -->
+  <section class="section" id="tree" aria-labelledby="tree-title">
+    <div class="section-head"><h2 id="tree-title">A tree up close: Speed</h2><p class="sub">The tree the balance section measures, talent by talent.</p></div>
+    <div class="sp-prose" style="margin-bottom:18px">
+      <p>Speed is the tree about tempo: the more drones a building has, the faster it works. Its talents carry the goals into play. Greater Incentive rewards active players for holding a building, The Drones Remember keeps that bonus going while they are away, and Life Is Not a Race reshapes a build that has stacked a lot of speed.</p>
+      <p class="dim">How to read it: M is the Major, the numbers are talents, and a line means the next talent opens once the one before it is maxed. Click a talent to read its tooltip. Values are illustrative.</p>
+    </div>
+    <div class="explorer" style="--tc:#d37cf0">
+      <div class="board" id="board">
+        <svg viewBox="0 0 100 100" aria-hidden="true" id="links"></svg>
+      </div>
+      <article class="tt" id="tip" aria-live="polite"></article>
+    </div>
+  </section>
+
+  <!-- 6. Balance: time as the single currency, the productivity formula, simulator calibration, and the Speed tree
+       graded level by level. Results rounded; talent parameters stay illustrative. -->
+  <section class="section" id="balance" aria-labelledby="balance-title">
+    <div class="section-head"><h2 id="balance-title">Balance: one currency, time</h2><p class="sub">Talents speak different languages. The projection translates them into the one players feel.</p></div>
+    <div class="sp-prose">
+      <p>Seven trees and dozens of talents, with effects that don't compare: one adds speed, another a chance, another drones. Playtests show how a talent feels, but not whether it is worth as much as its neighbors. So the model gives every point one price, in the unit players actually feel: time.</p>
+      <p>A point is worth how much sooner the next three terraforming levels arrive, in the base that starts right after it is bought. The band is 6 to 12% per point.</p>
+      <p>A second measure looks at the whole game: remove the talent and replay, and the game should end 10 to 30% later, per point spent. It is bigger than the first because gains compound: a faster base reaches every later reset sooner.</p>
+      <p class="dim">The rule: no talent over the top of the band in either measure, and at least one of the two measures inside it. Both are measured in a simulator: a script built from the game's own numbers and code that plays the game with a model player.</p>
+    </div>
+
+    <ol class="steps2">
+      <li class="tt">
+        <span class="step">Step 1</span>
+        <h3>Turn any effect into production</h3>
+        <p>In the game's code, a building's productivity is 1 plus all its speed bonuses added together. One talent, Life Is Not a Race, also multiplies it. A point is worth how much productivity grows, averaged across the buildings with drones.</p>
+        <p class="formula">m = geometric mean of (after / before)</p>
+      </li>
+      <li class="tt">
+        <span class="step">Step 2</span>
+        <h3>Turn production into time</h3>
+        <p>In the simulator, all production was multiplied by a fixed amount at seven different moments of the game, and the time to the next levels was measured. It shrank the same way every time: for small gains, each 1% more production saves about 0.9% of time.</p>
+        <p class="formula">time saved = 1 &minus; m<sup>&minus;0.9</sup></p>
+      </li>
+    </ol>
+
+    <div class="worked">
+      <article class="tt">
+        <h3 class="tt-title">Production into time</h3>
+        <p class="tt-body">The 6 to 12% band, read as production, is a multiplier of about &times;1.07 to &times;1.15 per point.</p>
+        <div class="calc">
+          <label for="mm">Production multiplier <b id="mmv">&times;1.10</b></label>
+          <input type="range" id="mm" min="100" max="130" step="1" value="110">
+          <div class="meter" aria-hidden="true"><div class="val" id="mmm"></div><div class="band"></div></div>
+          <div class="meter-legend" aria-hidden="true"><span>0%</span><span>target 6 to 12%</span><span>20%</span></div>
+          <output id="mmo" for="mm"></output>
+        </div>
+      </article>
+      <article class="tt">
+        <h3 class="tt-title">Why a bonus on one building fades</h3>
+        <p class="tt-body">A building that already has +150% speed runs at 2.5&times;. A +20% bonus takes it to 2.7&times;: only 8% more for that building. And the base moves at the pace of all four buildings together, so 8% on one of them is about 2% for the base. Move the sliders. Illustrative numbers.</p>
+        <div class="calc">
+          <label for="bb">Bonus <b id="bbv">+20%</b></label>
+          <input type="range" id="bb" min="5" max="100" step="5" value="20">
+          <label for="ss">Speed the building already has <b id="ssv">+150%</b></label>
+          <input type="range" id="ss" min="0" max="300" step="10" value="150">
+          <label for="nn">Buildings it reaches, of 4 <b id="nnv">1</b></label>
+          <input type="range" id="nn" min="1" max="4" step="1" value="1">
+          <div class="meter" aria-hidden="true"><div class="val" id="dm"></div><div class="band"></div></div>
+          <div class="meter-legend" aria-hidden="true"><span>0%</span><span>target 6 to 12%</span><span>20%</span></div>
+          <p class="chain" id="dch"></p>
+          <output id="do"></output>
+        </div>
+      </article>
+    </div>
+
+    <h3 class="sp-h3">The Speed tree, graded</h3>
+    <p class="sp-note">Each talent gets two grades, one per measure. B is inside the band. A is over the top (over 12% for the next levels, over 30% for the whole game) and S far over it. C is under the band and D far under it (under 2% and 3%). The table shows the talents before tuning. Early and late mean Speed opened as the first tree or a later one. Measured for a good human player (acts every 5 seconds, holds the main building 70% of the time) over a projected 4-hour game, with the tree opened early and late. Results rounded.</p>
+    <div class="grades-wrap">
+      <table class="conv grades">
+        <thead><tr><th scope="col">Talent</th><th scope="col">Next 3 levels, per point</th><th scope="col">Whole game, per point</th><th scope="col">Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Unchained Reactors</td><td><span class="g g-c">C</span> to <span class="g g-b">B</span> about 4 to 6%</td><td><span class="g g-b">B</span> about 11%</td><td>Passes the rule on the whole game. Tuned anyway, see below.</td></tr>
+          <tr><td>Weak Link</td><td><span class="g g-b">B</span> to <span class="g g-c">C</span> 9% early, 3% late</td><td><span class="g g-c">C</span> about 4%</td><td>Passes on the next levels when Speed comes first.</td></tr>
+          <tr><td>Planetary Momentum</td><td><span class="g g-c">C</span> about 3 to 5%</td><td><span class="g g-b">B</span> about 19%</td><td>Passes. Grows with the game, as designed.</td></tr>
+          <tr><td>Greater Incentive</td><td><span class="g g-d">D</span> under 1%</td><td><span class="g g-d">D</span> about 1%</td><td>Fails. A shape problem, not a number.</td></tr>
+          <tr><td>The Drones Remember</td><td><span class="g g-d">D</span> under 1%</td><td><span class="g g-d">D</span> about 1%</td><td>Fails, same cause.</td></tr>
+          <tr><td>Life Is Not a Race</td><td><span class="g g-c">C</span> to <span class="g g-s">S</span> 5 to 25%</td><td><span class="g g-s">S</span> far over the band</td><td>Fails. A shape problem, not a number.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sp-h3">A discrepancy the model caught</h3>
+    <div class="story">
+      <div class="tt"><span class="step">Before</span><p>An earlier model, from September, rated Life Is Not a Race as fine, and its values had been tuned to fit.</p></div>
+      <div class="tt"><span class="step">Found</span><p>While rebuilding the model, the AI compared each formula with the game's code. In the model, the talent multiplied production by speed already cut in half. In the game, it multiplies by the full speed from talents.</p></div>
+      <div class="tt"><span class="step">Fixed</span><p>The simulator was corrected to follow the code, and now matches it level by level within 1 to 3 percentage points.</p></div>
+      <div class="tt"><span class="step">Result</span><p>The talent was much stronger than the old model said. That is why it shows up above as failing, far over the band.</p></div>
+    </div>
+
+    <h3 class="sp-h3">What the numbers asked for</h3>
+    <p class="sp-note">One talent only needed a bigger number. The three that fail need more than that: for all of them, a bigger or smaller number wouldn't help, and the formula itself has to change. Two of them are the talents built for the active or idle goal, so the goal stands and their shape doesn't. This is the critique step of the process: the model shows where a talent breaks, design decides what it becomes.</p>
+    <div class="changes">
+      <article class="tt">
+        <h3 class="tt-title">Unchained Reactors: a bigger step</h3>
+        <p class="tt-body">At first it sat under the band on the next levels. A higher value per reactor puts it inside both measures, at about 24% per point for the whole game. One step more reaches about 32%, over the top, so the tuning stops there.</p>
+        <p class="tt-use">Tested in the simulator: inside both bands.</p>
+      </article>
+      <article class="tt">
+        <h3 class="tt-title">Life Is Not a Race: a new shape</h3>
+        <p class="tt-body">It halves every speed bonus, then multiplies production by the speed the building gets from talents. Cutting its value doesn't work: the halving would make the first rank slow the player down by about 10%, and the late game would still explode, because those talent bonuses keep growing.</p>
+        <p class="tt-use">Proposed: a cap, or growth slower than those bonuses.</p>
+      </article>
+      <article class="tt">
+        <h3 class="tt-title">Greater Incentive and The Drones Remember</h3>
+        <p class="tt-body">Even five times the value would give about 3% per point: the holding bonus lives on one building of four and is diluted by the speed that building already has.</p>
+        <p class="tt-use">Proposed: reach more buildings, or multiply instead of add.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 9. Role -->
+  <section class="section" id="role" aria-labelledby="role-title">
+    <div class="section-head"><h2 id="role-title">My part in the game</h2></div>
+    <div class="sp-prose">
+      <p>As lead game designer, I designed the system: its goals, the rules, the seven trees, every talent and the balance targets. I built the balance model with AI assistance (Claude), checking it against the game's code and a simulator of the game.</p>
+      <p class="dim">With the art team, I worked on the icons, the panels, the building elements and the feedback, under another person's art direction. Programming and production management were done by teammates.</p>
+    </div>
+    <div class="tt-actions" style="margin-top:20px"><a class="btn" href="../../#samples">More design samples</a><a class="btn" href="../../#games">See the games</a></div>
+  </section>
+
+</main>
+
+<footer class="foot"><div class="wrap">
+  <span>Contact: <a href="mailto:daniel.manginelli.o@gmail.com">daniel.manginelli.o@gmail.com</a> · <a href="https://www.linkedin.com/in/danielmanginellio/" target="_blank" rel="noopener">LinkedIn</a></span>
+  <span>Mars Incremental by Pixel Hound Studios. Values on this page are illustrative.</span>
+</div></footer>
+
+<script>
+/* Tree explorer: pointy-top hexes in the same places and chains as the planning board */
+(() => {
+  const T = [
+    { id: 'M', x: 0, y: 0, name: 'Speed', kind: 'Major talent', ranks: 1, opens: 'Breakthrough point',
+      fx: 'Every drone in a building raises that building\u2019s production speed by 1%.', rk: ['With 40 drones: +40% speed'], tag: 'any' },
+    { id: '1', x: -1, y: 0, from: 'M', name: 'Unchained Reactors', ranks: 5,
+      fx: 'Every reactor bought also raises production speed.', rk: ['+1.5% per reactor per rank', '+7.5% per reactor at 5/5'], tag: 'any' },
+    { id: '2', x: 1, y: 0, from: 'M', name: 'Weak Link', ranks: 2,
+      fx: 'The building with the fewest drones gets extra speed, so no building is left behind.', rk: ['+40% per rank', '+80% at 2/2'], tag: 'any' },
+    { id: '3', x: -0.5, y: -1, from: '1', name: 'Greater Incentive', ranks: 5,
+      fx: 'Holding the mouse on a building speeds it up even more.', rk: ['+15% hold bonus per rank', '+75% at 5/5'], tag: 'active' },
+    { id: '4', x: 0, y: -2, from: '3', name: 'The Drones Remember', ranks: 2,
+      fx: 'The last building you held keeps the hold bonus after you let go.', rk: ['Half the hold bonus per rank', 'The full bonus at 2/2, even while away'], tag: 'idle' },
+    { id: '5', x: 0.5, y: 1, from: 'M', name: 'Planetary Momentum', ranks: 5,
+      fx: 'Every terraforming level adds production speed to all buildings.', rk: ['+0.4% per level per rank', 'At level 25: +10% speed per rank, before dilution'], tag: 'any' },
+    { id: '6', x: 0, y: 2, from: '5', name: 'Life Is Not a Race', ranks: 3,
+      fx: 'Speed bonuses count half, but production is multiplied by the speed the building gets from talents (Speed, Unchained Reactors, Planetary Momentum). The more speed a build stacks, the less each extra bonus is worth; this talent turns that excess into production.', rk: ['Production \u00d7 (1 + 40% / 60% / 80% of that talent speed)'], tag: 'trade' },
+  ];
+  const TAGS = { any: 'Any playstyle', active: 'Rewards active play', idle: 'Rewards idle play', trade: 'For speed-heavy builds' };
+  /* Pointy-top hexes: 20% apart side by side, rows 0.75 of a hex height apart, as on the planning board */
+  const W = 20, ROW = W * 1.1547 * 0.75;
+  const pos = t => ({ x: 50 + t.x * W, y: 50 + t.y * ROW });
+  const board = document.getElementById('board'), links = document.getElementById('links'), tip = document.getElementById('tip');
+  const byId = Object.fromEntries(T.map(t => [t.id, t]));
+  T.forEach(t => { if (!t.from) return; const a = pos(byId[t.from]), b = pos(t);
+    const cut = (u, v, k) => u + (v - u) * k;
+    const seg = `x1="${cut(a.x, b.x, .38)}" y1="${cut(a.y, b.y, .38)}" x2="${cut(a.x, b.x, .62)}" y2="${cut(a.y, b.y, .62)}"`;
+    links.insertAdjacentHTML('beforeend', `<line ${seg} stroke="#000" stroke-width="3.4" stroke-linecap="round"/><line ${seg} stroke="#f1d2ff" stroke-width="1.8" stroke-linecap="round"/>`); });
+  T.forEach(t => { const p = pos(t), b = document.createElement('button');
+    b.className = 'hex' + (t.id === 'M' ? ' major' : ''); b.style.left = p.x + '%'; b.style.top = p.y + '%';
+    b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', t.name);
+    b.innerHTML = `<span>${t.id}</span><small>0/${t.ranks}</small>`;
+    b.addEventListener('click', () => show(t.id)); board.appendChild(b); t.el = b; });
+  function show(id) {
+    const t = byId[id];
+    T.forEach(x => x.el.setAttribute('aria-pressed', String(x.id === id)));
+    const req = t.opens ? `Opens with a ${t.opens}` : `Requires ${byId[t.from].name} ${byId[t.from].ranks}/${byId[t.from].ranks}`;
+    tip.innerHTML = `<h3 class="tt-title">${t.name}</h3>
+      <div class="tt-row"><span>${t.kind || 'Talent'}</span><span>${t.ranks} ${t.ranks > 1 ? 'ranks' : 'rank'}</span></div>
+      <div class="tt-role" style="color:var(--dim)">${req}</div>
+      <p class="tt-use">${t.fx}</p>
+      <div class="ranks">${t.rk.map(x => `<span>${x}</span>`).join('')}</div>
+      <span class="tag" data-t="${t.tag}">${TAGS[t.tag]}</span>
+      <p class="ex-hint">Planning board position ${t.id}. Illustrative values.</p>`;
+  }
+  show('M');
+})();
+
+/* Balance widgets: production into time (f = 1 - m^-0.9, from the simulator calibration) and the dilution of a bonus
+   on some of the 4 buildings (m = (1 + b / (1 + S))^(n / 4)); meter from 0 to 20%, band 6 to 12% */
+(() => {
+  const f = m => 100 * (1 - Math.pow(m, -0.9));
+  const $ = id => document.getElementById(id);
+  function show(v, meter, out) {
+    $(meter).style.width = Math.min(Math.max(v, 0) / 20, 1) * 100 + '%';
+    const on = v >= 6 && v <= 12;
+    $(out).textContent = `${v.toFixed(1)}% sooner, ${on ? 'inside the band' : v < 6 ? 'under the band' : 'over the band'}`;
+    $(out).classList.toggle('off', !on);
+  }
+  const upM = () => { const m = $('mm').value / 100; $('mmv').textContent = '\u00d7' + m.toFixed(2); show(f(m), 'mmm', 'mmo'); };
+  const upD = () => { const b = $('bb').value / 100, s = $('ss').value / 100, n = +$('nn').value;
+    $('bbv').textContent = '+' + $('bb').value + '%'; $('ssv').textContent = '+' + $('ss').value + '%'; $('nnv').textContent = n;
+    const one = b / (1 + s), base = Math.pow(1 + one, n / 4) - 1;
+    $('dch').textContent = `On ${n === 1 ? 'that building' : 'each building reached'}: +${(100 * one).toFixed(1)}%  \u00b7  For the base: +${(100 * base).toFixed(1)}%`;
+    show(f(1 + base), 'dm', 'do'); };
+  ['mm'].forEach(id => $(id).addEventListener('input', upM));
+  ['bb', 'ss', 'nn'].forEach(id => $(id).addEventListener('input', upD));
+  upM(); upD();
+})();
+</script>
+<!-- Visit stats: GoatCounter, cookie-free -->
+<script data-goatcounter="https://manginelli.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

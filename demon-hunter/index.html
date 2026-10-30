@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demon Hunter, an unofficial class for WoW: Forever</title>
+<meta name="description" content="Play the Demon Hunter, an unofficial class for WoW: Forever, in a four-wave browser stage, then explore its design, lore and Demon Bloods.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Danny's Tinker Lab">
+<meta property="og:title" content="Demon Hunter, an unofficial class for WoW: Forever">
+<meta property="og:description" content="Play it in your browser: pick a specialization, drink a Demon Blood and clear Burningwoods Hollow.">
+<meta property="og:url" content="https://manginelli.github.io/demon-hunter/">
+<meta property="og:image" content="https://manginelli.github.io/demon-hunter/og-demon-hunter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="stylesheet" href="css/tinker.css">
+<link rel="stylesheet" href="css/page.css">
+<link rel="preload" href="fonts/spectral-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/eczar-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body>
+
+<nav class="page-nav" aria-label="On this page">
+  <a href="#play">Play</a><a href="#design">Class Design</a><a href="#lore">Lore</a><a href="#abilities">Abilities</a>
+  <a href="#feedback">Feedback</a></nav>
+
+<section class="hero" id="top">
+  <figure class="class-visual">
+    <img class="class-art" src="img/hero-demon-hunter.webp" alt="" width="800" height="800" fetchpriority="high" style="object-position: 42% 40%">
+    <div class="stat-block">
+      <div class="stat"><span class="stat-label">Role</span><div class="icon-row"><span class="icon icon--art" tabindex="0" role="img" aria-label="Melee Damage Dealer"><img src="icons/stat-role-melee.webp" alt=""><span class="tip" role="tooltip">Melee Damage Dealer</span></span></div></div>
+      <div class="stat"><span class="stat-label">Armor</span><div class="icon-row"><span class="icon icon--art" tabindex="0" role="img" aria-label="Leather"><img src="icons/stat-armor-leather.webp" alt=""><span class="tip" role="tooltip">Leather</span></span></div></div>
+      <div class="stat"><span class="stat-label">Resource</span><span class="stat-value stat-value--resource">Mana</span></div>
+      <div class="stat"><span class="stat-label">Races</span><div class="icon-row"><span class="icon icon--art" tabindex="0" role="img" aria-label="Night Elf (Alliance)"><img src="icons/stat-race-night-elf.webp" alt=""><span class="tip" role="tooltip">Night Elf (Alliance)</span></span><span class="icon icon--art" tabindex="0" role="img" aria-label="Orc (Horde)"><img src="icons/stat-race-orc.webp" alt=""><span class="tip" role="tooltip">Orc (Horde)</span></span></div></div>
+      <div class="stat stat--wide"><span class="stat-label">Weapons</span><div class="icon-row"><span class="icon icon--art" tabindex="0" role="img" aria-label="One-Handed Sword"><img src="icons/stat-weapon-sword.webp" alt=""><span class="tip" role="tooltip">One-Handed Sword</span></span><span class="icon icon--art" tabindex="0" role="img" aria-label="One-Handed Mace"><img src="icons/stat-weapon-mace.webp" alt=""><span class="tip" role="tooltip">One-Handed Mace</span></span><span class="icon icon--art" tabindex="0" role="img" aria-label="One-Handed Axe"><img src="icons/stat-weapon-axe.webp" alt=""><span class="tip" role="tooltip">One-Handed Axe</span></span><span class="icon icon--art" tabindex="0" role="img" aria-label="Fist Weapon"><img src="icons/stat-weapon-fist.webp" alt=""><span class="tip" role="tooltip">Fist Weapon</span></span></div></div>
+    </div>
+  </figure>
+
+  <div class="class-intro">
+    <h1 class="class-name"><span>DEMON HUNTER</span></h1>
+    <p class="value-phrase">An endless war against demons, within and without.</p>
+    <hr class="accent-rule accent-rule--tight">
+    <div class="short-desc">
+      <p>Ten thousand years ago, a group of Night Elves made a solemn pact to turn the Burning Legion&rsquo;s own power against it. Through a profane ritual of demon blood, they sacrificed their souls to keep demons at bay for millennia, scorned by the very people they protected.</p>
+      <p>However, everything changed after the Third War. The Night Elves lost their immortality, and so did the Demon Hunters. Demetrius Darkheart, the last of the Pact, desperately trains thousands before the next invasion comes. Azeroth must be protected, and the Demon Hunters must endure, even if that means sharing the Pact&rsquo;s secrets with the Orcs.</p>
+      <p>You are one of them. Burning blood runs through your veins, and the demon within whispers, bargains and screams, demanding to be unleashed. Steady your blade and your mind, for the hunt is never over.</p>
+    </div>
+    <ul class="intro-points">
+      <li><strong>Rip and tear</strong> with a flurry of steel: the more you hit, the faster your strikes return.</li>
+      <li><strong>Break their magic</strong>, burn their mana and leave casters fleeing in despair.</li>
+      <li><strong>Burn them down</strong>, your body wreathed in fire, leaving only ash in your wake.</li>
+    </ul>
+    <a class="cta cta--play" href="#play">Play it now</a>
+    <span class="cta cta--play-off" aria-disabled="true">Play it now</span>
+    <p class="cta-note">Playable on PC only.</p>
+  </div>
+</section>
+
+<section class="section" id="play">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Burningwoods Hollow</h2>
+      <p class="section-sub">Choose your specialization, drink a Demon Blood and enter the Hollow (a 3-to-5-minute experience).</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="stage-frame">
+      <iframe src="stage/" title="Burningwoods Hollow, a playable stage" allow="fullscreen" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p>How do you best present a class design to the public? Let them play it!</p>
+        <p>Three level 40 Demon Hunter specs, as close to the designed rotations as I could make them, and a challenge to conquer with each. It grew out of an internal prototype built to test how the class feels and to rough out the balance of its core loop and the Battle Rhythm mechanic, where every hit brings your strikes back sooner.</p>
+        <p>Instead of reading pages and pages of documents, anyone can understand the class intuitively by playing it, inside a recreation of World of Warcraft&rsquo;s combat.</p>
+        <p>Turning that prototype into a stage meant balancing the three specs against each other and designing enemies that teach the class one piece at a time: a caster to learn the basics, a swarm to feel the Demon Hunter&rsquo;s area damage, two casters at once to test what you&rsquo;ve learned, and a Felguard that asks for real mastery. The waves are also meant to wear you down. Spent cooldowns, lost health and lost mana carry over, so how you win one wave decides how ready you are for the next.</p>
+        <!-- Authorship -->
+        <p>I designed every mechanic, number and encounter; Claude, an AI, wrote the prototype code under my direction.</p>
+        <p>I had a lot of fun making, balancing and playing this stage, and I hope you did too!</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="design">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Class Design</h2>
+      <p class="section-sub">How the class came to be, and where the idea came from.</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="section-body">
+      <p>The Demon Hunter is one of Warcraft&rsquo;s most iconic archetypes. For my WoW: Forever design, I wanted a version faithful to the Warcraft III hero, not the demonic form Illidan takes on and is depicted in Retail.</p>
+      <p>The hero unit already hinted at three specializations through its abilities: Evasion, Mana Burn and Immolation. But every WoW class is a bundle of archetypes: the Warrior holds the footman, the knight, the grunt, the mountain king and more. A class built from a single hero limits its own potential. The Demon Hunter had to be bigger than the hero that inspired it.</p>
+    </div>
+    <h3 class="sub-title sub-title--center">Sources and inspirations</h3>
+    <div class="cards-3 sources">
+      <article class="card-plain source-card"><div class="source-head"><img src="icons/w3-demon-hunter.webp" alt="" width="48" height="48" loading="lazy"><h4>Warcraft III: the Demon Hunter</h4></div><p>The foundation of the whole class: the demonic powers, the aesthetic and the lore. Every other influence orbits this core and expands it.</p></article>
+      <article class="card-plain source-card"><div class="source-head"><img src="icons/w3-blademaster.webp" alt="" width="48" height="48" loading="lazy"><h4>Warcraft III: the Blademaster</h4></div><p>What the Warrior&rsquo;s kit and fantasy left out of the Blademaster: Wind Walk, Mirror Image, flaming blades, and above all, the feeling of a samurai bound by a code of honor.</p></article>
+      <article class="card-plain source-card"><div class="source-head"><img src="icons/w3-spellbreaker.webp" alt="" width="48" height="48" loading="lazy"><h4>Warcraft III: the Spellbreaker</h4></div><p>Another archetype no WoW class depicts: the Blood Elf warriors who manipulate magic, burn mana and break spells.</p></article>
+    </div>
+    <div class="section-body bridge">
+      <p>From there, each ability tree became a consequence: the acrobatics of a trained body, anti-magic powers, and the demon&rsquo;s blood with its unique abilities. All three also mirror the class fantasy: a trained body and mind in control, against a demonic power that wants out.</p>
+    </div>
+
+    <div class="part" id="gameplay">
+      <div class="part-head">
+        <h3 class="part-title">Gameplay</h3>
+        <hr class="accent-rule accent-rule--part"></div>
+    <div class="section-body">
+      <h3 class="sub-title">Relentless Pressure</h3>
+      <p>I feel like a Demon Hunter is a class that should never let go of its target, with the mobility to make that possible: abilities that close the distance, movement speed above other classes, and pressure that grows with every hit, through shorter cooldowns, burned mana and each tree&rsquo;s own spender. A Demon Hunter&rsquo;s defense should be to kill faster than it dies.</p>
+      <p>Those strengths come at a price. The Demon Hunter has no self-healing outside Dreadlord&rsquo;s Blood, and few ways to hold an enemy in place. Each weakness feeds the pillar: with no way to recover health, the only answer is to kill faster; with few ways to lock enemies down, the only answer is to use your mobility to stay on them.</p>
+    </div>
+    <div class="sw-grid">
+      <div class="sw-col sw-col--good">
+        <h3 class="sw-title sw-title--good">Strengths</h3>
+        <ul class="sw-list"><li>High mobility, with many ways to close the distance.</li><li>Constant damage, with strong burst windows.</li><li>Unique tools to burn mana and break spellcasters.</li></ul>
+      </div>
+      <div class="sw-col sw-col--bad">
+        <h3 class="sw-title sw-title--bad">Weaknesses</h3>
+        <ul class="sw-list"><li>No self-healing, apart from Dreadlord&rsquo;s Blood.</li><li>Few ways to hold enemies in place.</li></ul>
+      </div>
+    </div>
+    <div class="section-body mechanic">
+      <h3 class="sub-title">Unique mechanic: Battle Rhythm</h3>
+      <p>Battle Rhythm comes from Heroes of the Storm: Illidan&rsquo;s basic attacks in that game lower his cooldowns, incentivizing the player to keep attacking as much as possible.</p>
+      <p>That feeling stuck with me, and it fit a Demon Hunter who must stay on the offensive. At first, every ability had this reduction, but that would have made haste and weapon speed too desirable. So Battle Rhythm only applies to the strikes, the engine of each build, while the rest of the kit keeps a more standard cooldown. Strikes never come back on a fully predictable timer, and that makes playing a Demon Hunter feel alive.</p>
+      <p>I believe haste still becomes the best stat, for as long as mana holds, which creates a push and pull that mirrors the Demon Hunter itself: attack as hard as you can, but hold back enough to last the fight. Martial Arts sits most comfortably here, with haste already built in; the Spellbreaker wants haste to fuel its mana, competing with Mana Strike&rsquo;s own resets; and the Felblood, like the blademasters and fire across Warcraft, leans more on critical strikes while still finding haste valuable.</p>
+    </div>
+    <h3 class="sub-title sub-title--center facets-title">The three specializations</h3>
+    <div class="facets">
+      <article class="facet facet--martial">
+        <img src="icons/double-strike.webp" alt="" loading="lazy">
+        <h4>Martial Arts</h4>
+        <p class="facet-stats">Physical · Agility · the most mobile</p>
+        <p class="facet-text">The agile Demon Hunter, always on the move and always striking. I built its combo around its movement abilities, so repositioning is part of the rotation: you are constantly cutting your way across the fight. It settles into a steady rhythm I find engaging, and as the simplest rotation of the three, it is naturally the fastest, cycling more often than any other spec.</p>
+      </article>
+      <article class="facet facet--spell">
+        <img src="icons/mana-strike.webp" alt="" loading="lazy">
+        <h4>Spellbreaker</h4>
+        <p class="facet-stats">Arcane · Intellect and Spell Power · breaks casters</p>
+        <p class="facet-text">Geared for Intellect and spell power, the Spellbreaker has naturally weaker auto attacks, so I turned them into its engine: they restore mana and grant free Mana Strikes. Attacking fast and constantly speeds up the build-up to its final blow, which is also why Mana Scar needs so many charges: with free strikes feeding it, fewer would fire too soon. I also added Mana Breaker to give the player more to do than wait for the proc, and to lower the variance of depending on Mana Strike alone.</p>
+      </article>
+      <article class="facet facet--fel">
+        <img src="icons/immolation.webp" alt="" loading="lazy">
+        <h4>Felblood</h4>
+        <p class="facet-stats">Fire from attack power · Strength · the toughest</p>
+        <p class="facet-text">The hardest to pin down. I landed on a mix of demonic power and fire: here the Demon Hunter draws on the infernal side of demons, so there is no Shadow damage, which fits Immolation and Burning Blades best. The rotation is simple, but split in two: the blades stoke their flames toward Eruption, while Immolation burns around you, waiting to be detonated for extra damage. Neither line is complex on its own, but managing both at once is very engaging.</p>
+      </article>
+    </div>
+    </div>
+
+    <div class="part" id="bloods">
+      <div class="part-head">
+        <h3 class="part-title">Demon Bloods</h3>
+        <hr class="accent-rule accent-rule--part"></div>
+    <div class="section-body mechanic mechanic--first">
+      <p>Demon Bloods were born from the ritual: turning the idea of wielding demonic power into a mechanic. The inspiration came from the Warlock, who earns each demon through a quest and gets a specific tool from each one. But where the Warlock dominates demons from the outside, the Demon Hunter hunts them down, masters them from within and wields their traits.</p>
+      <p>In-game, drinking a blood would play a /sit and drink animation or, ideally, an exclusive one: sitting, preparing a ritual elixir and then drinking it.</p>
+      <p>I kept the bloods on the defensive and adventuring side: shorter downtime between fights, and each blood stronger against specific enemies. I want it to be an active choice based on what you are about to fight, and that would be far harder to design if the bloods dealt damage. Imp&rsquo;s Blood has an offensive edge, but it depends on the enemy attacking, not on the Demon Hunter.</p>
+      <p>Each blood remains active until another blood is drunk, and cannot be used in combat.</p>
+    </div>
+<ul class="blood-list">
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/imps-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Imp&#x27;s Blood <span class="tag-stage">In the stage</span></p><p class="ability-desc">Increases your Fire resistance by 30 and causes a very small amount of Fire damage to enemies that strike you in melee.</p></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/satyrs-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Satyr&#x27;s Blood <span class="tag-stage">In the stage</span></p><p class="ability-desc">Increases your movement speed by 5% and your health regeneration rate by 50% out of combat.</p></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/felhunters-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Felhunter&#x27;s Blood <span class="tag-stage">In the stage</span></p><p class="ability-desc">Increases your resistance to all magic by 20, increases your stealth detection and allows 25% of your mana regeneration to continue while casting.</p></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dreadlords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Dreadlord&#x27;s Blood</p><p class="ability-desc">Causes your melee attacks to heal you for 3% of the damage they deal.</p></div></li>
+<li class="blood-card"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/pit-lords-blood.webp" alt="" loading="lazy"></span><div><p class="ability-name">Pit Lord&#x27;s Blood</p><p class="ability-desc">Reduces all damage you take by 2% for each enemy within 8 yds of you, up to 10%.</p></div></li>
+</ul>
+</div>
+  </div>
+</section>
+
+<section class="section" id="lore">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Lore</h2>
+      <p class="section-sub section-quote">&ldquo;The ritual kills nine of every ten. Tell me why you will be the tenth.&rdquo;<span class="quote-by">Demetrius Darkheart</span></p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="section-body">
+      <p>Drifters and outcasts, Demon Hunters were a rare presence amidst the most populated areas of Kalimdor. Yet their legends were not, ranging from dark saviors to blinded demons disguised in elven clothing, ever thirsting for power. But all legends agree on one thing: wherever a Demon Hunter is found, one can be certain that demons lurk nearby, by the hundreds.</p>
+      <h3 class="sub-title">The Wars and Their Aftermath</h3><p>Ten thousand years ago, as the Burning Legion invaded Azeroth, a group of Kaldorei led by Demetrius Darkheart swore to slay the demons with their own power. They drank an elixir of demon blood that burned away their eyes and corrupted their souls, and carved arcane runes into their skin to hold the power in. Not all had the physical and mental fortitude to endure it. Many became, at best, mindless husks, and at worst, power-hungry demons themselves. Those who survived helped turn the tide of the war, and earned a lifelong struggle against their own dark desires.</p>
+      <p>Over the next ten thousand years, the order dwindled. Some fell in the hunt. Others gave in, consuming more and more demonic energy until they became indistinguishable from the prey they once hunted. Masters tried to take only apprentices they deemed capable, but too often had to slay them with their own blades. Then came the Third War. At Mount Hyjal, the World Tree was sacrificed to destroy Archimonde, and the Kaldorei&rsquo;s immortality died with it. Few apprentices survived, the old guard kept falling, and now time itself was against them. For the first time in ten thousand years, Demetrius saw the end of the Demon Hunters.</p>
+      <h3 class="sub-title">The Rise of a New Generation</h3><p>There was only one answer: more Demon Hunters. Demetrius began to seek out and train as many apprentices as he could, Night Elves and Orcs alike, his last hope before the Legion&rsquo;s return. Gorthashi was the first to show Demetrius that possibility: he found the Orc fighting bravely against a Felguard. The Night Elf had already seen the Orcs, once slaves of the Legion, slay Mannoroth, the pit lord he himself had fought ten thousand years ago. A people capable of that was worth the risk.</p>
+      <p>To his surprise, most Orc initiates survived the ritual, their bodies already adapted by years of corruption. His own people called it madness: these were the same Orcs who slew Cenarius in a demonic rage, and who still fight the Kaldorei in Ashenvale. Rejected by their elven brethren, the Orc Demon Hunters began an order of their own, forged in honor and sacrifice. Once drifters and outcasts, the Demon Hunters now stand as two orders.</p>
+    </div>
+
+    <div class="part part--lore">
+      <div class="part-head">
+        <h3 class="part-title">The Two Branches</h3>
+        <hr class="accent-rule accent-rule--part"></div>
+    <div class="branches">
+      <article class="branch branch--pactbound">
+        <h4>Pactbound</h4>
+        <p>Heirs to ten thousand years of tradition, the young Night Elf Demon Hunters seek to preserve the teachings of Demetrius. Where their elders were bound only master to apprentice, they are bound to each other, in a brotherhood of pain and vengeance, for everyone lost since the Third War. They keep the Pact&rsquo;s tradition alive: meditation, discipline and restraint. Few trust their Orc brothers, and skirmishes between the two orders grow more common.</p>
+      </article>
+      <article class="branch branch--warblades">
+        <h4>Warblades</h4>
+        <p>Founders of a new order, the Warblades answer for the sins of their clans. Most come from the Burning Blade, whose blademasters broke free of the demons&rsquo; influence while the rest of the clan became the cult that still lurks in Orgrimmar&rsquo;s shadows. To them, defiling their souls to protect their own is no sacrifice, but an honor. Where the Pactbound stand as equals, the Warblades answer to rank: Initiates who have yet to face the ritual, Demon Hunters who survived it, and Blademasters, whose title is earned through deeds, never inherited. They expect no welcome, and ask for none.</p>
+      </article>
+    </div>
+    </div>
+
+    <div class="part part--lore">
+      <div class="part-head">
+        <h3 class="part-title">The Two Masters</h3>
+        <hr class="accent-rule accent-rule--part"></div>
+    <div class="lore-grid lore-grid--flip lore-char">
+      <div class="text-col"><div class="section-body">
+        <h3 class="sub-title">Demetrius Darkheart, The Last of the Pact</h3>
+        <p>The last survivor of the Pact sworn ten thousand years ago. Over the millennia, Demetrius has buried comrades, apprentices and friends, and at Mount Hyjal he watched still more of them fall. What remains is a cold urgency, and it worries even those closest to him.</p>
+        <p>After the Third War he trained many Night Elves, and the ritual took most of them. Within a year, no more than twenty had survived. Demetrius needed more, many more. During a hunt, an Orc named Gorthashi showed him another way: a brave soul, ready to die fighting demons. This could be it. The training of Orcs began with Gorthashi, and grew fast.</p>
+        <p>The older Night Elf Demon Hunters, most of them his own surviving disciples, have turned their backs on him, believing he has betrayed their Pact by sharing it with the once-slaves of the demons. Demetrius does not care. All that matters is that there are enough hunters to keep Azeroth safe, long after he is gone.</p>
+      </div></div>
+      <figure class="lore-art lore-art--model">
+        <div class="art-frame"><img src="img/lore-demetrius-model2.webp" alt="" width="712" height="866" loading="lazy" style="object-position: 58% 30%"></div>
+        <p class="art-credit">World of Warcraft model, &copy; Blizzard Entertainment. Render via Wowhead.</p>
+      </figure>
+    </div>
+    <div class="lore-grid lore-char">
+      <div class="text-col"><div class="section-body">
+        <h3 class="sub-title">Gorthashi Embersoul, The First Orc Demon Hunter</h3>
+        <p>The Burning Blade had lost its honor long before, in the wars where Mannoroth&rsquo;s blood drove its warriors into a mindless frenzy. Gorthashi fought among them. But when the clan gave itself fully to the demons, he stopped, saw how far he had fallen, and walked away.</p>
+        <p>He tried to atone alone, protecting the helpless of Kalimdor and hunting the demons that preyed on them. He did not always succeed. Facing a Felguard, he was ready to die, honorless and forgotten. Then, an elf appeared, saving his life in a dance of blade and flame.</p>
+        <p>In Demetrius, he found a true path: a way to reclaim his honor by protecting those who cannot protect themselves, destroying the evil that tarnished him and his former brethren. Gorthashi became the first Orc Demon Hunter.</p>
+        <p>He still calls Demetrius master, and means it. The two work side by side: the divide between Pactbound and Warblades was born among the disciples, not the masters. Skirmishes are a nuisance. The Legion is the war.</p>
+      </div></div>
+      <figure class="lore-art lore-art--model">
+        <div class="art-frame"><img src="img/lore-gorthashi-model2.webp" alt="" width="697" height="852" loading="lazy" style="object-position: 50% 30%"></div>
+        <p class="art-credit">World of Warcraft model, &copy; Blizzard Entertainment. Render via Wowhead.</p>
+      </figure>
+    </div>
+    </div>
+    <details class="commentary">
+      <summary>Designer&rsquo;s Commentary<span class="marker" aria-hidden="true"></span></summary>
+      <div class="commentary-body"><p>This lore had two problems to solve: how to bring Demon Hunters to the Horde, and why there are suddenly so many of them. I also wanted it to be completely agnostic to Illidan, to make it feel like Illidan is small compared to what Demon Hunters are in Azeroth, and not leash the class to a single figure.</p>
+        <p>For a Horde Demon Hunter, the Orcs&rsquo; history with demons and the blademaster tradition fit far better than the alternatives. In the World of Warcraft RPG (2006), Demon Hunters can already set their blades aflame, just as the Burning Blade&rsquo;s blademasters did before battle. The clan then became the heart of the Horde&rsquo;s Demon Hunters.</p>
+        <p>Demetrius holds the restrained core of the Warcraft III Demon Hunter, even as he breaks its traditions. Gorthashi pushes the order beyond it. An Orc seeking honor through sacrifice, a wandering samurai saving the world from a greater evil: once those pieces came together, my mind was buzzing.</p>
+        <p>The rest was asking why, again and again. Why would Demetrius train new hunters? Why Orcs? Why are there so many on both sides? Why do they fight in the wars between Horde and Alliance? The lore answers each one, and leaves Azeroth with more conflict and more room for stories to be told.</p></div>
+    </details>
+  </div>
+</section>
+
+<section class="section" id="abilities">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Abilities</h2>
+      <p class="section-sub">Every ability and talent in the stage, for reference.</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="tree-list">
+      <details class="tree tree--martial">
+        <summary>
+          <span class="icon icon--static icon--art" aria-hidden="true"><img src="icons/double-strike.webp" alt=""></span>
+          <span class="tree-name">Martial Arts</span>
+          <span class="tree-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="tree-body">
+<h4 class="block-title">Key Spells &amp; Abilities</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/double-strike.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Double Strike</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Physical Damage</li><li>8 sec cooldown</li><li>Requires a main hand and an off-hand weapon</li></ul><p class="ability-desc">Strikes twice in quick succession, first with your main hand and then with your off-hand weapon. Each strike causes 64% weapon damage plus a small amount of additional damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dive.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Dive</p><ul class="meta"><li>Instant</li><li>Very Low Mana</li><li>Single Target</li><li>7 to 20 yds</li><li class="is-school">Physical Damage</li><li>30 sec cooldown</li></ul><p class="ability-desc">Dives at the target and lands on its other side, causing a small amount of damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/blade-dash.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Blade Dash</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Self</li><li class="is-school">Physical Damage</li><li>12 sec cooldown</li><li>Requires Melee Weapon</li></ul><p class="ability-desc">Dashes 7 yds forward, striking all enemies in your path for 26% of your main hand and off-hand weapon damage plus a moderate amount of additional damage. Cannot miss, be dodged or be parried.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/wind-walk.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Wind Walk</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Self</li><li>30 sec cooldown</li></ul><p class="ability-desc">Increases your movement speed by 40% and your chance to dodge attacks and spells by 40% for 5 sec. Using any ability or attacking ends the effect.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/battle-rhythm.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Battle Rhythm</p><ul class="meta"><li class="is-passive">Passive</li></ul><p class="ability-desc">Each of your melee weapon hits that lands reduces the remaining cooldown of your Double Strike, Mana Strike and Flame Strike by 0.5 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/the-hunt.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">The Hunt</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Single Target</li><li>45 yds</li><li class="is-school">Physical Damage</li><li>3 min cooldown</li><li>Requires Melee Weapon</li></ul><p class="ability-desc">Leaps at the target and stuns it for 1 sec. During the stun, you make 5 extra melee attacks, alternating between your main hand and off-hand weapons.</p></div></li>
+</ul>
+<h4 class="block-title">Key Talents</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/blade-dash.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Improved Blade Dash <span class="rank">Tier 2 · 2 ranks</span></p><ul class="meta"><li>Requires 5 points in Martial Arts Talents</li></ul><p class="ability-desc">Reduces the cooldown of your Blade Dash by 2/4 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/muscle-memory.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Muscle Memory <span class="rank">Tier 3 · 5 ranks</span></p><ul class="meta"><li>Requires 10 points in Martial Arts Talents</li></ul><p class="ability-desc">Gives your melee auto attacks a 2/4/6/8/10% chance to make your next ability cost no mana. That ability does not interrupt your mana regeneration.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/momentum.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Momentum <span class="rank">Tier 5 · 5 ranks</span></p><ul class="meta"><li>Requires 20 points in Martial Arts Talents</li></ul><p class="ability-desc">Each hit of your Double Strike that lands grants you a stack of Momentum, increasing your movement speed by 0.5/1/1.5/2/2.5%. Stacks up to 4 times. Lasts 30 sec. Your Blade Dash consumes up to 4 stacks of Momentum, increasing its damage by 20% for each stack consumed.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/dive.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Hunt Prey <span class="rank">Tier 7 · 1 rank</span></p><ul class="meta"><li>Requires 30 points in Martial Arts Talents</li><li>Requires 5 points in Momentum</li></ul><p class="ability-desc">When your Blade Dash consumes 4 stacks of Momentum, the cooldown of your Dive is reset and your next Dive within 5 sec has no minimum range, costs no mana, deals 500% additional damage and does not trigger the global cooldown.</p></div></li>
+</ul>
+</div>
+      </details>
+      <details class="tree tree--spell">
+        <summary>
+          <span class="icon icon--static icon--art" aria-hidden="true"><img src="icons/mana-strike.webp" alt=""></span>
+          <span class="tree-name">Spellbreaker</span>
+          <span class="tree-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="tree-body">
+<h4 class="block-title">Key Spells &amp; Abilities</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-strike.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Strike</p><ul class="meta"><li>Instant</li><li>High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Arcane Damage</li><li>8 sec cooldown</li><li>Requires Melee Weapon</li></ul><p class="ability-desc">An instant strike that causes Arcane damage equal to 3 times your main hand weapon&#x27;s damage per second. If the target has mana, also burns mana equal to 100% of the damage dealt and causes 50% of that amount as additional Arcane damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/disrupt.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Disrupt</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Single Target</li><li>10 yds</li><li class="is-school">Arcane Damage</li><li>15 sec cooldown</li></ul><p class="ability-desc">Interrupts the target&#x27;s spellcasting, burning mana equal to the interrupted spell&#x27;s cost and causing Arcane damage equal to 50% of the mana burned. Prevents any spell in that school from being cast for 4 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/shackle-demon.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Shackle Demon</p><ul class="meta"><li>Cast</li><li>High Mana</li><li>Single Target</li><li>25 yds</li><li>15 sec cooldown</li></ul><p class="ability-desc">Shackles the target demon for up to 30 sec. The shackled demon is unable to move, attack or cast spells, and any spell it is casting is interrupted. You stop attacking the target until you click on it or attack it again. Any damage caused will break the effect. Only one target can be shackled at a time.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/deep-breaths.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Still Mind</p><ul class="meta"><li>Channeled</li><li>Self</li><li>3 min cooldown</li></ul><p class="ability-desc">Try to focus your mind for 2 sec. While channeling, your mana regeneration is active and increased by 1400%.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mirror-image.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mirror Image</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>Self</li><li>5 min cooldown</li></ul><p class="ability-desc">Splits your form into 3 images of yourself for 15 sec, causing enemies to lose track of you and removing all your threat. Each image has 25% of your maximum health, starting at the same share of health as you. The images surround your target, attack it and use Mana Strike. If you have Mana Charge, each Mana Strike they land grants you a stack of it.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-breaker.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Breaker</p><ul class="meta"><li>Instant</li><li>Very High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Arcane Damage</li><li>12 sec cooldown</li><li>Requires Melee Weapon</li></ul><p class="ability-desc">Breaks the target&#x27;s defenses with a blade of arcane energy, causing Arcane damage equal to 6.75 times your main hand weapon&#x27;s damage per second and granting you 2 stacks of Mana Charge. If the target has mana, also burns mana equal to 100% of the damage dealt and causes 50% of that amount as additional Arcane damage.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-scar.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Scar</p><ul class="meta"><li>Cast</li><li>High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Arcane Damage</li><li>Requires a main hand and an off-hand weapon</li></ul><p class="ability-desc">Gathers your focus, then cuts the target twice in quick succession with blades of mana, first with your main hand and then with your off-hand weapon. Each cut causes Arcane damage equal to 12.6 times that weapon&#x27;s damage per second. Can only be used while you have 8 stacks of Mana Charge, and consumes them after the second cut.</p></div></li>
+</ul>
+<h4 class="block-title">Key Talents</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mental-clarity.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mental Clarity <span class="rank">Tier 3 · 5 ranks</span></p><ul class="meta"><li>Requires 10 points in Spellbreaker Talents</li></ul><p class="ability-desc">Gives your melee auto attacks a 3/5/8/11/13% chance to restore mana equal to 5 sec of your mana regeneration.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-weaving.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Weaving <span class="rank">Tier 5 · 1 rank</span></p><ul class="meta"><li>Requires 20 points in Spellbreaker Talents</li><li>Requires 5 points in Deep Meditation</li></ul><p class="ability-desc">Each time your Deep Meditation deals damage, the cooldown of your Mana Strike is reset and your next Mana Strike costs 50% less mana.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mana-charge.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mana Charge <span class="rank">Tier 5 · 5 ranks</span></p><ul class="meta"><li>Requires 20 points in Spellbreaker Talents</li></ul><p class="ability-desc">Each of your Mana Strikes that lands has a 20/40/60/80/100% chance to grant you a stack of Mana Charge, increasing the magic damage you deal by 1%. Stacks up to 8 times. Lasts 15 sec, and each new stack refreshes the duration.</p></div></li>
+</ul>
+</div>
+      </details>
+      <details class="tree tree--fel">
+        <summary>
+          <span class="icon icon--static icon--art" aria-hidden="true"><img src="icons/immolation.webp" alt=""></span>
+          <span class="tree-name">Felblood</span>
+          <span class="tree-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="tree-body">
+<h4 class="block-title">Key Spells &amp; Abilities</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/flame-strike.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Flame Strike</p><ul class="meta"><li>Instant</li><li>Medium Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Fire Damage</li><li>8 sec cooldown</li><li>Requires Melee Weapon</li></ul><p class="ability-desc">An instant strike that causes 36% weapon damage plus an additional small amount as Fire damage, and sets your weapons ablaze with Burning Blades, reducing your attack speed by 5% and causing your melee auto attacks to deal an additional 10% of weapon damage as Fire damage per stack. Can be applied up to 3 times. Lasts 9 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/immolation.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Immolation</p><ul class="meta"><li>Instant</li><li>Low Mana</li><li>All enemies in melee range</li><li class="is-school">Fire Damage</li><li>20 sec cooldown</li></ul><p class="ability-desc">Engulfs you in flames, causing a very small amount of Fire damage every 1 sec to all enemies in melee range. Lasts 10 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/demonic-skin.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Demonic Skin</p><ul class="meta"><li>Instant</li><li>Self</li><li>3 min cooldown</li></ul><p class="ability-desc">Hardens your skin with demonic power, reducing all damage you take by a moderate amount for 15 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/metamorphosis.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Metamorphosis</p><ul class="meta"><li>Instant</li><li>Self</li><li>5 min cooldown</li></ul><p class="ability-desc">Transforms you into a half-demon, increasing your haste by 20%, armor by 50% and health by 25%. Lasts 15 sec.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/eruption.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Eruption</p><ul class="meta"><li>1 sec cast</li><li>High Mana</li><li>Single Target</li><li>Melee Range</li><li class="is-school">Fire Damage</li><li>No cooldown</li></ul><p class="ability-desc">Makes the flames on your weapons erupt into the target, causing Fire damage equal to 32% of your attack power plus a large amount. Requires 3 stacks of Burning Blades, and consumes them.</p></div></li>
+</ul>
+<h4 class="block-title">Key Talents</h4>
+<ul class="ability-list">
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/demonic-thirst.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Demonic Thirst <span class="rank">Tier 3 · 3 ranks</span></p><ul class="meta"><li>Requires 10 points in Felblood Talents</li></ul><p class="ability-desc">Your Fire critical strikes restore mana equal to 1.3/2.7/4% of your base mana.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/immolation.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Infernal Release <span class="rank">Tier 4 · 1 rank</span></p><ul class="meta"><li>Requires 15 points in Felblood Talents</li><li>Requires 2 points in Improved Immolation</li></ul><p class="ability-desc">While your Immolation is active, using it again makes it explode for 50% of the total damage it deals to one target over its full duration, increased by 5% for each second it has been active, hitting all enemies within melee range. Ends the Immolation and does not trigger the global cooldown. If the Immolation ends on its own, it does not explode.</p></div></li>
+<li class="ability"><span class="icon icon--static icon--lg icon--art" aria-hidden="true"><img src="icons/mixed-blood.webp" alt="" loading="lazy"></span><div class="ability-main"><p class="ability-name">Mixed Blood <span class="rank">Tier 4 · 1 rank</span></p><ul class="meta"><li>Requires 15 points in Felblood Talents</li></ul><p class="ability-desc">Allows you to have two Demon Bloods active at the same time.</p></div></li>
+</ul>
+</div>
+      </details>
+    </div>
+    </div>
+</section>
+
+<section class="section" id="feedback">
+  <div class="panel">
+    <div class="panel-head">
+      <h2 class="section-title">Feedback</h2>
+      <p class="section-sub">Played it? Tell me what worked, what didn&rsquo;t, and what you would change.</p>
+      <hr class="accent-rule accent-rule--tight">
+    </div>
+    <div class="feedback-grid">
+      <form class="poll" id="poll" aria-label="Poll">
+        <h3 class="sub-title">Would you play it?</h3>
+        <label><input type="radio" name="vote" value="yes"> Yes</label>
+        <label><input type="radio" name="vote" value="maybe"> Maybe</label>
+        <label><input type="radio" name="vote" value="no"> No</label>
+        <h3 class="sub-title">Favorite specialization</h3>
+        <label><input type="radio" name="spec" value="martial"> Martial Arts</label>
+        <label><input type="radio" name="spec" value="spellbreaker"> Spellbreaker</label>
+        <label><input type="radio" name="spec" value="felblood"> Felblood</label>
+        <button type="submit" class="cta cta--small" disabled>Vote</button>
+        <p class="form-status" id="pollStatus" role="status" aria-live="polite"></p>
+        <p class="poll-total">Votes so far: <span id="pollTotal">-</span></p>
+      </form>
+      <form class="feedback-form" id="feedbackForm" aria-label="Feedback form">
+        <fieldset class="spec-pick">
+          <legend>Specializations you played</legend>
+          <label><input type="checkbox" name="spec" value="Martial Arts"> Martial Arts</label>
+          <label><input type="checkbox" name="spec" value="Spellbreaker"> Spellbreaker</label>
+          <label><input type="checkbox" name="spec" value="Felblood"> Felblood</label>
+        </fieldset>
+        <label>Did you win? <select name="won"><option value="">-</option><option>Yes</option><option>No</option></select></label>
+        <label>What was best?<textarea name="best" rows="3"></textarea></label>
+        <label>What was worst?<textarea name="worst" rows="3"></textarea></label>
+        <label>Ideas<textarea name="ideas" rows="3"></textarea></label>
+        <label>Contact (optional)<input type="text" name="contact" autocomplete="email"></label>
+        <input type="text" name="website" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="hidden" name="run" id="runData">
+        <p class="run-note" id="runNote" hidden></p>
+        <button type="submit" class="cta cta--small" disabled>Send</button>
+        <p class="form-status" id="feedbackStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+    <p class="privacy">Your vote, your answers and the stats of your last run (spec, Demon Bloods, wave reached, time and damage) are stored privately and used only to improve this design. Only vote totals appear on this page. Contact is optional and never shared.</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <nav class="footer-site" aria-label="Site">
+    <a href="#top">Back to top</a><a class="footer-lab" href="../">Danny&rsquo;s Tinker Lab</a>
+  </nav>
+  <p>Hero art: <cite>The Art of Warcraft</cite> (BradyGames, 2002), &copy; Blizzard Entertainment.</p>
+  <p>Art by Blizzard Entertainment, from Warcraft III and World of Warcraft, with each source credited. Icons are original World of Warcraft icons, some recolored. Fonts: Eczar, Spectral, Jost, Alegreya Sans, Barlow Condensed and Marcellus SC, under the SIL Open Font License.</p>
+  <p>Fan-made project, not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Warcraft are trademarks of Blizzard Entertainment, Inc.</p>
+  <p class="footer-by">A <a href="../">Danny&rsquo;s Tinker Lab</a> project by Daniel Manginelli</p>
+</footer>
+
+<script src="js/page.js"></script>
+<!-- Visit stats: GoatCounter, cookie-free. -->
+<script data-goatcounter="https://manginelli.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

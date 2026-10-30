@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forever Class Lab · WoW: Forever talent calculator and class tester</title>
+  <meta name="description" content="Talent calculator for WoW: Forever with a class tester: build your talents and action bar, then play your class against a dummy, a raid boss as the tank, or as the healer. Built from public beta data.">
+  <link rel="canonical" href="https://manginelli.github.io/forever-class-lab/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Danny's Tinker Lab">
+  <meta property="og:title" content="Forever Class Lab: build your WoW: Forever class, then play it">
+  <meta property="og:description" content="Talent calculator and class tester for every WoW: Forever class. Damage, tank and healing tests, built from public beta data.">
+  <meta property="og:url" content="https://manginelli.github.io/forever-class-lab/">
+  <meta property="og:image" content="https://manginelli.github.io/forever-class-lab/og-class-lab.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Forever Class Lab: a talent tree, an action bar and a raid boss fight in the browser.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./" aria-label="Forever Class Lab, beta">
+      <span class="brand-title">Forever Class Lab</span>
+      <span class="brand-tag">beta</span>
+    </a>
+    <div class="class-pick" id="classPick" aria-label="Class"></div>
+    <div class="builds" id="builds" aria-label="Suggested builds"></div>
+    <div class="links">
+      <button class="ghost" id="linkBtn" aria-expanded="false" aria-controls="linkBox">Import / Export</button>
+      <button class="ghost" id="shareBtn">Copy link</button>
+      <button class="ghost" id="feedbackBtn">Feedback</button>
+      <div class="link-box" id="linkBox" hidden>
+        <label for="codeOut">This build's code: talents, action bar, gear and options</label>
+        <div class="link-row"><input id="codeOut" type="text" readonly spellcheck="false"><button class="ghost small" id="codeCopy">Copy</button></div>
+        <label for="linkInput">Import a build code or a Class Lab link</label>
+        <div class="link-row"><input id="linkInput" type="text" placeholder="FCL1-..." autocomplete="off" spellcheck="false"><button class="ghost small" id="linkGo">Import</button></div>
+        <label class="link-check"><input type="checkbox" id="barOnly"> Only the action bar (keep my talents)</label>
+        <p class="link-note" id="linkNote" role="status"></p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel builder" aria-label="Build your character">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="talents">Talents</button>
+        <button class="tab" role="tab" data-tab="spells">Spellbook</button>
+        <button class="tab" role="tab" data-tab="gear">Gear and options</button>
+      </div>
+      <div class="tab-panel" id="tab-talents" role="tabpanel"></div>
+      <div class="tab-panel" id="tab-spells" role="tabpanel" hidden></div>
+      <div class="tab-panel" id="tab-gear" role="tabpanel" hidden></div>
+    </aside>
+
+    <section class="stage" aria-label="Training ground">
+      <canvas id="arena" tabindex="0" aria-label="Arena with your character and the Training Dummy"></canvas>
+      <!-- Start window: the fight waits for Start. The HUD and the test panel stay above it and keep working. -->
+      <div class="start-overlay" id="startOverlay">
+        <div class="start-box" role="dialog" aria-labelledby="startTest">
+          <p class="start-kicker" id="startTest">Damage test</p>
+          <p class="start-text">Talents, bar and test can change now. The fight waits for you.</p>
+          <button class="start-btn" id="startBtn">Start <kbd>Enter</kbd></button>
+          <p class="start-hint-touch" id="startHintTouch"></p>
+          <p class="start-note">Simulated from public WoW: Forever beta data. Numbers and feel may change at launch. <a href="how-it-works/">How it works</a></p>
+        </div>
+      </div>
+      <div id="hud" class="hud"></div>
+      <aside class="meter" id="meter" aria-label="Test and spec"></aside>
+      <p class="keys-hint" id="keysHint"></p>
+      <!-- The simulation notice, always on screen (the data version is the client build of tools/extract/data). -->
+      <p class="sim-note" role="note">Simulated from public WoW: Forever beta data (build 1.60.1.70685). Numbers and feel may change at launch. <a href="how-it-works/">How it works</a></p>
+    </section>
+  </main>
+
+  <!-- Touch layout only: one view at a time. -->
+  <nav class="touch-nav" aria-label="Lab views">
+    <button data-view="play" aria-current="true">Play</button>
+    <button data-view="talents">Talents</button>
+    <button data-view="spells">Spellbook</button>
+    <button data-view="gear">Gear</button>
+  </nav>
+
+  <footer class="foot">
+    <span>Spell and talent data: public WoW: Forever beta data (build 1.60.1.70685), via <a href="https://foreverchanges.pro" target="_blank" rel="noopener">ForeverChanges</a> and <a href="https://wago.tools" target="_blank" rel="noopener">wago.tools</a>. Icons: World of Warcraft.</span>
+    <span>Fan-made project, not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Warcraft are trademarks of Blizzard Entertainment, Inc.</span>
+    <span><a href="how-it-works/">How it works</a> · <button class="link" id="footFeedback">Report a bug or send feedback</button> · <a href="https://manginelli.github.io/">A Danny's Tinker Lab project by Daniel Manginelli</a></span>
+  </footer>
+
+  <script src="dist/app.js"></script>
+  <!-- Visit stats: GoatCounter, cookie-free. -->
+  <script data-goatcounter="https://manginelli.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

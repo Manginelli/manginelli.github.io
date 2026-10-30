@@ -1,0 +1,131 @@
+/* Site identity: a white accent and the RPG tooltip.
+   A game HUD over a world: the page ground is the "world" (slate with the arena floor grid), content sits in flat black
+   panels with a 1px black edge and square corners, numbers in an editor mono (Barlow is the game layer, JetBrains Mono the engine layer, like fields in an Inspector).
+   The signature piece is the RPG tooltip, used for the designer and every project. Each project keeps its own "class color".
+   Shared by every page of the personal site; page pieces live in index.css (Home) and about.css.
+   Fonts in /fonts: Barlow and JetBrains Mono (SIL Open Font License, see fonts/OFL-barlow.txt and fonts/OFL-jetbrains-mono.txt). Barlow Condensed files stay in /fonts for older pages but are no longer loaded here. */
+
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/barlow-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/barlow-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Barlow"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/barlow-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/jetbrains-mono-latin-600-normal.woff2) format("woff2"); }
+
+:root {
+  color-scheme: dark;
+  /* world */
+  --world: #262b33;          /* lit top of the ground */
+  --world-deep: #161a1f;
+  --grid: rgba(255, 255, 255, 0.055);
+  /* HUD */
+  --tooltip: rgba(0, 0, 0, 0.40);   /* tooltips: translucent, the floor shows through */
+  --panel: rgba(0, 0, 0, 0.74);     /* bars, slots, cast bars */
+  --edge: #000;
+  --hair: rgba(255, 255, 255, 0.09);
+  /* text */
+  --text: #eceae4;
+  --dim: #a4a9b0;
+  --faint: #737981;
+  --use: #3ee040;            /* tooltip "Use:" green */
+  --flavor: #ffd100;         /* tooltip flavor-text yellow */
+  --accent: #f4f2ec;         /* personal accent: white */
+  --accent-ink: #101114;
+  /* project "class colors" */
+  --dh: #c47ede; --lab: #69ccf0; --mangi: #19d3a2; --void: #c58cff; --mars: #ff8a4c; --hoplon: #ffc93c;
+  /* type and layout */
+  --f-ui: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-num: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --page-w: 1120px;
+  --outline: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background-color: var(--world-deep); scroll-padding-top: 72px; scroll-behavior: smooth; }
+body { margin: 0; min-height: 100vh; color: var(--text); font-family: var(--f-ui); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 56px 56px,
+    radial-gradient(120% 70% at 50% 0%, var(--world) 0%, var(--world-deep) 100%) fixed;
+  background-color: var(--world-deep); }
+/* On desktops with the side art (side.js), the floor grid scrolls slower than the page, together with the arena units:
+   side.js sets --floor-y. Elsewhere (phones, no JavaScript) the grid scrolls with the page as before. */
+html.floor-parallax body { background-attachment: fixed, fixed, fixed; background-position: 0 var(--floor-y, 0px), 0 var(--floor-y, 0px), 0 0; }
+a { color: inherit; }
+img, video { max-width: 100%; height: auto; display: block; }
+h1, h2, h3, h4, p { margin: 0; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: var(--page-w); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 30; padding: 8px 14px; background: var(--accent); color: var(--accent-ink); font-weight: 600; text-decoration: none; }
+.skip:focus { top: 12px; }
+
+/* ---------- sections ---------- */
+.section { padding-block: clamp(52px, 8vw, 88px) 0; }
+.section-head { display: grid; gap: 4px; margin-bottom: 22px; }
+.section-head h2 { font-weight: 600; font-size: clamp(24px, 3vw, 30px); line-height: 1.2; text-wrap: balance; }
+.sub { color: var(--dim); }
+
+/* ---------- tooltip ---------- */
+.tt { background: var(--tooltip); border: 1px solid var(--edge); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05); padding: 14px 16px 15px;
+  display: grid; gap: 3px; align-content: start; font-size: 15.5px; line-height: 1.45; }
+.tt-title { font-weight: 600; font-size: 19px; line-height: 1.25; color: var(--pc, var(--text)); }
+.tt-row { display: flex; justify-content: space-between; gap: 16px; }
+.tt-row > span:last-child { color: var(--dim); font-family: var(--f-num); font-size: 14px; font-weight: 500; letter-spacing: 0; text-align: right; }
+.tt-role { color: var(--text); }
+.tt-body { color: var(--dim); margin-top: 6px; }
+.tt-use { color: var(--use); margin-top: 6px; }
+.tt-flavor { color: var(--flavor); margin-top: 6px; }
+.tt-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 18px; font: 600 15.5px/1.2 var(--f-ui); text-decoration: none;
+  color: var(--text); background: rgba(255, 255, 255, 0.04); border: 1px solid var(--accent); transition: background-color .12s, border-color .12s, color .12s; }
+/* Hover takes the project's "class color" when the button sits in a project (any ancestor sets --pc);
+   elsewhere it stays white */
+.btn:hover { background: color-mix(in srgb, var(--pc, var(--accent)) 16%, transparent); border-color: var(--pc, var(--accent)); color: var(--pc, var(--text)); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--pc, #fff); border-color: var(--pc, #fff); color: var(--accent-ink); }
+
+/* ---------- action bar slot and media with cast bar ---------- */
+.slot { position: relative; width: 64px; height: 64px; flex: none; border: 1px solid var(--edge); background: #000; overflow: hidden; padding: 0; }
+.slot img { width: 100%; height: 100%; object-fit: cover; }
+.slot kbd { position: absolute; top: 2px; right: 4px; font: 600 11px/1 var(--f-num); color: #fff; text-shadow: var(--outline); }
+.media { display: block; position: relative; background: #000; border: 1px solid var(--edge); }
+.media video, .media img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.media img.contain { object-fit: contain; padding: 6%; }
+.cast { position: relative; height: 16px; margin-top: 6px; background: var(--panel); border: 1px solid var(--edge); overflow: hidden; }
+.cast i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--pc, var(--accent)); opacity: 0.85; }
+.cast > span { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 6px; font: 500 12.5px/15px var(--f-ui); color: #fff; text-shadow: var(--outline); }
+.cast > span b { font: 600 11px/15px var(--f-num); }
+
+/* ---------- top bar ---------- */
+.topbar { position: sticky; top: 0; z-index: 20; background: rgba(12, 14, 17, 0.86); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border-bottom: 1px solid var(--edge); padding-top: env(safe-area-inset-top, 0px); }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; }
+.brand { font-weight: 600; font-size: 17px; text-decoration: none; white-space: nowrap; }
+.nav { display: flex; gap: clamp(12px, 2.4vw, 26px); font-size: 15.5px; color: var(--dim); }
+.nav a { text-decoration: none; padding-block: 4px; border-bottom: 1px solid transparent; white-space: nowrap; }
+.nav a:hover, .nav a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+
+/* ---------- footer ---------- */
+/* The footer keeps its translucent band and sits above the side art (side.css, z-index 2); the blur keeps arena
+   units that pass under it from competing with the contact line */
+.foot { position: relative; z-index: 3; margin-top: clamp(56px, 9vw, 96px); border-top: 1px solid var(--edge); background: rgba(0, 0, 0, 0.35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.foot .wrap { padding-block: 26px calc(40px + env(safe-area-inset-bottom, 0px)); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; color: var(--dim); font-size: 14.5px; }
+.foot a { color: var(--text); }
+
+/* Phones and tablets can't play the Demon Hunter stage (same test as its page): swap the play buttons */
+.only-touch { display: none !important; }
+@media (hover: none) and (pointer: coarse) {
+  .only-pointer { display: none !important; }
+  .only-touch { display: inline-flex !important; }
+}
+
+@media (max-width: 520px) {
+  body { font-size: 16px; }
+  .nav { gap: 12px; font-size: 14.5px; }
+  .nav .hide-s { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
