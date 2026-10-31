@@ -627,7 +627,7 @@
     const t = ctx.target;
     if (!t || t.dead) return null;
     const c = { ...ctx, heal: true };
-    let amount = spec.pctMaxHp ? maxHpOf(game, t) * spec.pctMaxHp : game.rng.range(spec.min, spec.max) + healingPower(game, c) * (spec.coef || 0);
+    let amount = spec.pctMaxHp ? maxHpOf(game, t) * spec.pctMaxHp : game.rng.range(spec.min, spec.max) + healingPower(game, c) * (spec.coef || 0) + applyMods(game, "healBonus", 0, c);
     amount *= applyMods(game, "healMult", 1, c);
     let crit2 = false;
     if (spec.canCrit !== false && !spec.pctMaxHp && game.rng() < critChance(game, c)) {
@@ -640,10 +640,10 @@
     return res;
   }
   function hotTick(game, a) {
-    const per6 = a.data.perTick || 0, n = a.data.ticks || 1;
+    const per5 = a.data.perTick || 0, n = a.data.ticks || 1;
     const k = a.def.hotShape === "decay" ? 2 * (n + 1 - a.tick) / (n + 1) : 1;
     const ctx = { caster: a.source, target: a.unit, ability: a.data.ability || null, periodic: true, heal: true, schools: a.def.schools || [] };
-    return healUnit(game, a.unit, per6 * k, { name: a.def.name, icon: a.def.icon, periodic: true, source: a.source === game.player ? "player" : "raid", ctx });
+    return healUnit(game, a.unit, per5 * k, { name: a.def.name, icon: a.def.icon, periodic: true, source: a.source === game.player ? "player" : "raid", ctx });
   }
   function damageUnit(game, unit, amount, { name = "Damage", schools = ["physical"], attacker = null } = {}) {
     if (!unit || unit.dead || !(amount > 0)) return 0;
@@ -1393,7 +1393,7 @@
   function enemyMods(enemy) {
     let ap = 0, slow = 1, dmg = 1;
     for (const a of enemy.auras) {
-      const m = a.def.enemy;
+      const m = typeof a.def.enemy === "function" ? a.def.enemy(a) : a.def.enemy;
       if (!m) continue;
       if (m.ap) ap = Math.max(ap, m.ap);
       if (m.attackSpeed) slow = Math.max(slow, m.attackSpeed);
@@ -2217,7 +2217,7 @@
   };
 
   // src/common/data-version.js
-  var DATA_BUILD = "1.60.1.70685";
+  var DATA_BUILD = "1.60.1.70707";
   var LINK_DEFAULT = "1.60.1.70532";
 
   // src/classes/mage/talent-data.js
@@ -2230,14 +2230,14 @@
       talents: [
         { id: "wand_specialization", name: "Wand Specialization", icon: "inv_wand_01", tier: 0, col: 0, max: 2, ranks: ["Increases your damage with Wands by 13%.", "Increases your damage with Wands by 25%."] },
         { id: "improved_channeling", name: "Improved Channeling", icon: "spell_nature_starfall", tier: 0, col: 1, max: 5, ranks: [[20, 14], [40, 28], [60, 42], [80, 56], [100, 70]].map(([a, b]) => `Gives your Arcane Missiles spell a ${a}% chance and your Arcane Blast and Arcane Wrath spells a ${b}% chance to not lose casting time when you take damage.`) },
-        { id: "arcane_resilience", name: "Arcane Resilience", icon: "spell_arcane_arcaneresilience", tier: 0, col: 2, max: 2, ranks: [25, 50].map((n) => `Increases your Armor by an amount equal to ${n}% of your Intellect.`) },
+        { id: "arcane_resilience", name: "Arcane Resilience", icon: "spell_arcane_arcaneresilience", tier: 0, col: 2, max: 3, ranks: [25, 50, 75].map((n) => `Increases your Armor by an amount equal to ${n}% of your Intellect.`) },
         { id: "arcane_subtlety", name: "Arcane Subtlety", icon: "spell_holy_dispelmagic", tier: 1, col: 0, max: 2, ranks: [[8, 15], [15, 30]].map(([a, b]) => `Reduces your target's resistance to all your spells by ${a} and reduces the threat caused by your Arcane spells by ${b}%.`) },
         { id: "magic_absorption", name: "Magic Absorption", icon: "spell_nature_astralrecalgroup", tier: 1, col: 1, max: 2, ranks: [[5, 1], [10, 2]].map(([a, b]) => `Increases all your resistances by ${a} and causes all spells you fully resist to restore ${b}% of your total mana. Cannot trigger more often than 1 time per sec.`) },
         { id: "arcane_concentration", name: "Arcane Concentration", icon: "spell_shadow_manaburn", tier: 1, col: 2, max: 5, ranks: [2, 4, 6, 8, 10].map((n) => `Gives you a ${n}% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%.`) },
         { id: "missile_barrage", name: "Missile Barrage", icon: "ability_mage_missilebarrage", tier: 1, col: 3, max: 2, ranks: [[20, 10], [40, 20]].map(([a, b]) => `Gives your Arcane Blast spell a ${a}% chance, and your Arcane Wrath, Fireball, Frostbolt, Frost Blast, and Frostfire Bolt spells a ${b}% chance to reduce the channeled duration of your next Arcane Missiles spell by 50%, reduce the Mana cost by 100%, and missiles fire every 0.5 sec.`) },
         { id: "arcane_geometry", name: "Arcane Geometry", icon: "inv_ability_mage_radiantspark", tier: 2, col: 0, max: 2, ranks: [3, 6].map((n) => `Increases the range of your Arcane spells by ${n} yards.`) },
         { id: "arcane_impact", name: "Arcane Impact", icon: "spell_nature_wispsplode", tier: 2, col: 1, max: 3, ranks: [2, 4, 6].map((n) => `Increases the critical strike chance of your Arcane spells by ${n}%.`) },
-        { id: "arcane_blast", name: "Arcane Blast", icon: "spell_arcane_blast", tier: 2, col: 3, max: 1, active: true, ranks: ["Teaches Arcane Blast: blasts the target with energy, dealing Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application."] },
+        { id: "arcane_blast", name: "Arcane Blast", icon: "spell_arcane_blast", tier: 2, col: 3, max: 1, active: true, ranks: ["Teaches Arcane Blast: blasts the target with energy, dealing Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application."] },
         { id: "arcane_shielding", name: "Arcane Shielding", icon: "spell_shadow_detectlesserinvisibility", tier: 3, col: 0, max: 2, ranks: [[17, 25], [33, 50]].map(([a, b]) => `Decreases the Mana lost per point of damage taken when your Mana Shield spell is active by ${a}% and increases the resistances granted by your Mage Armor spell by ${b}%.`) },
         { id: "improved_counterspell", name: "Improved Counterspell", icon: "spell_frost_iceshock", tier: 3, col: 1, max: 2, ranks: [2, 4].map((n) => `Your Counterspell also Silences the target for ${n} sec.`) },
         { id: "arcane_meditation", name: "Arcane Meditation", icon: "spell_shadow_siphonmana", tier: 3, col: 2, max: 3, req: "arcane_concentration", ranks: [17, 33, 50].map((n) => `Allows ${n}% of your Mana regeneration to continue while casting.`) },
@@ -2286,15 +2286,15 @@
         { id: "permafrost", name: "Permafrost", icon: "spell_frost_wisp", tier: 1, col: 3, max: 3, ranks: [[11, 3], [22, 7], [33, 10]].map(([a, b]) => `Increases the duration of your Chill effects by ${a}% and reduces the target's speed by an additional ${b}%.`) },
         { id: "frost_channeling", name: "Frost Channeling", icon: "spell_frost_stun", tier: 2, col: 0, max: 3, ranks: [[5, 10], [10, 20], [15, 30]].map(([a, b]) => `Reduces the mana cost of your Frost spells by ${a}% and reduces the threat caused by your Frost spells by ${b}%.`) },
         { id: "improved_blizzard", name: "Improved Blizzard", icon: "spell_frost_icestorm", tier: 2, col: 1, max: 3, ranks: [15, 25, 40].map((n) => `Adds a Chill effect to your Blizzard spell. This effect lowers the target's movement speed by ${n}% for 1.5 sec.`) },
-        { id: "ice_lance", name: "Ice Lance", icon: "spell_frost_frostblast", tier: 2, col: 2, max: 1, active: true, ranks: ["Teaches Ice Lance: deals Frost damage to an enemy target. Deals 200% increased damage to Frozen targets. Instant."] },
-        { id: "arctic_reach", name: "Arctic Reach", icon: "spell_shadow_darkritual", tier: 3, col: 0, max: 2, ranks: [10, 20].map((n) => `Increases the range of your Frostbolt, Frost Blast, and Blizzard spells and the radius of your Frost Nova and Cone of Cold spells by ${n}%.`) },
+        { id: "ice_lance", name: "Ice Lance", icon: "spell_frost_frostblast", tier: 2, col: 2, max: 1, active: true, ranks: ["Teaches Ice Lance: deals Frost damage to an enemy target. Deals 300% increased damage to Frozen targets. Instant."] },
+        { id: "arctic_reach", name: "Arctic Reach", icon: "spell_shadow_darkritual", tier: 3, col: 0, max: 2, ranks: [10, 20].map((n) => `Increases the range of your Frostbolt, Frost Blast, Ice Lance, and Blizzard spells and the radius of your Frost Nova and Cone of Cold spells by ${n}%.`) },
         { id: "ice_block", name: "Ice Block", icon: "spell_frost_frost", tier: 3, col: 1, max: 1, active: true, ranks: ["You become encased in a block of ice, protecting you from all physical attacks and spells for 10 sec, but during that time you cannot attack, move, or cast spells. 5 min cooldown."] },
         { id: "shatter", name: "Shatter", icon: "spell_frost_frostshock", tier: 3, col: 3, max: 3, ranks: [17, 33, 50].map((n) => `Increases the critical strike chance of all your spells against Frozen targets by ${n}%.`) },
         { id: "improved_cone_of_cold", name: "Improved Cone of Cold", icon: "spell_frost_glacier", tier: 4, col: 0, max: 3, ranks: [12, 23, 35].map((n) => `Increases the damage dealt by your Cone of Cold spell by ${n}%.`) },
         { id: "cold_snap", name: "Cold Snap", icon: "spell_frost_wizardmark", tier: 4, col: 1, max: 1, active: true, ranks: ["Finishes the remaining cooldown on all your other Frost spells. 10 min cooldown."] },
         { id: "fingers_of_frost", name: "Fingers of Frost", icon: "ability_mage_wintersgrasp", tier: 4, col: 2, max: 2, req: "ice_lance", ranks: [1, 2].map((n) => `Gives your Chill effects a 15% chance to grant you the Fingers of Frost effect, which treats your next ${n === 1 ? "1 spell" : "2 spells"} cast as if the target were Frozen. Lasts 15 sec.`) },
-        { id: "winters_chill", name: "Winter's Chill", icon: "spell_frost_chillingblast", tier: 5, col: 2, max: 5, ranks: [20, 40, 60, 80, 100].map((n) => `Gives your Frostbolt, Frost Blast, and Fingers of Frost empowered Ice Lance spells a ${n}% chance to apply Winter's Chill, increasing the target's damage taken from your next Cone of Cold by 5% and it gains an additional 7% of your spell damage, stacking up to 5 times.`) },
-        { id: "ice_barrier", name: "Ice Barrier", icon: "spell_ice_lament", tier: 6, col: 1, max: 1, req: "cold_snap", active: true, ranks: ["Teaches Ice Barrier: shield yourself, absorbing damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage. 30 sec cooldown."] }
+        { id: "winters_chill", name: "Winter's Chill", icon: "spell_frost_chillingblast", tier: 5, col: 2, max: 5, ranks: [20, 40, 60, 80, 100].map((n) => `Gives your Frostbolt, Frost Blast, and Fingers of Frost empowered Ice Lance spells a ${n}% chance to apply Winter's Chill, increasing the target's damage taken from your next Cone of Cold by 20% and it gains an additional 7% of your spell damage, stacking up to 5 times.`) },
+        { id: "ice_barrier", name: "Ice Barrier", icon: "spell_ice_lament", tier: 6, col: 1, max: 1, req: "cold_snap", active: true, ranks: ["Teaches Ice Barrier: shield yourself, absorbing damage and increasing your Frost damage by 15% for 1 min. While shielded, your Frost damage is increased by an additional 5% and you do not lose casting time when you take damage. 30 sec cooldown."] }
       ]
     }
   ];
@@ -2458,7 +2458,7 @@
       range: 30,
       target: "enemy",
       effects: [{ type: "damage", min: 218, max: 254, coef: 0.429 }],
-      text: "Blasts the target with energy, dealing 218 to 254 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application."
+      text: "Blasts the target with energy, dealing 218 to 254 Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application."
     },
     {
       id: "arcane_wrath",
@@ -2692,7 +2692,6 @@
       range: 30,
       target: "enemy",
       speed: 38,
-      // 8 sec cooldown: server data of 1.60.1.70685 (ForeverChanges patch notes), not in the client tooltip yet
       effects: [{
         type: "damage",
         min: 137,
@@ -2700,7 +2699,7 @@
         coef: 0.429
         /* ESTIMATE: 0 in the client table, instant-cast rule used */
       }],
-      text: "Deals 137 to 161 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets."
+      text: "Deals 137 to 161 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets."
     },
     {
       id: "frost_nova",
@@ -2766,7 +2765,7 @@
       target: "self",
       // The absorb has no spell power coefficient in the beta client (SpellEffect 13033).
       effects: [{ type: "absorb", to: "self", aura: "ice_barrier", amount: (g) => 901 * (1 + 0.1 * g.rank("frost_warding")) }, { type: "applyAura", to: "self", aura: "ice_barrier_frost" }],
-      text: "Shield yourself, absorbing 901 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage."
+      text: "Shield yourself, absorbing 901 damage and increasing your Frost damage by 15% for 1 min. While shielded, your Frost damage is increased by an additional 5% and you do not lose casting time when you take damage."
     },
     {
       id: "cold_snap",
@@ -2853,13 +2852,13 @@
       icon: "spell_arcane_blast",
       kind: "buff",
       maxStacks: 4,
-      duration: 15,
+      duration: 18,
       refresh: false,
       mods: (a) => [
-        { key: "spellPower", fn: (v, ctx, g) => v + g.stats().int * 0.15 * a.stacks },
-        mult("cost", 1 + 1.75 * a.stacks, (ctx) => isAbility(ctx, "arcane_blast"))
+        { key: "spellPower", fn: (v, ctx, g) => v + g.stats().int * 0.12 * a.stacks },
+        mult("cost", 1 + 1 * a.stacks, (ctx) => isAbility(ctx, "arcane_blast"))
       ],
-      desc: (a, g) => `Spell damage increased by ${Math.round(g.stats().int * 0.15 * a.stacks)}. Arcane Blast costs ${175 * a.stacks}% more mana.`
+      desc: (a, g) => `Spell damage increased by ${Math.round(g.stats().int * 0.12 * a.stacks)}. Arcane Blast costs ${100 * a.stacks}% more mana.`
     },
     presence_of_mind: {
       id: "presence_of_mind",
@@ -2941,7 +2940,7 @@
       charges: 1,
       desc: (a) => `Your next ${a.charges > 1 ? a.charges + " spells treat" : "spell treats"} the target as Frozen.`
     },
-    // Ice Barrier: the shield (absorbs, +3% Frost damage and no pushback while it holds) and the minute of +3% Frost damage.
+    // Ice Barrier: the shield (absorbs, +5% Frost damage and no pushback while it holds) and the minute of +15% Frost damage.
     ice_barrier: {
       id: "ice_barrier",
       name: "Ice Barrier",
@@ -2949,8 +2948,8 @@
       kind: "buff",
       duration: 60,
       absorb: true,
-      mods: () => [mult("damageMult", 1.03, (ctx) => hasSchool(ctx, "frost")), focus(1)],
-      desc: (a) => `Absorbs ${Math.round(a.data.absorb || 0)} damage. Frost damage increased by 3%, and you do not lose casting time when you take damage.`
+      mods: () => [mult("damageMult", 1.05, (ctx) => hasSchool(ctx, "frost")), focus(1)],
+      desc: (a) => `Absorbs ${Math.round(a.data.absorb || 0)} damage. Frost damage increased by 5%, and you do not lose casting time when you take damage.`
     },
     ice_barrier_frost: {
       id: "ice_barrier_frost",
@@ -2958,8 +2957,8 @@
       icon: "spell_ice_lament",
       kind: "buff",
       duration: 60,
-      mods: () => [mult("damageMult", 1.03, (ctx) => hasSchool(ctx, "frost"))],
-      desc: () => "Frost damage increased by 3%."
+      mods: () => [mult("damageMult", 1.15, (ctx) => hasSchool(ctx, "frost"))],
+      desc: () => "Frost damage increased by 15%."
     },
     ice_block: {
       id: "ice_block",
@@ -3031,10 +3030,10 @@
       maxStacks: 5,
       duration: 15,
       sourceMods: (a) => [
-        mult("damageMult", 1 + 0.05 * a.stacks, (ctx) => isAbility(ctx, "cone_of_cold")),
+        mult("damageMult", 1 + 0.2 * a.stacks, (ctx) => isAbility(ctx, "cone_of_cold")),
         mult("spellPower", 1 + 0.07 * a.stacks, (ctx) => isAbility(ctx, "cone_of_cold"))
       ],
-      desc: (a) => `Your next Cone of Cold deals ${5 * a.stacks}% more damage and gains ${7 * a.stacks}% more spell damage.`
+      desc: (a) => `Your next Cone of Cold deals ${20 * a.stacks}% more damage and gains ${7 * a.stacks}% more spell damage.`
     }
   };
 
@@ -3157,7 +3156,7 @@
       baseHp: 1365,
       baseMana: 1213,
       derive(a) {
-        const conv = (v, per6) => Math.min(v, 20) + Math.max(0, v - 20) * per6;
+        const conv = (v, per5) => Math.min(v, 20) + Math.max(0, v - 20) * per5;
         return {
           maxHp: 1365 + conv(a.sta, 10) - 20,
           maxMana: 1213 + conv(a.int, 15) - 20,
@@ -3376,12 +3375,12 @@
       // its Chill is on Blizzard's tick (abilities.js) and feeds Frostbite and Fingers of Frost
       ice_lance: {
         teaches: "ice_lance",
-        mods: () => [mult("damageMult", 3, (ctx) => isAbility(ctx, "ice_lance") && ctx.frozen)]
-        // 200% more against Frozen targets
+        mods: () => [mult("damageMult", 4, (ctx) => isAbility(ctx, "ice_lance") && ctx.frozen)]
+        // 300% more against Frozen targets
       },
       arctic_reach: {
         mods: (r) => [
-          mult("range", 1 + 0.1 * r, (ctx) => isAbility(ctx, "frostbolt", "blizzard")),
+          mult("range", 1 + 0.1 * r, (ctx) => isAbility(ctx, "frostbolt", "ice_lance", "blizzard")),
           mult("radius", 1 + 0.1 * r, (ctx) => isAbility(ctx, "frost_nova", "cone_of_cold"))
         ]
       },
@@ -4472,7 +4471,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     ["Piercing Howl", "spell_shadow_deathscream", "fury", 10, 0, 0, 0, 1, "Causes all enemies within 10 yds to be Dazed, reducing movement speed by 50% for 6 sec."],
     ["Taunt", "spell_nature_reincarnation", "protection", 0, "m", 0, 8, 0, "Taunts the target to attack you, but has no effect if the target is already attacking you. Requires Defensive Stance"],
     ["Shield Bash", "ability_warrior_shieldbash", "protection", 10, "m", 0, 12, 0, "Bashes the target with your shield for 45 damage. It also interrupts spellcasting and prevents any spell in that school from being cast for 6 sec. Requires Shields Requires Battle Stance, Defensive Stance"],
-    ["Revenge", "ability_warrior_revenge", "protection", 5, "m", 0, 5, 0, "Instantly counterattack an enemy for 138 to 168 damage and a high amount of threat. Revenge must follow a block, dodge or parry. Requires Melee Weapon Requires Defensive Stance"],
+    ["Revenge", "ability_warrior_revenge", "protection", 5, "m", 0, 5, 0, "Instantly counterattack an enemy for (138 + 22.5% of attack power) to (168 + 22.5% of attack power) damage and a high amount of threat. Revenge must follow a block, dodge or parry. Requires Melee Weapon Requires Defensive Stance"],
     ["Shield Block", "ability_defend", "protection", 10, 0, 0, 5, 0, "Increases chance to block by 75% for 7 sec, but will only block 2 attacks. Requires Shields Requires Defensive Stance"],
     ["Disarm", "ability_warrior_disarm", "protection", 20, "m", 0, 60, 0, "Disarm the enemy's weapon for 10 sec. Requires Defensive Stance"],
     ["Shield Wall", "ability_warrior_shieldwall", "protection", 0, 0, 0, 900, 0, "Reduces the damage taken from all attacks by 60% for 12 sec. Requires Shields Requires Defensive Stance"],
@@ -4902,9 +4901,10 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         weaponStrike: false,
         threat: 315,
         usable: (g) => g.player.auras.some((a) => a.id === "revenge_ready") ? null : "Only usable after you block, dodge or parry",
+        // 138 to 168 plus 22.5% of attack power (1.60.1.70707), all of it raised by Improved Revenge.
         effects: [{ type: "meleeDamage", name: "Revenge", dynamic: (g) => {
           const k = 1 + 0.2 * g.rank("improved_revenge");
-          return { min: 138 * k, max: 168 * k };
+          return { min: 138 * k, max: 168 * k, apCoef: 0.225 * k };
         } }]
       },
       shield_block: { ...sim, gcd: false, effects: [{ type: "applyAura", to: "self", aura: "shield_block", charges: 2 }] },
@@ -5437,30 +5437,30 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   };
 
   // src/classes/paladin/talent-data.js
-  var SOURCE4 = { site: "foreverchanges.pro/talents/paladin", build: "1.60.1.70532", extracted: "2026-10-23" };
+  var SOURCE4 = { site: "foreverchanges.pro/talents/paladin", build: "1.60.1.70707", extracted: "2026-10-31" };
   var trees4 = [
     {
       id: "holy",
       name: "Holy",
       icon: "spell_holy_holybolt",
       talents: [
-        { id: "divine_strength", name: "Divine Strength", icon: "ability_golemthunderclap", tier: 0, col: 1, max: 5, ranks: ["Increases your Strength by 2%.", "Increases your Strength by 4%.", "Increases your Strength by 6%.", "Increases your Strength by 8%.", "Increases your Strength by 10%."] },
-        { id: "divine_intellect", name: "Divine Intellect", icon: "spell_nature_sleep", tier: 0, col: 2, max: 5, ranks: ["Increases your total Intellect by 2%.", "Increases your total Intellect by 4%.", "Increases your total Intellect by 6%.", "Increases your total Intellect by 8%.", "Increases your total Intellect by 10%."] },
+        { id: "spiritual_focus", name: "Spiritual Focus", icon: "spell_arcane_blink", tier: 0, col: 1, max: 5, ranks: ["Gives your Flash of Light, Holy Light, and Light's Vigil spells a 14% chance to not lose casting time when you take damage.", "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 28% chance to not lose casting time when you take damage.", "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 42% chance to not lose casting time when you take damage.", "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 56% chance to not lose casting time when you take damage.", "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 70% chance to not lose casting time when you take damage."] },
+        { id: "divine_strength", name: "Divine Strength", icon: "ability_golemthunderclap", tier: 0, col: 2, max: 5, ranks: ["Increases your Strength by 2%.", "Increases your Strength by 4%.", "Increases your Strength by 6%.", "Increases your Strength by 8%.", "Increases your Strength by 10%."] },
         { id: "healing_light", name: "Healing Light", icon: "spell_holy_holybolt", tier: 1, col: 0, max: 3, ranks: ["Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by 4%.", "Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by 8%.", "Increases the amount healed by your Holy Light, Flash of Light, and Holy Shock spells by 12%."] },
-        { id: "spiritual_focus", name: "Spiritual Focus", icon: "spell_arcane_blink", tier: 1, col: 1, max: 2, ranks: ["Gives your Flash of Light, Holy Light, and Light's Vigil spells a 35% chance to not lose casting time when you take damage.", "Gives your Flash of Light, Holy Light, and Light's Vigil spells a 70% chance to not lose casting time when you take damage."] },
-        { id: "improved_seals", name: "Improved Seals", icon: "ability_thunderbolt", tier: 1, col: 2, max: 3, ranks: ["Increases the damage done by your Seals and Judgements by 5%.", "Increases the damage done by your Seals and Judgements by 10%.", "Increases the damage done by your Seals and Judgements by 15%."] },
-        { id: "unyielding_faith", name: "Unyielding Faith", icon: "spell_holy_unyieldingfaith", tier: 1, col: 3, max: 2, ranks: ["Reduces the duration of Fear and Disorient effects on you by 15%.", "Reduces the duration of Fear and Disorient effects on you by 30%."] },
-        { id: "voice_of_truth", name: "Voice of Truth", icon: "inv_misc_horn_03", tier: 2, col: 0, max: 1, active: true, ranks: ["Grants you immunity to Silence and Interrupt effects for 6 sec."] },
-        { id: "reverence", name: "Reverence", icon: "spell_holy_divineillumination", tier: 2, col: 1, max: 3, ranks: ["Allows 10% of your Mana regeneration to continue while casting.", "Allows 20% of your Mana regeneration to continue while casting.", "Allows 30% of your Mana regeneration to continue while casting."] },
-        { id: "purifying_power", name: "Purifying Power", icon: "spell_holy_purifyingpower", tier: 2, col: 2, max: 2, ranks: ["Reduces the mana cost of your Cleanse and Purify spells by 10% and reduces the cooldown of your Exorcism and Holy Wrath spells by 17%.", "Reduces the mana cost of your Cleanse and Purify spells by 20% and reduces the cooldown of your Exorcism and Holy Wrath spells by 33%."] },
-        { id: "infusion_of_light", name: "Infusion of Light", icon: "ability_paladin_infusionoflight", tier: 3, col: 0, max: 2, ranks: ["Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 0.5 sec.", "Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 1.0 sec."] },
-        { id: "illumination", name: "Illumination", icon: "spell_holy_greaterheal", tier: 3, col: 1, max: 5, req: "reverence", ranks: ["After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 20% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 40% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 60% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 80% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 100% chance to gain Mana equal to 50% of the base cost of the spell."] },
-        { id: "divine_favor", name: "Divine Favor", icon: "spell_holy_heal", tier: 3, col: 2, max: 1, active: true, ranks: ["When activated, gives your next Flash of Light, Holy Light, or Holy Shock spell a 100% critical effect chance."] },
-        { id: "divine_precision", name: "Divine Precision", icon: "spell_holy_healingfocus", tier: 4, col: 0, max: 3, req: "holy_shock", ranks: ["Improves your chance to hit with Holy spells by 6%.", "Improves your chance to hit with Holy spells by 12%.", "Improves your chance to hit with Holy spells by 18%."] },
+        { id: "reverence", name: "Reverence", icon: "spell_holy_divineillumination", tier: 1, col: 1, max: 2, ranks: ["Allows 15% of your Mana regeneration to continue while casting.", "Allows 30% of your Mana regeneration to continue while casting."] },
+        { id: "improved_seals", name: "Improved Seals", icon: "ability_thunderbolt", tier: 1, col: 2, max: 5, ranks: ["Increases the damage done by your Seals and Judgements by 3%.", "Increases the damage done by your Seals and Judgements by 6%.", "Increases the damage done by your Seals and Judgements by 9%.", "Increases the damage done by your Seals and Judgements by 12%.", "Increases the damage done by your Seals and Judgements by 15%."] },
+        { id: "purifying_power", name: "Purifying Power", icon: "spell_holy_purifyingpower", tier: 1, col: 3, max: 2, ranks: ["Reduces the mana cost of your Cleanse and Purify spells by 10% and reduces the cooldown of your Exorcism and Holy Wrath spells by 17%.", "Reduces the mana cost of your Cleanse and Purify spells by 20% and reduces the cooldown of your Exorcism and Holy Wrath spells by 33%."] },
+        { id: "divine_favor", name: "Divine Favor", icon: "spell_holy_heal", tier: 2, col: 0, max: 1, active: true, ranks: ["When activated, gives your next Flash of Light, Holy Light, or Holy Shock spell a 100% critical effect chance."] },
+        { id: "illumination", name: "Illumination", icon: "spell_holy_greaterheal", tier: 2, col: 1, max: 5, req: "reverence", ranks: ["After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 20% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 40% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 60% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 80% chance to gain Mana equal to 50% of the base cost of the spell.", "After getting a critical effect from your Flash of Light, Holy Light, Light's Vigil, or Holy Shock heal spell you have a 100% chance to gain Mana equal to 50% of the base cost of the spell."] },
+        { id: "holy_conduit", name: "Holy Conduit", icon: "spell_holy_devineaegis", tier: 2, col: 2, max: 2, ranks: ["Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 20%.", "Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 40%."] },
+        { id: "divine_precision", name: "Divine Precision", icon: "spell_holy_mindsooth", tier: 3, col: 0, max: 2, ranks: ["Improves your chance to hit with Holy spells by 4%, and reduces the duration of Silence effects on you by 10%.", "Improves your chance to hit with Holy spells by 8%, and reduces the duration of Silence effects on you by 20%."] },
+        { id: "infusion_of_light", name: "Infusion of Light", icon: "ability_paladin_infusionoflight", tier: 3, col: 1, max: 2, ranks: ["Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 0.5 sec.", "Your Holy Shock and Flash of Light critical hits reduce the cast time of your next Holy Light cast within 15 sec by 1.0 sec."] },
+        { id: "oath_of_light", name: "Oath of Light", icon: "spell_holy_greaterblessingoflight", tier: 3, col: 2, max: 1, active: true, ranks: ["Swear an Oath to protect target ally for 5 min, increasing the healing of your Holy Light on them by up to 400, your Flash of Light by up to 115, and your Holy Shock by up to 115. Only one Oath of Light may be sworn by the Paladin at any one time.\n\nSupposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). The lab uses Blessing of Light's, which Oath of Light replaced."] },
+        { id: "consecrated_ground", name: "Consecrated Ground", icon: "spell_holy_innerfire", tier: 4, col: 0, max: 2, ranks: ["Gives your Holy spells 5% increased damage against the first 4 enemies that enter your Consecration.", "Gives your Holy spells 10% increased damage against the first 4 enemies that enter your Consecration."] },
         { id: "holy_shock", name: "Holy Shock", icon: "spell_holy_searinglight", tier: 4, col: 1, max: 1, active: true, ranks: ["Blasts the target with Holy energy, causing 129 to 139 Holy damage to an enemy, or 110 to 118 healing to an ally."] },
-        { id: "consecrated_ground", name: "Consecrated Ground", icon: "spell_holy_innerfire", tier: 4, col: 2, max: 2, ranks: ["Gives your Holy spells 5% increased damage against the first 4 enemies that enter your Consecration.", "Gives your Holy spells 10% increased damage against the first 4 enemies that enter your Consecration."] },
-        { id: "holy_power", name: "Holy Power", icon: "spell_holy_power", tier: 5, col: 2, max: 5, ranks: ["Increases the critical strike chance of your Holy Shock and Holy Strike spells by 3%, and all other spells by 1%.", "Increases the critical strike chance of your Holy Shock and Holy Strike spells by 6%, and all other spells by 2%.", "Increases the critical strike chance of your Holy Shock and Holy Strike spells by 9%, and all other spells by 3%.", "Increases the critical strike chance of your Holy Shock and Holy Strike spells by 12%, and all other spells by 4%.", "Increases the critical strike chance of your Holy Shock and Holy Strike spells by 15%, and all other spells by 5%."] },
-        { id: "lights_vigil", name: "Light's Vigil", icon: "ability_paladin_judgementofthepure", tier: 6, col: 1, max: 1, req: "holy_shock", active: true, ranks: ["Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 175 to 189 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 326 to 344. You may only have one Light's Vigil active per party."] }
+        { id: "boundless_light", name: "Boundless Light", icon: "ability_paladin_sacredcleansing", tier: 4, col: 2, max: 2, req: "holy_shock", ranks: ["Increases the critical strike chance of your Holy Shock spell by 15% when cast on allies not affected by your Oath of Light.", "Increases the critical strike chance of your Holy Shock spell by 30% when cast on allies not affected by your Oath of Light."] },
+        { id: "holy_power", name: "Holy Power", icon: "spell_holy_power", tier: 5, col: 2, max: 5, ranks: ["Increases the critical strike healing bonus of your Holy spells by 10%.", "Increases the critical strike healing bonus of your Holy spells by 20%.", "Increases the critical strike healing bonus of your Holy spells by 30%.", "Increases the critical strike healing bonus of your Holy spells by 40%.", "Increases the critical strike healing bonus of your Holy spells by 50%."] },
+        { id: "lights_vigil", name: "Light's Vigil", icon: "ability_paladin_judgementofthepure", tier: 6, col: 1, max: 1, req: "holy_shock", active: true, ranks: ["Applies Light's Vigil to a friendly target for 30 sec. The caster's next Holy Shock on the target incurs no cooldown and heals the target and their party for 326 to 344. Only one Vigil per Paladin may be active in each party."] }
       ]
     },
     {
@@ -5468,22 +5468,23 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       name: "Protection",
       icon: "spell_holy_devotionaura",
       talents: [
-        { id: "toughness", name: "Toughness", icon: "spell_holy_devotion", tier: 0, col: 1, max: 5, ranks: ["Increases your armor value from items by 2%.", "Increases your armor value from items by 4%.", "Increases your armor value from items by 6%.", "Increases your armor value from items by 8%.", "Increases your armor value from items by 10%."] },
-        { id: "redoubt", name: "Redoubt", icon: "ability_defend", tier: 0, col: 2, max: 5, ranks: ["Damaging melee attacks against you have a 10% chance to increase your chance to block by 4%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 8%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 12%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 16%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 20%. Lasts 10 sec or 5 blocks."] },
+        { id: "divine_intellect", name: "Divine Intellect", icon: "spell_nature_sleep", tier: 0, col: 1, max: 5, ranks: ["Increases your total Intellect by 2%.", "Increases your total Intellect by 4%.", "Increases your total Intellect by 6%.", "Increases your total Intellect by 8%.", "Increases your total Intellect by 10%."] },
+        { id: "redoubt", name: "Redoubt", icon: "ability_defend", tier: 0, col: 2, max: 5, ranks: ["Damaging melee attacks against you have a 10% chance to increase your chance to block by 6%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 12%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 18%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 24%. Lasts 10 sec or 5 blocks.", "Damaging melee attacks against you have a 10% chance to increase your chance to block by 30%. Lasts 10 sec or 5 blocks."] },
         { id: "precision", name: "Precision", icon: "ability_rogue_ambush", tier: 1, col: 0, max: 3, ranks: ["Improves your chance to hit by 1%.", "Improves your chance to hit by 2%.", "Improves your chance to hit by 3%."] },
         { id: "guardians_favor", name: "Guardian's Favor", icon: "spell_holy_sealofprotection", tier: 1, col: 1, max: 2, ranks: ["Reduces the cooldown of your Blessing of Protection by 1 min and increases the duration of your Blessing of Freedom by 3 sec.", "Reduces the cooldown of your Blessing of Protection by 2 min and increases the duration of your Blessing of Freedom by 6 sec."] },
-        { id: "anticipation", name: "Anticipation", icon: "spell_magic_lesserinvisibilty", tier: 1, col: 3, max: 5, ranks: ["Increases your Defense Skill by 4.", "Increases your Defense Skill by 8.", "Increases your Defense Skill by 12.", "Increases your Defense Skill by 16.", "Increases your Defense Skill by 20."] },
-        { id: "improved_seal_of_fury", name: "Improved Seal of Fury", icon: "spell_holy_righteousnessaura", tier: 2, col: 0, max: 1, ranks: ["When Seal of Fury's shield is fully absorbed, restore 0 Mana, increased by 15% per level the attacker is above you, up to 45%."] },
-        { id: "improved_righteous_fury", name: "Improved Righteous Fury", icon: "spell_holy_sealoffury", tier: 2, col: 1, max: 3, ranks: ["While Righteous Fury is active, all damage taken is reduced by 2%.", "While Righteous Fury is active, all damage taken is reduced by 4%.", "While Righteous Fury is active, all damage taken is reduced by 6%."] },
-        { id: "shield_specialization", name: "Shield Specialization", icon: "inv_shield_06", tier: 2, col: 2, max: 3, req: "redoubt", ranks: ["Increases the amount of damage absorbed by your shield by 10%, and gives your blocks a 33% chance to restore 4% of your maximum Mana. May only occur once every 3 sec.", "Increases the amount of damage absorbed by your shield by 20%, and gives your blocks a 66% chance to restore 4% of your maximum Mana. May only occur once every 3 sec.", "Increases the amount of damage absorbed by your shield by 30%, and gives your blocks a 100% chance to restore 4% of your maximum Mana. May only occur once every 3 sec."] },
-        { id: "sacred_duty", name: "Sacred Duty", icon: "spell_holy_divineintervention", tier: 2, col: 3, max: 2, ranks: ["Increases your total Stamina by 2% and reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 30 sec.", "Increases your total Stamina by 4% and reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 60 sec."] },
-        { id: "swift_judgement", name: "Swift Judgement", icon: "ability_paladin_judgementred", tier: 3, col: 0, max: 1, req: "improved_seal_of_fury", active: true, ranks: ["Finishes the remaining cooldown on your Judgement ability and reduces the Mana cost of your next Judgement by 100%."] },
-        { id: "one_handed_weapon_specialization", name: "One-Handed Weapon Specialization", icon: "inv_sword_20", tier: 3, col: 1, max: 3, ranks: ["Increases the damage you deal with one-handed melee weapons by 3%.", "Increases the damage you deal with one-handed melee weapons by 7%.", "Increases the damage you deal with one-handed melee weapons by 10%."] },
-        { id: "improved_hammer_of_justice", name: "Improved Hammer of Justice", icon: "spell_holy_sealofmight", tier: 3, col: 2, max: 3, ranks: ["Decreases the cooldown of your Hammer of Justice spell by 5 sec.", "Decreases the cooldown of your Hammer of Justice spell by 10 sec.", "Decreases the cooldown of your Hammer of Justice spell by 15 sec."] },
-        { id: "templars_bulwark", name: "Templar's Bulwark", icon: "ability_paladin_shieldofthetemplar", tier: 4, col: 1, max: 1, active: true, ranks: ["When activated, this ability grants you an absorb shield equal to 100% of your maximum health for 8 sec. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active."] },
+        { id: "sacred_duty", name: "Sacred Duty", icon: "spell_holy_divineintervention", tier: 1, col: 3, max: 2, ranks: ["Reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 30 sec, and reduces the duration of Forbearance by 5 sec.", "Reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by 60 sec, and reduces the duration of Forbearance by 10 sec."] },
+        { id: "templars_bulwark", name: "Templar's Bulwark", icon: "ability_paladin_shieldofthetemplar", tier: 2, col: 0, max: 1, active: true, ranks: ["When activated, this ability grants you an absorb shield equal to 100% of your maximum health for 8 sec. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active."] },
+        { id: "improved_hammer_of_justice", name: "Improved Hammer of Justice", icon: "spell_holy_sealofmight", tier: 2, col: 1, max: 3, ranks: ["Decreases the cooldown of your Hammer of Justice spell by 5 sec.", "Decreases the cooldown of your Hammer of Justice spell by 10 sec.", "Decreases the cooldown of your Hammer of Justice spell by 15 sec."] },
+        { id: "shield_specialization", name: "Shield Specialization", icon: "inv_shield_06", tier: 2, col: 2, max: 2, req: "redoubt", ranks: ["Increases the amount of damage absorbed by your shield by 15%, and gives your blocks a 50% chance to restore 4% of your maximum Mana. May only occur once every 3 sec.", "Increases the amount of damage absorbed by your shield by 30%, and gives your blocks a 100% chance to restore 4% of your maximum Mana. May only occur once every 3 sec."] },
+        { id: "toughness", name: "Toughness", icon: "spell_holy_devotion", tier: 2, col: 3, max: 5, ranks: ["Increases your armor value from items by 2%.", "Increases your armor value from items by 4%.", "Increases your armor value from items by 6%.", "Increases your armor value from items by 8%.", "Increases your armor value from items by 10%."] },
+        { id: "swift_judgement", name: "Swift Judgement", icon: "ability_paladin_judgementred", tier: 3, col: 0, max: 1, req: "templars_bulwark", active: true, ranks: ["Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal. Refer to individual Seals for Judgement effect. Does not share a cooldown with your Judgement ability."] },
+        { id: "improved_righteous_fury", name: "Improved Righteous Fury", icon: "spell_holy_sealoffury", tier: 3, col: 1, max: 3, ranks: ["While Righteous Fury is active, all damage taken is reduced by 3%.", "While Righteous Fury is active, all damage taken is reduced by 6%.", "While Righteous Fury is active, all damage taken is reduced by 9%."] },
+        { id: "anticipation", name: "Anticipation", icon: "spell_magic_lesserinvisibilty", tier: 3, col: 2, max: 5, ranks: ["Increases your Defense Skill by 4.", "Increases your Defense Skill by 8.", "Increases your Defense Skill by 12.", "Increases your Defense Skill by 16.", "Increases your Defense Skill by 20."] },
+        { id: "stoicism", name: "Stoicism", icon: "spell_holy_stoicism", tier: 4, col: 0, max: 2, ranks: ["Reduces the duration of Stun and Charm effects on you by 10%.", "Reduces the duration of Stun and Charm effects on you by 20%."] },
+        { id: "holy_shield", name: "Holy Shield", icon: "spell_holy_blessingofprotection", tier: 4, col: 1, max: 1, active: true, ranks: ["Increases chance to block by 30% for 10 sec, and deals 75 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges."] },
         { id: "reckoning", name: "Reckoning", icon: "spell_holy_blessingofstrength", tier: 4, col: 2, max: 5, ranks: ["Gives you a 8% chance after Blocking and a 20% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.", "Gives you a 16% chance after Blocking and a 40% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.", "Gives you a 24% chance after Blocking and a 60% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.", "Gives you a 32% chance after Blocking and a 80% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec.", "Gives you a 40% chance after Blocking and a 100% chance after receiving a non-periodic critical strike to gain an extra attack. Stores up to 4 extra attacks. Cannot occur from Blocks more than once every 1.5 sec."] },
-        { id: "iron_creed", name: "Iron Creed", icon: "spell_holy_improvedresistanceauras", tier: 5, col: 2, max: 5, ranks: ["Increases the threat generated by your Holy Strike ability by 5%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 2% for 6 sec.", "Increases the threat generated by your Holy Strike ability by 10%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 4% for 6 sec.", "Increases the threat generated by your Holy Strike ability by 15%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 6% for 6 sec.", "Increases the threat generated by your Holy Strike ability by 20%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 8% for 6 sec.", "Increases the threat generated by your Holy Strike ability by 25%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 10% for 6 sec."] },
-        { id: "holy_shield", name: "Holy Shield", icon: "spell_holy_blessingofprotection", tier: 6, col: 1, max: 1, req: "templars_bulwark", active: true, ranks: ["Increases chance to block by 30% for 10 sec, and deals 110 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges."] }
+        { id: "iron_creed", name: "Iron Creed", icon: "spell_holy_improvedresistanceauras", tier: 5, col: 2, max: 3, ranks: ["Increases the threat generated by your Holy Strike ability by 10%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 2% for 6 sec.", "Increases the threat generated by your Holy Strike ability by 20%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 4% for 6 sec.", "Increases the threat generated by your Holy Strike ability by 30%. While Righteous Fury is active, Holy Strike also reduces your damage taken by 6% for 6 sec."] },
+        { id: "shieldsworn", name: "Shieldsworn", icon: "spell_holy_greaterblessingofsanctuary", tier: 6, col: 1, max: 1, req: "holy_shield", ranks: ["Reduces the cooldown of your Holy Strike ability by 4 sec. Additionally, Holy Strike now strikes with your shield, triggering your active Holy Shield and Shield Specialization talents without consuming their charges or triggering their cooldowns, and allowing you to Block spells for 6 sec."] }
       ]
     },
     {
@@ -5494,21 +5495,42 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         { id: "deflection", name: "Deflection", icon: "ability_parry", tier: 0, col: 1, max: 5, ranks: ["Increases your Parry chance by 1%.", "Increases your Parry chance by 2%.", "Increases your Parry chance by 3%.", "Increases your Parry chance by 4%.", "Increases your Parry chance by 5%."] },
         { id: "benediction", name: "Benediction", icon: "spell_frost_windwalkon", tier: 0, col: 2, max: 5, ranks: ["Reduces the Mana cost of all instant cast spells and abilities by 2%.", "Reduces the Mana cost of all instant cast spells and abilities by 4%.", "Reduces the Mana cost of all instant cast spells and abilities by 6%.", "Reduces the Mana cost of all instant cast spells and abilities by 8%.", "Reduces the Mana cost of all instant cast spells and abilities by 10%."] },
         { id: "improved_judgement", name: "Improved Judgement", icon: "spell_holy_righteousfury", tier: 1, col: 0, max: 2, ranks: ["Decreases the cooldown of your Judgement ability by 1 sec.", "Decreases the cooldown of your Judgement ability by 2 sec."] },
-        { id: "holy_conduit", name: "Holy Conduit", icon: "spell_holy_devineaegis", tier: 1, col: 1, max: 2, ranks: ["Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 20%.", "Reduces the mana cost of your Consecration, Holy Wrath, Exorcism, and Hammer of Wrath spells by 40%."] },
-        { id: "conviction", name: "Conviction", icon: "spell_holy_retributionaura", tier: 1, col: 2, max: 5, ranks: ["Improves your chance to get a critical strike with melee attacks by 1%.", "Improves your chance to get a critical strike with melee attacks by 2%.", "Improves your chance to get a critical strike with melee attacks by 3%.", "Improves your chance to get a critical strike with melee attacks by 4%.", "Improves your chance to get a critical strike with melee attacks by 5%."] },
-        { id: "vindication", name: "Vindication", icon: "spell_holy_vindication", tier: 2, col: 0, max: 3, ranks: ["Gives your damaging melee attacks a chance to reduce the target's Attack Power by 67, and increase your Attack Power by 1% for 30 sec.", "Gives your damaging melee attacks a chance to reduce the target's Attack Power by 133, and increase your Attack Power by 2% for 30 sec.", "Gives your damaging melee attacks a chance to reduce the target's Attack Power by 200, and increase your Attack Power by 3% for 30 sec."] },
-        { id: "sanctified_judgement", name: "Sanctified Judgement", icon: "ability_paladin_judgementblue", tier: 2, col: 1, max: 3, ranks: ["Gives your Judgement ability a 33% chance to return 20% of the Mana cost of the judged seal.", "Gives your Judgement ability a 66% chance to return 40% of the Mana cost of the judged seal.", "Gives your Judgement ability a 100% chance to return 60% of the Mana cost of the judged seal."] },
+        { id: "conviction", name: "Conviction", icon: "spell_holy_retributionaura", tier: 1, col: 1, max: 3, ranks: ["Improves your chance to get a critical strike with all spells and attacks by 2%.", "Improves your chance to get a critical strike with all spells and attacks by 4%.", "Improves your chance to get a critical strike with all spells and attacks by 6%."] },
+        { id: "sanctified_judgement", name: "Sanctified Judgement", icon: "ability_paladin_judgementblue", tier: 1, col: 2, max: 3, ranks: ["Gives your Judgement ability a 33% chance to return 20% of the Mana cost of the judged seal.", "Gives your Judgement ability a 66% chance to return 40% of the Mana cost of the judged seal.", "Gives your Judgement ability a 100% chance to return 60% of the Mana cost of the judged seal."] },
+        { id: "vindication", name: "Vindication", icon: "spell_holy_vindication", tier: 2, col: 0, max: 3, ranks: ["Gives your damaging melee attacks a chance to reduce the target's Attack Power by 67 for 30 sec.", "Gives your damaging melee attacks a chance to reduce the target's Attack Power by 133 for 30 sec.", "Gives your damaging melee attacks a chance to reduce the target's Attack Power by 200 for 30 sec."] },
+        { id: "unyielding_faith", name: "Unyielding Faith", icon: "spell_holy_unyieldingfaith", tier: 2, col: 1, max: 2, ranks: ["Reduces the duration of Fear and Disorient effects on you by 15%.", "Reduces the duration of Fear and Disorient effects on you by 30%."] },
         { id: "seal_of_command", name: "Seal of Command", icon: "ability_warrior_innerrage", tier: 2, col: 2, max: 1, active: true, ranks: ["Gives the Paladin a chance to deal additional Holy damage equal to 70% of normal weapon damage. Only one Seal can be active on the Paladin at any one time. Lasts 30 sec.\n\nUnleashing this Seal's energy will judge an enemy, instantly causing 69 to 73 Holy damage, 138 to 146 if the target is stunned or incapacitated."] },
         { id: "pursuit_of_justice", name: "Pursuit of Justice", icon: "spell_holy_persuitofjustice", tier: 2, col: 3, max: 2, ranks: ["Increases movement speed and mounted movement speed by 8%. This does not stack with other movement speed increasing effects.", "Increases movement speed and mounted movement speed by 15%. This does not stack with other movement speed increasing effects."] },
         { id: "eye_for_an_eye", name: "Eye for an Eye", icon: "spell_holy_eyeforaneye", tier: 3, col: 0, max: 2, ranks: ["All critical strikes against you cause 5% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health.", "All critical strikes against you cause 10% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health."] },
-        { id: "sacred_arbiter", name: "Sacred Arbiter", icon: "inv_sword_08", tier: 3, col: 2, max: 1, ranks: ["Increases the damage of your Holy Strike ability by 20% and causes it to refresh all Judgement effects on the target."] },
-        { id: "two_handed_weapon_specialization", name: "Two-Handed Weapon Specialization", icon: "inv_hammer_04", tier: 4, col: 0, max: 3, ranks: ["Increases the damage you deal with two-handed melee weapons by 2%.", "Increases the damage you deal with two-handed melee weapons by 4%.", "Increases the damage you deal with two-handed melee weapons by 6%."] },
-        { id: "vengeance", name: "Vengeance", icon: "ability_racial_avatar", tier: 4, col: 1, max: 3, req: "sanctified_judgement", ranks: ["Increases your Physical and Holy damage dealt by 1% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times.", "Increases your Physical and Holy damage dealt by 2% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times.", "Increases your Physical and Holy damage dealt by 3% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times."] },
-        { id: "repentance", name: "Repentance", icon: "spell_holy_prayerofhealing", tier: 4, col: 2, max: 1, active: true, ranks: ["Puts the enemy target in a state of meditation, incapacitating them for up to 6 sec. Any damage caused will awaken the target. Only works against Humanoids."] },
-        { id: "champion_of_the_light", name: "Champion of the Light", icon: "ability_paladin_enlightenedjudgements", tier: 5, col: 1, max: 3, ranks: ["Increases your spell damage by up to 20% of your Intellect.", "Increases your spell damage by up to 40% of your Intellect.", "Increases your spell damage by up to 60% of your Intellect."] },
-        { id: "instrument_of_law", name: "Instrument of Law", icon: "spell_holy_divinepurpose", tier: 5, col: 2, max: 2, ranks: ["Reduces the cast time of your Hammer of Wrath by 0.5 sec, and reduces all threat you generate by 10% while Righteous Fury is not active.", "Reduces the cast time of your Hammer of Wrath by 1.0 sec, and reduces all threat you generate by 20% while Righteous Fury is not active."] },
-        { id: "twist_of_light", name: "Twist of Light", icon: "spell_holy_blessedresillience", tier: 6, col: 1, max: 1, ranks: ["Reduces the Mana cost of your Seal spells by 20%, and when you replace your Seal of Command, Seal of Righteousness, Seal of Fury, or Seal of Justice with a different Seal, you gain an Echo of that Seal. Your next melee attack applies the replaced Seal's effects, consuming the Echo."] }
+        { id: "sacred_arbiter", name: "Sacred Arbiter", icon: "inv_sword_08", tier: 3, col: 1, max: 1, ranks: ["Increases the damage of your Holy Strike ability by 20% and causes it to refresh all Judgement effects on the target."] },
+        { id: "two_handed_weapon_specialization", name: "Two-Handed Weapon Specialization", icon: "inv_hammer_04", tier: 3, col: 3, max: 3, ranks: ["Increases the physical damage you deal by 2%, and reduces all threat you generate by 7% while a two-handed melee weapon is equipped.", "Increases the physical damage you deal by 4%, and reduces all threat you generate by 14% while a two-handed melee weapon is equipped.", "Increases the physical damage you deal by 6%, and reduces all threat you generate by 20% while a two-handed melee weapon is equipped."] },
+        { id: "turn_evil", name: "Turn Evil", icon: "spell_holy_turnundead", tier: 4, col: 0, max: 2, ranks: ["Reduces the cast time of your Turn Undead spell by 0.5 sec, its cooldown by 5 sec, and allows it to affect Demons.", "Reduces the cast time of your Turn Undead spell by 1.0 sec, its cooldown by 10 sec, and allows it to affect Demons."] },
+        { id: "repentance", name: "Repentance", icon: "spell_holy_prayerofhealing", tier: 4, col: 1, max: 1, active: true, ranks: ["Puts the enemy target in a state of meditation, incapacitating them for up to 6 sec. Any damage caused will awaken the target. Only works against Humanoids."] },
+        { id: "vengeance", name: "Vengeance", icon: "ability_racial_avatar", tier: 4, col: 2, max: 3, req: "seal_of_command", ranks: ["Increases your Physical and Holy damage dealt by 1% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times.", "Increases your Physical and Holy damage dealt by 2% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times.", "Increases your Physical and Holy damage dealt by 3% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times."] },
+        { id: "champion_of_the_light", name: "Champion of the Light", icon: "ability_paladin_enlightenedjudgements", tier: 5, col: 2, max: 5, ranks: ["Increases your spell damage by up to 12% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.2 sec.", "Increases your spell damage by up to 24% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.4 sec.", "Increases your spell damage by up to 36% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.6 sec.", "Increases your spell damage by up to 48% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.8 sec.", "Increases your spell damage by up to 60% of your Intellect, and reduces the cast time of your Hammer of Wrath by 1.0 sec."] },
+        { id: "unsealed_wrath", name: "Unsealed Wrath", icon: "spell_holy_blessedresillience", tier: 6, col: 1, max: 1, req: "repentance", ranks: ["Your melee attacks store a copy of your active Seal for 15 sec, stacking up to 3 times. Landing an attack with a different Seal consumes all stacks, giving the stored Seal its normal chance to activate once per stack."] }
       ]
+    }
+  ];
+
+  // src/classes/paladin/talent-history.js
+  var talentHistory2 = [
+    {
+      // 1.60.1.70707 (October 30): the three trees remade. Voice of Truth became Oath of Light, Improved Seal of Fury
+      // became Shieldsworn and Twist of Light became Unsealed Wrath (same places in the client's trees); Instrument of
+      // Law and One-Handed Weapon Specialization left; Divine Intellect went to Protection, Holy Conduit to Holy and
+      // Unyielding Faith to Retribution; Reverence, Divine Precision and Shield Specialization went to 2 ranks, Iron Creed
+      // and Conviction to 3.
+      until: "1.60.1.70707",
+      date: "October 30",
+      order: [
+        ["divine_strength", "divine_intellect", "healing_light", "spiritual_focus", "improved_seals", "unyielding_faith", "voice_of_truth", "reverence", "purifying_power", "infusion_of_light", "illumination", "divine_favor", "divine_precision", "holy_shock", "consecrated_ground", "holy_power", "lights_vigil"],
+        ["toughness", "redoubt", "precision", "guardians_favor", "anticipation", "improved_seal_of_fury", "improved_righteous_fury", "shield_specialization", "sacred_duty", "swift_judgement", "one_handed_weapon_specialization", "improved_hammer_of_justice", "templars_bulwark", "reckoning", "iron_creed", "holy_shield"],
+        ["deflection", "benediction", "improved_judgement", "holy_conduit", "conviction", "vindication", "sanctified_judgement", "seal_of_command", "pursuit_of_justice", "eye_for_an_eye", "sacred_arbiter", "two_handed_weapon_specialization", "vengeance", "repentance", "champion_of_the_light", "instrument_of_law", "twist_of_light"]
+      ],
+      renamed: { voice_of_truth: "oath_of_light", improved_seal_of_fury: "shieldsworn", twist_of_light: "unsealed_wrath" },
+      removed: { instrument_of_law: "Instrument of Law", one_handed_weapon_specialization: "One-Handed Weapon Specialization" },
+      names: { voice_of_truth: "Voice of Truth", improved_seal_of_fury: "Improved Seal of Fury", twist_of_light: "Twist of Light" }
     }
   ];
 
@@ -5521,29 +5543,24 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     ["Turn Undead", "spell_holy_turnundead", "holy", 75, 20, 1.5, 30, 0, "The targeted undead enemy will be compelled to flee for up to 20 sec. Damage caused may interrupt the effect. Only one target can be turned at a time."],
     ["Seal of Light", "spell_holy_healingaura", "holy", 210, 0, 0, 0, 0, "Fills the Paladin with divine light for 30 sec, giving each melee attack a chance to heal the Paladin for 94. Only one Seal can be active on the Paladin at any one time. Unleashing this Seal's energy will judge an enemy for 40 sec, granting melee attacks made against the judged enemy a chance of healing the attacker for 61. Your melee strikes will refresh the spell's duration. Only one Judgement per Paladin can be active at any one time."],
     ["Seal of Wisdom", "spell_holy_righteousnessaura", "holy", 200, 0, 0, 0, 0, "Fills the Paladin with divine wisdom for 30 sec, giving each melee attack a chance to restore 90 of the Paladin's mana. Only one Seal can be active on the Paladin at any one time. Unleashing this Seal's energy will judge an enemy for 40 sec, granting attacks and spells used against the judged enemy a chance to restore 59 mana to the attacker. Your melee strikes will refresh the spell's duration. Only one Judgement per Paladin can be active at any one time."],
-    ["Blessing of Light", "spell_holy_prayerofhealing02", "holy", 135, 30, 0, 0, 0, "Places a Blessing on the friendly target, increasing the effects of Holy Light spells used on the target by up to 400 and the effect Flash of Light spells used on the target by up to 115. Lasts 1 hr. Players may only have one Blessing on them per Paladin at any one time."],
     ["Cleanse", "spell_holy_renew", "holy", "b8", 30, 0, 0, 0, "Cleanses a friendly target, removing 1 poison effect, 1 disease effect, and 1 magic effect."],
     ["Greater Blessing of Wisdom", "spell_holy_greaterblessingofwisdom", "holy", 250, 40, 0, 0, 0, "Gives all members of the raid or group that share the same class with the target the Greater Blessing of Wisdom, restoring 40 mana every 5 seconds for 1 hr. Players may only have one Blessing on them per Paladin at any one time."],
-    ["Greater Blessing of Light", "spell_holy_greaterblessingoflight", "holy", 260, 40, 0, 0, 0, "Gives all members of the raid or group that share the same class with the target the Greater Blessing of Light, increasing the effects of Holy Light spells used on the target by up to 400 and the effect Flash of Light spells used on the target by up to 115. Lasts 1 hr. Players may only have one Blessing on them per Paladin at any one time."],
-    ["Voice of Truth", "inv_misc_horn_03", "holy", 0, 0, 0, 180, 1, "Grants you immunity to Silence and Interrupt effects for 6 sec."],
     ["Divine Protection", "spell_holy_restoration", "protection", 35, 0, 0, 300, 0, "You are protected from all physical attacks and spells for 8 sec, but during that time you cannot attack or use physical abilities yourself. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active."],
     ["Blessing of Protection", "spell_holy_sealofprotection", "protection", "b7", 30, 0, 300, 0, "A targeted party member is protected from all physical attacks for 10 sec, but during that time they cannot attack or use physical abilities. Players may only have one Blessing on them per Paladin at any one time. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active."],
-    ["Righteous Fury", "spell_holy_sealoffury", "protection", "b30", 0, 0, 0, 0, "Increases the threat generated by your Holy attacks by 90%. Lasts 30 min."],
+    ["Righteous Fury", "spell_holy_sealoffury", "protection", "b30", 0, 0, 0, 0, "Increases all threat generated by 33%, and all threat generated by your Holy attacks by an additional 90%. Lasts 30 min."],
     ["Blessing of Freedom", "spell_holy_sealofvalor", "protection", "b10", 30, 0, 20, 0, "Places a Blessing on the friendly target, granting immunity to movement impairing effects for 10 sec. Players may only have one Blessing on them per Paladin at any one time."],
     ["Seal of Justice", "spell_holy_sealofwrath", "protection", "b13", 0, 0, 0, 0, "Fills the Paladin with the spirit of justice for 30 sec, giving each melee attack a chance to stun for 2 sec. Only one Seal can be active on the Paladin at any one time. Unleashing this Seal's energy will judge an enemy for 10 sec, preventing them from fleeing. Your melee strikes will refresh the spell's duration. Only one Judgement per Paladin can be active at any one time."],
-    ["Revoke", "spell_holy_prayerofmendingtga", "protection", 0, 40, 0, 0, 0, "Remove target party or raid member's Salvation or Mass Salvation."],
-    ["Salvation", "spell_holy_sealofsalvation", "protection", "b8", 30, 0, 0, 0, "Reduces all threat generated by target party member by 30% for 1 hr."],
     ["Divine Intervention", "spell_nature_timestop", "protection", 0, 40, 0, 3600, 0, "The paladin sacrifices himself to remove the targeted party member from harms way. Enemies will stop attacking the protected party member, who will be immune to all harmful attacks but cannot take any action for 3 min."],
     ["Divine Shield", "spell_holy_divineintervention", "protection", 110, 0, 0, 300, 0, "Protects the paladin from all damage and spells for 12 sec, but reduces all damage you deal by 50%. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active."],
     ["Blessing of Sacrifice", "spell_holy_sealofsacrifice", "protection", 100, 30, 0, 0, 0, "Places a Blessing on the party member, transfering 55 damage taken per hit to the caster. Lasts 30 sec. Players may only have one Blessing on them per Paladin at any one time."],
     ["Greater Blessing of Kings", "spell_magic_greaterblessingofkings", "protection", 150, 40, 0, 0, 0, "Gives all members of the raid or group that share the same class with the target the Greater Blessing of Kings, increasing total stats by 10% for 1 hr. Players may only have one Blessing on them per Paladin at any one time."],
-    ["Mass Salvation", "spell_holy_greaterblessingofsalvation", "protection", "b16", 40, 0, 0, 0, "Gives all members of the raid or group that share the same class with the target a reduction to all threat generated by 30% for 1 hr."],
     ["Templar's Bulwark", "ability_paladin_shieldofthetemplar", "protection", 110, 0, 0, 300, 1, "When activated, this ability grants you an absorb shield equal to 100% of your maximum health for 8 sec. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active."],
     ["Greater Blessing of Might", "spell_holy_greaterblessingofkings", "retribution", 260, 40, 0, 0, 0, "Gives all members of the raid or group that share the same class with the target the Greater Blessing of Might, increasing melee attack power by 133 for 1 hr. Players may only have one Blessing on them per Paladin at any one time."],
     ["Repentance", "spell_holy_prayerofhealing", "retribution", 60, 20, 0, 60, 1, "Puts the enemy target in a state of meditation, incapacitating them for up to 6 sec. Any damage caused will awaken the target. Only works against Humanoids."]
   ];
 
   // src/classes/paladin/abilities.js
+  var OATH = { holy_light: 400, flash_of_light: 115, holy_shock: 115 };
   var melee3 = { range: "melee", target: "enemy", harmful: true };
   var holy = ["holy"];
   var ONE_HANDED = ["sword", "mace", "axe"];
@@ -5630,10 +5647,15 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       talent: "holy_shock",
       dual: true,
       tags: ["heal"],
-      // Light's Vigil on the target: no cooldown, more damage and part of the mana back (paladin.js sets ctx.vigil).
-      effects: [{ type: "damage", coef: 0.429, dynamic: (g, ctx) => ctx.vigil ? { min: 380, max: 410 } : { min: 334, max: 362 } }],
-      // On a friendly target: a heal, or with Light's Vigil on it a heal of its whole party (ESTIMATE: 0.429 and 0.286,
-      // the client keeps them in spells it does not list).
+      effects: [{
+        type: "damage",
+        min: 334,
+        max: 362,
+        coef: 0.429
+        /* ESTIMATE: Classic coefficient */
+      }],
+      // On a friendly target: a heal, or with Light's Vigil on it (paladin.js sets ctx.vigil, no cooldown) a heal of its
+      // whole party (ESTIMATE: 0.429 and 0.286, the client keeps them in spells it does not list).
       allyEffects: [
         { type: "heal", min: 307, max: 333, coef: 0.429, when: (g, ctx) => !ctx.vigil },
         { type: "party", radius: 40, when: (g, ctx) => !!ctx.vigil, effects: [{ type: "heal", min: 684, max: 724, coef: 0.286, name: "Holy Shock (Light's Vigil)" }] }
@@ -5646,17 +5668,41 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       icon: "ability_paladin_judgementofthepure",
       tree: "holy",
       schools: holy,
-      harmful: true,
-      target: "enemy",
-      range: 20,
+      harmful: false,
+      target: "ally",
+      range: 40,
       cost: 1340,
       castTime: 1.5,
       cooldown: 6,
       talent: "lights_vigil",
-      dual: true,
+      tags: ["heal"],
       effects: [{ type: "applyAura", to: "target", aura: "lights_vigil" }],
-      allyEffects: [{ type: "applyAura", to: "target", aura: "lights_vigil" }],
-      text: "Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 380 to 410 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 684 to 724."
+      text: "Applies Light's Vigil to a friendly target for 30 sec. The caster's next Holy Shock on the target incurs no cooldown and heals the target and their party for 684 to 724. Only one Vigil per Paladin may be active in each party."
+    },
+    {
+      // Oath of Light (1.60.1.70707) took the place of Blessing of Light, which left the game in the same build. The client
+      // gives its three bonuses as 0: the lab SUPPOSES Blessing of Light's numbers (400 for Holy Light, 115 for Flash of
+      // Light) and the same 115 for Holy Shock, an instant heal with Flash of Light's coefficient.
+      id: "oath_of_light",
+      name: "Oath of Light",
+      icon: "spell_holy_greaterblessingoflight",
+      tree: "holy",
+      schools: holy,
+      harmful: false,
+      target: "ally",
+      range: 40,
+      cost: basePct(0.08),
+      talent: "oath_of_light",
+      tags: ["heal"],
+      effects: [
+        { type: "custom", run: (g, ctx) => {
+          for (const u of [g.player, ...g.allies || []]) for (const a of u.auras.slice()) if (a.id === "oath_of_light" && a.source === g.player && u !== ctx.target) removeAura(g, a, "replaced");
+        } },
+        { type: "applyAura", to: "target", aura: "oath_of_light" }
+      ],
+      text: `Swear an Oath to protect target ally for 5 min, increasing the healing of your Holy Light on them by up to ${OATH.holy_light}, your Flash of Light by up to ${OATH.flash_of_light}, and your Holy Shock by up to ${OATH.holy_shock}. Only one Oath of Light may be sworn by the Paladin at any one time.
+
+Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). The lab uses Blessing of Light's, which Oath of Light replaced.`
     },
     {
       id: "hammer_of_wrath",
@@ -5721,7 +5767,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       "spell_holy_retributionaura",
       "protection",
       200,
-      "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 35 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Unleashing this Seal's energy inflicts 154 to 167 Holy damage to an enemy and taunts the target to attack you for 4 sec."
+      "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 35 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Unleashing this Seal's energy inflicts 154 to 167 Holy damage to an enemy and taunts the target to attack you for 3 sec."
     ),
     {
       id: "hammer_of_justice",
@@ -5782,22 +5828,20 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       text: "Increases chance to block by 30% for 10 sec, and deals 221 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges."
     },
     {
+      // A second Judgement with its own cooldown and no mana cost (1.60.1.70707).
       id: "swift_judgement",
       name: "Swift Judgement",
       icon: "ability_paladin_judgementred",
       tree: "protection",
       schools: holy,
-      target: "self",
+      harmful: true,
+      target: "enemy",
+      range: 10,
       cooldown: 60,
-      gcd: false,
       talent: "swift_judgement",
-      effects: [
-        { type: "custom", run: (g) => {
-          delete g.player.cooldowns.judgement;
-        } },
-        { type: "applyAura", to: "self", aura: "swift_judgement" }
-      ],
-      text: "Finishes the remaining cooldown on your Judgement ability and reduces the Mana cost of your next Judgement by 100%."
+      usable: (g) => g.player.auras.some((a) => a.def.exclusive === "seal") ? null : "You have no Seal active",
+      effects: [{ type: "custom", run: (g, ctx) => g.cls.judge(g, ctx) }],
+      text: "Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal. Refer to individual Seals for Judgement effect. Does not share a cooldown with your Judgement ability."
     },
     /* ---------- Retribution ---------- */
     {
@@ -5896,8 +5940,10 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     auraOverrides: {
       righteous_fury: {
         notSimulated: false,
-        mods: (a, g) => [mult("threatMult", 1.9, (ctx) => hasSchool(ctx, "holy")), mult("damageTaken", 1 - 0.02 * g.rank("improved_righteous_fury"))],
-        desc: (a, g) => `Threat from Holy attacks increased by 90%.${g.rank("improved_righteous_fury") ? ` Damage taken reduced by ${2 * g.rank("improved_righteous_fury")}%.` : ""}`
+        // 1.60.1.70707: 33% more threat from everything, and Holy attacks 90% more on top. ESTIMATE: the two add up
+        // (x 2.23 for Holy, x 1.33 for the rest); the tooltip does not say whether they multiply.
+        mods: (a, g) => [mult("threatMult", (ctx) => hasSchool(ctx, "holy") ? 2.23 : 1.33), mult("damageTaken", 1 - 0.03 * g.rank("improved_righteous_fury"))],
+        desc: (a, g) => `Threat increased by 33%, and by 90% more from Holy attacks.${g.rank("improved_righteous_fury") ? ` Damage taken reduced by ${3 * g.rank("improved_righteous_fury")}%.` : ""}`
       },
       divine_protection: { notSimulated: false, flags: { immune: true }, mods: () => [{ key: "noAttack", fn: () => true }], desc: () => "Immune to physical attacks and spells. Cannot attack or use physical abilities." },
       divine_shield: { notSimulated: false, flags: { immune: true }, mods: () => [mult("damageMult", 0.5)], desc: () => "Immune to all damage. Damage dealt reduced by 50%." },
@@ -5906,8 +5952,6 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       seal_of_light: seal2,
       seal_of_wisdom: seal2,
       seal_of_justice: seal2,
-      blessing_of_light: blessing,
-      greater_blessing_of_light: blessing,
       greater_blessing_of_might: { ...blessing, notSimulated: false, mods: () => [add("attackPower", 133)], desc: () => "Melee attack power increased by 133." },
       greater_blessing_of_wisdom: { ...blessing, notSimulated: false, mods: () => [add("mp5", 40)], desc: () => "Restores 40 mana every 5 seconds." },
       greater_blessing_of_kings: { ...blessing, notSimulated: false, mods: () => [{ key: "attributes", fn: (a) => ({ str: a.str * 1.1, agi: a.agi * 1.1, sta: a.sta * 1.1, int: a.int * 1.1, spi: a.spi * 1.1 }) }], desc: () => "Total stats increased by 10%." }
@@ -5929,8 +5973,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       // the attack power and anything that procs on a hit gain.
       mods: () => [add("attackPower", 325), mult("attackSpeed", 1.4), mult("damageMult", 1 / 1.4, (ctx) => !!ctx.white)]
     }),
-    // Twist of Light: the replaced Seal's effect on the next melee attack.
-    echo_of_seal: { id: "echo_of_seal", name: "Echo of the Seal", icon: "spell_holy_blessedresillience", kind: "buff", duration: 30, desc: (a) => `Your next melee attack applies ${a.data.sealName || "the replaced Seal"}.` },
+    // Unsealed Wrath: copies of the Seal your melee attacks landed with, up to 3 (paladin.js).
+    unsealed_wrath: { id: "unsealed_wrath", name: "Unsealed Wrath", icon: "spell_holy_blessedresillience", kind: "buff", duration: 15, maxStacks: 3, desc: (a) => `${a.stacks} stored ${a.stacks > 1 ? "copies" : "copy"} of ${a.data.sealName || "your Seal"}. An attack with a different Seal sets them off.` },
     /* ---------- Auras (one at a time). Devotion and Retribution Aura matter when the fight hits back (Tank test),
        Concentration Aura when you are hit while casting: the resistance auras do nothing in the lab. ---------- */
     devotion_aura: { id: "devotion_aura", name: "Devotion Aura", icon: "spell_holy_devotionaura", kind: "buff", exclusive: "paladin_aura", duration: Infinity, mods: () => [add("armor", 735)], desc: () => "Armor increased by 735." },
@@ -5950,15 +5994,6 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     }),
     /* ---------- other buffs ---------- */
     divine_favor: { id: "divine_favor", name: "Divine Favor", icon: "spell_holy_heal", kind: "buff", desc: () => "Your next Holy Shock is a critical effect." },
-    swift_judgement: {
-      id: "swift_judgement",
-      name: "Swift Judgement",
-      icon: "ability_paladin_judgementred",
-      kind: "buff",
-      duration: 30,
-      mods: () => [set("cost", 0, (ctx) => isAbility(ctx, "judgement"))],
-      desc: () => "Your next Judgement costs no mana."
-    },
     holy_shield: { id: "holy_shield", name: "Holy Shield", icon: "spell_holy_blessingofprotection", kind: "buff", duration: 10, charges: 4, mods: () => [add("blockChance", 0.3)], desc: (a) => `Block chance increased by 30%. Each block deals 221 Holy damage to the attacker (${a.charges} left).` },
     // Seal of Fury with a shield: half of its Holy damage becomes an absorb shield. ESTIMATE: it lasts 15 sec from the
     // last hit and keeps adding up (the tooltip gives no duration or cap).
@@ -5970,8 +6005,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       kind: "buff",
       duration: 10,
       charges: 5,
-      mods: (a, g) => [add("blockChance", 0.04 * g.rank("redoubt"))],
-      desc: (a, g) => `Block chance increased by ${4 * g.rank("redoubt")}% for ${a.charges} more blocks.`
+      mods: (a, g) => [add("blockChance", 0.06 * g.rank("redoubt"))],
+      desc: (a, g) => `Block chance increased by ${6 * g.rank("redoubt")}% for ${a.charges} more blocks.`
     },
     reckoning: { id: "reckoning", name: "Reckoning", icon: "spell_holy_blessingofstrength", kind: "buff", duration: Infinity, maxStacks: 4, desc: (a) => `Your next melee swing gives ${a.stacks} extra attack${a.stacks > 1 ? "s" : ""}.` },
     iron_creed: {
@@ -6003,14 +6038,16 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       mods: (a, g) => [mult("damageMult", 1 + 0.01 * g.rank("vengeance") * a.stacks, holyOrPhysical)],
       desc: (a, g) => `Physical and Holy damage increased by ${g.rank("vengeance") * a.stacks}%.`
     },
+    // Vindication (1.60.1.70707): only the enemy's attack power goes down now (the Paladin's own bonus is gone).
     vindication: {
       id: "vindication",
       name: "Vindication",
       icon: "spell_holy_vindication",
-      kind: "buff",
+      kind: "debuff",
       duration: 30,
-      mods: (a, g) => [mult("attackPower", 1 + 0.01 * g.rank("vindication"))],
-      desc: (a, g) => `Attack power increased by ${g.rank("vindication")}%.`
+      enemy: (a) => ({ ap: a.data.ap || 0 }),
+      // data.ap: 67 per rank, set when applied (paladin.js)
+      desc: (a) => `Attack power reduced by ${a.data.ap || 0}.`
     },
     /* ---------- debuffs on the target ---------- */
     judgement_of_the_crusader: {
@@ -6030,7 +6067,17 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       coef: 0.333
       /* ESTIMATE: Classic */
     } },
-    lights_vigil: { id: "lights_vigil", name: "Light's Vigil", icon: "ability_paladin_judgementofthepure", kind: "debuff", duration: 30, desc: () => "Your next Holy Shock on this target has no cooldown, hits harder and refunds mana." },
+    lights_vigil: { id: "lights_vigil", name: "Light's Vigil", icon: "ability_paladin_judgementofthepure", kind: "buff", duration: 30, desc: () => "The Paladin's next Holy Shock on this target has no cooldown and heals their whole party." },
+    // Oath of Light on a friend: the Paladin's Holy Light, Flash of Light and Holy Shock heal it for more (SUPPOSED numbers).
+    oath_of_light: {
+      id: "oath_of_light",
+      name: "Oath of Light",
+      icon: "spell_holy_greaterblessingoflight",
+      kind: "buff",
+      duration: 300,
+      sourceMods: () => [add("healBonus", (ctx) => OATH[ctx.ability.id] || 0, (ctx) => !!ctx.heal && !ctx.periodic && isAbility(ctx, "holy_light", "flash_of_light", "holy_shock"))],
+      desc: () => `Holy Light heals for up to ${OATH.holy_light} more, Flash of Light and Holy Shock for up to ${OATH.flash_of_light} more (supposed numbers: the client shows 0).`
+    },
     hammer_of_justice: stun3("hammer_of_justice", "Hammer of Justice", "spell_holy_sealofmight", 6),
     holy_wrath_stun: stun3("holy_wrath_stun", "Holy Wrath", "spell_holy_excorcism", 2)
   };
@@ -6058,60 +6105,61 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     {
       id: "holy",
       name: "Holy",
-      points: "34/12/5",
+      points: "32/14/5",
       gearRole: "healer",
       scenario: "raid-healing",
-      blurb: "A healer build for the Healing test: Holy Light on the tank, Flash of Light for cheap top-ups, Holy Shock from 20 yards; Light's Vigil on a friend turns the next Holy Shock into a heal for their whole party. Illumination gives mana back on crits, Divine Favor makes one heal crit. Lay on Hands when someone is about to die.",
+      blurb: "A healer build for the Healing test: Oath of Light on the tank (Holy Light, Flash of Light and Holy Shock heal it for more), Holy Light on the tank, Flash of Light for cheap top-ups, Holy Shock from 20 yards; Light's Vigil on a friend turns the next Holy Shock into a heal for their whole party. Illumination gives mana back on crits, Divine Favor makes one heal crit. Lay on Hands when someone is about to die.",
       options: { mainHand: "mace", offHand: "shield", blessing: "wisdom", righteousFury: "auto", aura: "concentration_aura" },
-      source: { site: "Daniel", url: "index.html#c=paladin&t=05320013225131051-503200002-05&b=holy_light.flash_of_light.holy_shock.lights_vigil.divine_favor.lay_on_hands.divine_shield.cleanse.major_mana_potion&g=mc_healer&o=mainHand%3Amace%2CoffHand%3Ashield%2Cblessing%3Awisdom%2Caura%3Aconcentration_aura", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (36/10/5)." },
+      source: { site: "Daniel", url: "index.html#c=paladin&t=50320215022101251-503220002-05&b=holy_light.flash_of_light.holy_shock.lights_vigil.oath_of_light.divine_favor.lay_on_hands.divine_shield.cleanse.major_mana_potion&g=mc_healer&o=mainHand%3Amace%2CoffHand%3Ashield%2Cblessing%3Awisdom%2CrighteousFury%3Aauto%2Caura%3Aconcentration_aura", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (34/12/5) adjusted for build 1.60.1.70707." },
       talents: {
-        divine_intellect: 5,
+        spiritual_focus: 5,
         healing_light: 3,
-        spiritual_focus: 2,
-        voice_of_truth: 1,
-        reverence: 3,
+        reverence: 2,
         purifying_power: 2,
-        infusion_of_light: 2,
-        illumination: 5,
         divine_favor: 1,
-        divine_precision: 3,
+        illumination: 5,
+        divine_precision: 2,
+        infusion_of_light: 2,
+        oath_of_light: 1,
         holy_shock: 1,
+        boundless_light: 2,
         holy_power: 5,
         lights_vigil: 1,
-        toughness: 5,
+        divine_intellect: 5,
         precision: 3,
         guardians_favor: 2,
         sacred_duty: 2,
+        toughness: 2,
         benediction: 5
       },
-      bar: ["holy_light", "flash_of_light", "holy_shock", "lights_vigil", "divine_favor", "lay_on_hands", "divine_shield", "cleanse", "major_mana_potion"]
+      bar: ["holy_light", "flash_of_light", "holy_shock", "lights_vigil", "oath_of_light", "divine_favor", "lay_on_hands", "divine_shield", "cleanse", "major_mana_potion"]
     },
     {
       id: "protection",
       name: "Protection",
-      points: "0/35/16",
+      points: "0/37/14",
       gearRole: "tank",
       scenario: "raid-boss",
-      blurb: "A tank build for the Tank test: one-hander and shield, Righteous Fury and Devotion Aura. Seal of Fury turns Holy damage into an absorb shield and its Judgement taunts; Holy Strike, Hammer of the Righteous and Consecration for threat, Holy Shield up for blocks. Templar's Bulwark, Divine Protection and Lay on Hands for the bad moments.",
+      blurb: "A tank build for the Tank test: one-hander and shield, Righteous Fury and Devotion Aura. Seal of Fury turns Holy damage into an absorb shield and its Judgement taunts; Swift Judgement is a second Judgement. Holy Strike (sooner with Shieldsworn, and it sets off Holy Shield), Hammer of the Righteous and Consecration for threat, Holy Shield up for blocks. Templar's Bulwark, Divine Protection and Lay on Hands for the bad moments.",
       options: { mainHand: "sword", offHand: "shield", blessing: "kings", righteousFury: "on", aura: "devotion_aura" },
-      source: { site: "Daniel", url: "index.html#c=paladin&t=-0530513321001551-5422003&b=seal_of_fury.judgement.holy_strike.hammer_of_the_righteous.consecration.holy_shield.swift_judgement.templars_bulwark.divine_protection.lay_on_hands.holy_light.major_mana_potion&g=mc_tank&o=mainHand%3Asword%2CoffHand%3Ashield%2Cblessing%3Akings%2CrighteousFury%3Aon%2Caura%3Adevotion_aura", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (0/44/7)." },
+      source: { site: "Daniel", url: "index.html#c=paladin&t=-05302102513501531-54203&b=seal_of_fury.judgement.holy_strike.hammer_of_the_righteous.consecration.holy_shield.swift_judgement.templars_bulwark.divine_protection.lay_on_hands.holy_light.major_mana_potion&g=mc_tank&o=mainHand%3Asword%2CoffHand%3Ashield%2Cblessing%3Akings%2CrighteousFury%3Aon%2Caura%3Adevotion_aura", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (0/35/16) adjusted for build 1.60.1.70707." },
       talents: {
         redoubt: 5,
         precision: 3,
-        anticipation: 5,
-        improved_seal_of_fury: 1,
-        improved_righteous_fury: 3,
-        shield_specialization: 3,
         sacred_duty: 2,
-        swift_judgement: 1,
         templars_bulwark: 1,
-        reckoning: 5,
-        iron_creed: 5,
+        shield_specialization: 2,
+        toughness: 5,
+        swift_judgement: 1,
+        improved_righteous_fury: 3,
+        anticipation: 5,
         holy_shield: 1,
+        reckoning: 5,
+        iron_creed: 3,
+        shieldsworn: 1,
         deflection: 5,
         benediction: 4,
         improved_judgement: 2,
-        holy_conduit: 2,
         sanctified_judgement: 3
       },
       bar: ["seal_of_fury", "judgement", "holy_strike", "hammer_of_the_righteous", "consecration", "holy_shield", "swift_judgement", "templars_bulwark", "divine_protection", "lay_on_hands", "holy_light", "major_mana_potion"]
@@ -6119,30 +6167,29 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     {
       id: "retribution",
       name: "Retribution",
-      points: "9/8/34",
+      points: "12/8/31",
       gearRole: "melee",
-      blurb: "A two-hander with Seal of Command. Judgement and Holy Strike on cooldown; Twist of Light lets you swap Seals and keep an Echo of the old one for the next swing. Vengeance stacks from crits, Champion of the Light turns Intellect into spell power.",
+      blurb: "A two-hander with Seal of Command. Judgement and Holy Strike on cooldown; Unsealed Wrath stores copies of your Seal on each swing, and changing Seals sets them off. Vengeance stacks from crits, Champion of the Light turns Intellect into spell power and makes Hammer of Wrath faster.",
       options: { mainHand: "two_hand_mace", offHand: "none", blessing: "might", righteousFury: "auto", aura: "retribution_aura" },
-      source: { site: "Daniel", url: "index.html#c=paladin&t=51003-503-05225331001330321&b=seal_of_command.judgement.holy_strike.seal_of_righteousness.consecration.hammer_of_wrath.seal_of_the_crusader.hammer_of_justice.major_mana_potion&g=mc&o=blessing%3Amight%2Caura%3Aretribution_aura", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (8/8/35)." },
+      source: { site: "Daniel", url: "index.html#c=paladin&t=050050002-503-05233301001301351&b=seal_of_command.judgement.holy_strike.seal_of_righteousness.consecration.hammer_of_wrath.seal_of_the_crusader.hammer_of_justice.major_mana_potion&g=mc&o=mainHand%3Atwo_hand_mace%2CoffHand%3Anone%2Cblessing%3Amight%2CrighteousFury%3Aauto%2Caura%3Aretribution_aura", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (9/8/34) adjusted for build 1.60.1.70707." },
       talents: {
         divine_strength: 5,
-        divine_intellect: 1,
-        improved_seals: 3,
-        toughness: 5,
+        improved_seals: 5,
+        holy_conduit: 2,
+        divine_intellect: 5,
         precision: 3,
         benediction: 5,
         improved_judgement: 2,
-        holy_conduit: 2,
-        conviction: 5,
-        vindication: 3,
+        conviction: 3,
         sanctified_judgement: 3,
+        vindication: 3,
         seal_of_command: 1,
         sacred_arbiter: 1,
         two_handed_weapon_specialization: 3,
+        repentance: 1,
         vengeance: 3,
-        champion_of_the_light: 3,
-        instrument_of_law: 2,
-        twist_of_light: 1
+        champion_of_the_light: 5,
+        unsealed_wrath: 1
       },
       bar: ["seal_of_command", "judgement", "holy_strike", "seal_of_righteousness", "consecration", "hammer_of_wrath", "seal_of_the_crusader", "hammer_of_justice", "major_mana_potion"]
     }
@@ -6152,7 +6199,6 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   var MAIN_HANDS2 = ["two_hand_mace", "two_hand_sword", "two_hand_axe", "polearm", "mace", "sword", "axe"];
   var OFF_HANDS2 = ["none", "shield"];
   var BLESSINGS = ["might", "wisdom", "kings", "none"];
-  var TWISTABLE = ["seal_of_command", "seal_of_righteousness", "seal_of_fury"];
   var SOC_PPM = 7;
   var SOC_GAP = 1;
   var isPlayer3 = (game, ev) => ev.ctx.caster === game.player;
@@ -6161,15 +6207,15 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   var activeSeal = (game) => game.player.auras.find((a) => a.def.exclusive === "seal") || null;
   var weaponHit = (game, ev) => !ev.periodic && ev.ctx.melee && isPlayer3(game, ev) && !ev.ctx.cleave && !ev.ctx.sealProc && landedRes3(ev.res) && (ev.ctx.white || !!(ev.ctx.ability && ev.ctx.ability.weaponStrike));
   var spellCtx = (game, target, id, name, icon2, tags) => ({ castId: ++game.castSeq, caster: game.player, target, schools: ["holy"], tags, ability: { id, name, icon: icon2, schools: ["holy"], tags }, sealProc: tags.includes("seal") });
-  function sealHit(game, sealId, target, forced) {
+  function sealHit(game, sealId, target, stored) {
     const w = mainWeapon(game);
     if (!w || !target || target.dead) return;
     if (sealId === "seal_of_righteousness") {
       const base = 23 + (76 - 23) * clamp((w.speed - 1.5) / 2.5, 0, 1);
       spellHit(game, spellCtx(game, target, sealId, "Seal of Righteousness", "ability_thunderbolt", ["seal"]), { min: base, max: base, coef: 0.2 * w.speed / 3.6, noMiss: true, canCrit: false, name: "Seal of Righteousness" });
     } else if (sealId === "seal_of_command") {
-      if (!forced && (game.time - (game.player.socLast ?? -Infinity) < SOC_GAP || game.rng() >= SOC_PPM * w.speed / 60)) return;
-      if (!forced) game.player.socLast = game.time;
+      if (!stored && game.time - (game.player.socLast ?? -Infinity) < SOC_GAP || game.rng() >= SOC_PPM * w.speed / 60) return;
+      if (!stored) game.player.socLast = game.time;
       const ctx = spellCtx(game, target, sealId, "Seal of Command", "ability_warrior_innerrage", ["seal"]);
       meleeHit(game, ctx, { hand: "main", weaponPct: 0.7, spCoef: 0.29, name: "Seal of Command" });
     } else if (sealId === "seal_of_fury") {
@@ -6180,6 +6226,19 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         applyAura(game, p, auras4.seal_of_fury_shield, { source: p, data: { absorb: absorb2 } });
       }
     }
+  }
+  function holyShieldHit(game, target) {
+    const ab = game.ability("holy_shield");
+    return spellHit(game, { castId: ++game.castSeq, caster: game.player, target, schools: ["holy"], tags: [], ability: ab }, { min: 221, max: 221, coef: 0.05, noMiss: true, canCrit: false, name: "Holy Shield" });
+  }
+  function unsealedWrath(game, seal4, target) {
+    const p = game.player, a = findAura(p, "unsealed_wrath");
+    if (a && a.data.seal !== seal4.id) {
+      const n = a.stacks, id = a.data.seal;
+      removeAura(game, a, "consumed");
+      for (let i = 0; i < n; i++) sealHit(game, id, target, true);
+    }
+    applyAura(game, p, auras4.unsealed_wrath, { source: p, data: { seal: seal4.id, sealName: seal4.def.name } });
   }
   var paladin = {
     id: "paladin",
@@ -6200,7 +6259,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       baseHp: 1381,
       baseMana: 1512,
       derive(a) {
-        const conv = (v, per6) => Math.min(v, 20) + Math.max(0, v - 20) * per6;
+        const conv = (v, per5) => Math.min(v, 20) + Math.max(0, v - 20) * per5;
         return {
           maxHp: 1381 + conv(a.sta, 10) - 20,
           maxMana: 1512 + conv(a.int, 15) - 20,
@@ -6223,6 +6282,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     stanceBar: { label: "Auras", abilities: ["devotion_aura", "retribution_aura", "concentration_aura"] },
     // the resistance auras are not simulated
     trees: trees4,
+    talentHistory: talentHistory2,
+    // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities4, ...extra4.abilities],
     // the rest of the spellbook: spellbook.js
     auras: { ...auras4, ...extra4.auras },
@@ -6250,7 +6311,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       mainHand: { label: "Main hand", values: MAIN_HANDS2, names: weaponNames(MAIN_HANDS2), default: "two_hand_mace" },
       offHand: { label: "Off hand", values: OFF_HANDS2, names: { none: "None", shield: "Shield" }, default: "none", note: "Ignored with a two-handed weapon." },
       blessing: { label: "Blessing", values: ["auto", ...BLESSINGS], names: { auto: "Best for the spec", might: "Blessing of Might", wisdom: "Blessing of Wisdom", kings: "Blessing of Kings", none: "None" }, default: "auto" },
-      righteousFury: { label: "Righteous Fury", values: ["auto", "off", "on"], names: { auto: "On for Protection", off: "Off", on: "On (90% more threat from Holy damage)" }, default: "auto" },
+      righteousFury: { label: "Righteous Fury", values: ["auto", "off", "on"], names: { auto: "On for Protection", off: "Off", on: "On (33% more threat, 90% more from Holy damage)" }, default: "auto" },
       aura: { label: "Aura", values: ["none", "devotion_aura", "retribution_aura", "concentration_aura"], hidden: true }
       // set by the aura bar; unset: the spec's
     },
@@ -6291,7 +6352,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         hit2("Judgement of Command", 169.5 * k, 186.5 * k, 0.429 * k);
       } else if (s.id === "seal_of_fury") {
         hit2("Judgement of Fury", 154, 167, 0.429);
-        taunt(game, t, 4);
+        taunt(game, t, 3);
       } else if (s.id === "seal_of_the_crusader") applyAura(game, t, auras4.judgement_of_the_crusader, { source: game.player });
     },
     // Baseline rules, no talent needed.
@@ -6304,11 +6365,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         if (!weaponHit(game, ev)) return;
         const s = activeSeal(game);
         if (s) sealHit(game, s.id, ev.ctx.target, false);
-        const echo = findAura(p(), "echo_of_seal");
-        if (echo) {
-          removeAura(game, echo, "consumed");
-          sealHit(game, echo.data.seal, ev.ctx.target, true);
-        }
+        if (s && game.rank("unsealed_wrath")) unsealedWrath(game, s, ev.ctx.target);
         const jc = findAura(ev.ctx.target, "judgement_of_the_crusader", p());
         if (jc) jc.expires = game.time + jc.duration;
       });
@@ -6329,21 +6386,13 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
           ctx.vigil = true;
           removeAura(game, lv, "consumed");
           delete p().cooldowns.holy_shock;
-          game.resource.gain(game, p(), 0.75 * 1340);
-        }
-      });
-      on("cast:success", ({ ability }) => {
-        if (ability.id === "judgement") {
-          const a = findAura(p(), "swift_judgement");
-          if (a) removeAura(game, a, "consumed");
         }
       });
       on("hitTaken", ({ attacker, res }) => {
         if (res.outcome === "block") {
           const hs = findAura(p(), "holy_shield");
           if (hs) {
-            const ab = game.ability("holy_shield");
-            spellHit(game, { castId: ++game.castSeq, caster: p(), target: attacker, schools: ["holy"], tags: [], ability: ab }, { min: 221, max: 221, coef: 0.05, noMiss: true, canCrit: false, name: "Holy Shield" });
+            holyShieldHit(game, attacker);
             useCharge(game, hs);
           }
           const rd = findAura(p(), "redoubt");
@@ -6356,24 +6405,18 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     },
     talents: {
       /* ---------- Holy ---------- */
-      spiritual_focus: { mods: (r) => [focus(0.35 * r, (ctx) => isAbility(ctx, "flash_of_light", "holy_light", "lights_vigil"))] },
+      spiritual_focus: { mods: (r) => [focus(0.14 * r, (ctx) => isAbility(ctx, "flash_of_light", "holy_light", "lights_vigil"))] },
       divine_strength: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, str: a.str * (1 + 0.02 * r) }) }] },
-      divine_intellect: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, int: a.int * (1 + 0.02 * r) }) }] },
-      improved_seals: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => !!ctx.tags && (ctx.tags.includes("seal") || ctx.tags.includes("judgement")))] },
-      reverence: { mods: (r) => [add("regenWhileCasting", 0.1 * r)] },
-      purifying_power: { mods: (r) => [mult("cooldown", 1 - [0.17, 0.33][r - 1], (ctx) => isAbility(ctx, "exorcism", "holy_wrath"))] },
-      divine_favor: { teaches: "divine_favor" },
-      divine_precision: { mods: (r) => [add("hitChance", 0.06 * r, (ctx) => !ctx.melee && hasSchool(ctx, "holy"))] },
-      holy_shock: { teaches: "holy_shock" },
       healing_light: { mods: (r) => [mult("healMult", 1 + 0.04 * r, (ctx) => isAbility(ctx, "holy_light", "flash_of_light", "holy_shock"))] },
-      // A critical Holy Shock or Flash of Light heal makes the next Holy Light faster.
-      infusion_of_light: {
-        listen(game, r, on) {
-          on("heal", (ev) => {
-            if (ev.source === "player" && ev.crit && !ev.periodic && ev.ctx && isAbility(ev.ctx, "holy_shock", "flash_of_light")) applyAura(game, game.player, auras4.infusion_of_light, { source: game.player });
-          });
-        }
+      reverence: { mods: (r) => [add("regenWhileCasting", 0.15 * r)] },
+      improved_seals: { mods: (r) => [mult("damageMult", 1 + 0.03 * r, (ctx) => !!ctx.tags && (ctx.tags.includes("seal") || ctx.tags.includes("judgement")))] },
+      purifying_power: {
+        mods: (r) => [
+          mult("cooldown", 1 - [0.17, 0.33][r - 1], (ctx) => isAbility(ctx, "exorcism", "holy_wrath")),
+          mult("cost", 1 - 0.1 * r, (ctx) => isAbility(ctx, "cleanse", "purify"))
+        ]
       },
+      divine_favor: { teaches: "divine_favor" },
       // A critical heal has a 20% chance per rank to give back half of the spell's base cost.
       illumination: {
         listen(game, r, on) {
@@ -6384,16 +6427,26 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
           });
         }
       },
-      consecrated_ground: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx, g) => !ctx.melee && hasSchool(ctx, "holy") && !!ctx.target && !!findAura(ctx.target, "consecration", g.player))] },
-      holy_power: {
-        mods: (r) => [
-          add("critChance", 0.03 * r, (ctx) => isAbility(ctx, "holy_shock", "holy_strike")),
-          add("critChance", 0.01 * r, (ctx) => !ctx.melee && !isAbility(ctx, "holy_shock", "holy_strike"))
-        ]
+      holy_conduit: { mods: (r) => [mult("cost", 1 - 0.2 * r, (ctx) => isAbility(ctx, "consecration", "holy_wrath", "exorcism", "hammer_of_wrath"))] },
+      divine_precision: { mods: (r) => [add("hitChance", 0.04 * r, (ctx) => !ctx.melee && hasSchool(ctx, "holy"))] },
+      // and shorter Silences (no Silence in the lab)
+      // A critical Holy Shock or Flash of Light heal makes the next Holy Light faster.
+      infusion_of_light: {
+        listen(game, r, on) {
+          on("heal", (ev) => {
+            if (ev.source === "player" && ev.crit && !ev.periodic && ev.ctx && isAbility(ev.ctx, "holy_shock", "flash_of_light")) applyAura(game, game.player, auras4.infusion_of_light, { source: game.player });
+          });
+        }
       },
+      oath_of_light: { teaches: "oath_of_light" },
+      consecrated_ground: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx, g) => !ctx.melee && hasSchool(ctx, "holy") && !!ctx.target && !!findAura(ctx.target, "consecration", g.player))] },
+      holy_shock: { teaches: "holy_shock" },
+      // Holy Shock heals crit more often on friends without your Oath of Light.
+      boundless_light: { mods: (r) => [add("critChance", 0.15 * r, (ctx, g) => !!ctx.heal && isAbility(ctx, "holy_shock") && !!ctx.target && !findAura(ctx.target, "oath_of_light", g.player))] },
+      holy_power: { mods: (r) => [mult("healCritBonusMult", 1 + 0.1 * r, (ctx) => !!ctx.heal && hasSchool(ctx, "holy"))] },
       lights_vigil: { teaches: "lights_vigil" },
       /* ---------- Protection ---------- */
-      toughness: { mods: (r) => [mult("itemArmor", 1 + 0.02 * r)] },
+      divine_intellect: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, int: a.int * (1 + 0.02 * r) }) }] },
       redoubt: {
         listen(game, r, on) {
           on("hitTaken", ({ res }) => {
@@ -6401,28 +6454,39 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
           });
         }
       },
-      anticipation: { mods: (r) => [add("defense", 4 * r)] },
-      improved_righteous_fury: { mods: () => [] },
-      // read by Righteous Fury (spellbook.js)
+      precision: { mods: (r) => [add("hitChance", 0.01 * r, (ctx) => !!ctx.melee)] },
+      guardians_favor: { mods: (r) => [add("cooldown", -60 * r, (ctx) => isAbility(ctx, "blessing_of_protection"))] },
+      // Shorter cooldowns, and a shorter Forbearance after them.
+      sacred_duty: {
+        mods: (r) => [add("cooldown", -30 * r, (ctx) => isAbility(ctx, "divine_shield", "divine_protection", "templars_bulwark"))],
+        listen(game, r, on) {
+          on("aura:apply", ({ aura: aura2, fresh }) => {
+            if (fresh && aura2.id === "forbearance" && aura2.unit === game.player) {
+              aura2.duration -= 5 * r;
+              aura2.expires -= 5 * r;
+            }
+          });
+        }
+      },
+      templars_bulwark: { teaches: "templars_bulwark" },
+      improved_hammer_of_justice: { mods: (r) => [add("cooldown", -5 * r, (ctx) => isAbility(ctx, "hammer_of_justice"))] },
       shield_specialization: {
-        mods: (r) => [mult("blockValue", 1 + 0.1 * r)],
+        mods: (r) => [mult("blockValue", 1 + 0.15 * r)],
         listen(game, r, on) {
           let ready = 0;
           on("hitTaken", ({ res }) => {
-            if (res.outcome !== "block" || game.time < ready || game.rng() >= [0.33, 0.66, 1][r - 1]) return;
+            if (res.outcome !== "block" || game.time < ready || game.rng() >= [0.5, 1][r - 1]) return;
             ready = game.time + 3;
             game.gainPower("mana", 0.04 * game.stats().maxMana);
           });
         }
       },
-      sacred_duty: {
-        mods: (r) => [
-          { key: "attributes", fn: (a) => ({ ...a, sta: a.sta * (1 + 0.02 * r) }) },
-          add("cooldown", -30 * r, (ctx) => isAbility(ctx, "divine_shield", "divine_protection", "templars_bulwark"))
-        ]
-      },
-      guardians_favor: { mods: (r) => [add("cooldown", -60 * r, (ctx) => isAbility(ctx, "blessing_of_protection"))] },
-      templars_bulwark: { teaches: "templars_bulwark" },
+      toughness: { mods: (r) => [mult("itemArmor", 1 + 0.02 * r)] },
+      swift_judgement: { teaches: "swift_judgement" },
+      improved_righteous_fury: { mods: () => [] },
+      // read by Righteous Fury (spellbook.js)
+      anticipation: { mods: (r) => [add("defense", 4 * r)] },
+      holy_shield: { teaches: "holy_shield" },
       // Extra attacks stored from blocks (once per 1.5 sec) and critical hits taken, all spent on the next melee swing.
       reckoning: {
         listen(game, r, on) {
@@ -6443,37 +6507,46 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         }
       },
       iron_creed: {
-        mods: (r) => [mult("threatMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "holy_strike"))],
+        mods: (r) => [mult("threatMult", 1 + 0.1 * r, (ctx) => isAbility(ctx, "holy_strike"))],
         listen(game, r, on) {
           on("spell:resolved", ({ ability, ctx }) => {
             if (ability.id === "holy_strike" && landedRes3(ctx.result) && findAura(game.player, "righteous_fury")) applyAura(game, game.player, auras4.iron_creed, { source: game.player });
           });
         }
       },
-      deflection: { mods: (r) => [add("parryChance", 0.01 * r)] },
-      precision: { mods: (r) => [add("hitChance", 0.01 * r, (ctx) => !!ctx.melee)] },
-      swift_judgement: { teaches: "swift_judgement" },
-      one_handed_weapon_specialization: { mods: (r) => [mult("damageMult", 1 + [0.03, 0.07, 0.1][r - 1], (ctx, g) => !!ctx.melee && !!mainWeapon(g) && !mainWeapon(g).twoHand)] },
-      improved_hammer_of_justice: { mods: (r) => [add("cooldown", -5 * r, (ctx) => isAbility(ctx, "hammer_of_justice"))] },
-      holy_shield: { teaches: "holy_shield" },
-      /* ---------- Retribution ---------- */
-      benediction: { mods: (r) => [mult("cost", 1 - 0.02 * r, (ctx) => !!ctx.ability && !ctx.ability.castTime && !ctx.ability.channel)] },
-      improved_judgement: { mods: (r) => [add("cooldown", -r, (ctx) => isAbility(ctx, "judgement"))] },
-      holy_conduit: { mods: (r) => [mult("cost", 1 - 0.2 * r, (ctx) => isAbility(ctx, "consecration", "holy_wrath", "exorcism", "hammer_of_wrath"))] },
-      conviction: { mods: (r) => [add("critChance", 0.01 * r, (ctx) => !!ctx.melee)] },
-      vindication: {
+      // Holy Strike 4 sec sooner, and struck with the shield: it sets off an active Holy Shield (no charge spent) and
+      // Shield Specialization (outside its 3 sec). Blocking spells for 6 sec is not simulated (no spells in the lab's fights).
+      shieldsworn: {
+        mods: () => [add("cooldown", -4, (ctx) => isAbility(ctx, "holy_strike"))],
         listen(game, r, on) {
-          on("damage", (ev) => {
-            if (weaponHit(game, ev) && game.rng() < 0.1) applyAura(game, game.player, auras4.vindication, { source: game.player });
+          on("spell:resolved", ({ ability, ctx }) => {
+            const p = game.player, t = ctx.target;
+            if (ability.id !== "holy_strike" || !landedRes3(ctx.result) || !paladin.weapons(game).shield || !t || t.dead) return;
+            if (findAura(p, "holy_shield")) holyShieldHit(game, t);
+            const ss = game.rank("shield_specialization");
+            if (ss && game.rng() < [0.5, 1][ss - 1]) game.gainPower("mana", 0.04 * game.stats().maxMana);
           });
         }
       },
+      /* ---------- Retribution ---------- */
+      deflection: { mods: (r) => [add("parryChance", 0.01 * r)] },
+      benediction: { mods: (r) => [mult("cost", 1 - 0.02 * r, (ctx) => !!ctx.ability && !ctx.ability.castTime && !ctx.ability.channel)] },
+      improved_judgement: { mods: (r) => [add("cooldown", -r, (ctx) => isAbility(ctx, "judgement"))] },
+      conviction: { mods: (r) => [add("critChance", 0.02 * r)] },
       sanctified_judgement: {
         listen(game, r, on) {
           on("spell:resolved", ({ ability, ctx }) => {
             if (ability.id !== "judgement" || !ctx.judgedSeal || game.rng() >= [0.33, 0.66, 1][r - 1]) return;
             const sealAb = game.ability(ctx.judgedSeal);
             if (sealAb) game.resource.gain(game, game.player, 0.2 * r * (sealAb.cost || 0));
+          });
+        }
+      },
+      // ESTIMATE: 10% chance per melee hit that lands (the tooltip only says "a chance"). Lowers the enemy's attack power.
+      vindication: {
+        listen(game, r, on) {
+          on("damage", (ev) => {
+            if (weaponHit(game, ev) && game.rng() < 0.1) applyAura(game, ev.ctx.target, auras4.vindication, { source: game.player, data: { ap: 67 * r } });
           });
         }
       },
@@ -6487,7 +6560,13 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
           });
         }
       },
-      two_handed_weapon_specialization: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx, g) => !!ctx.melee && !!mainWeapon(g) && mainWeapon(g).twoHand)] },
+      // With a two-hander: more physical damage, less threat.
+      two_handed_weapon_specialization: {
+        mods: (r) => [
+          mult("damageMult", 1 + 0.02 * r, (ctx, g) => hasSchool(ctx, "physical") && !!mainWeapon(g) && mainWeapon(g).twoHand),
+          mult("threatMult", 1 - [0.07, 0.13, 0.2][r - 1], (ctx, g) => !!mainWeapon(g) && mainWeapon(g).twoHand)
+        ]
+      },
       vengeance: {
         listen(game, r, on) {
           on("damage", (ev) => {
@@ -6495,18 +6574,14 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
           });
         }
       },
-      champion_of_the_light: { mods: (r) => [{ key: "spellPower", fn: (v, ctx, g) => v + g.stats().int * 0.2 * r }] },
-      instrument_of_law: { mods: (r) => [add("castTime", -0.5 * r, (ctx) => isAbility(ctx, "hammer_of_wrath"))] },
-      twist_of_light: {
-        mods: () => [mult("cost", 0.8, (ctx) => !!ctx.ability && !!ctx.ability.seal)],
-        listen(game, r, on) {
-          on("cast:success", ({ ability }) => {
-            if (!ability.seal) return;
-            const old = activeSeal(game);
-            if (old && old.id !== ability.id && TWISTABLE.includes(old.id)) applyAura(game, game.player, auras4.echo_of_seal, { source: game.player, data: { seal: old.id, sealName: old.def.name } });
-          });
-        }
-      }
+      champion_of_the_light: {
+        mods: (r) => [
+          { key: "spellPower", fn: (v, ctx, g) => v + g.stats().int * 0.12 * r },
+          add("castTime", -0.2 * r, (ctx) => isAbility(ctx, "hammer_of_wrath"))
+        ]
+      },
+      unsealed_wrath: { mods: () => [] }
+      // read by the Seals (listen above, unsealedWrath)
     }
   };
 
@@ -7096,7 +7171,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       baseHp: 1467,
       baseMana: 1720,
       derive(a) {
-        const conv = (v, per6) => Math.min(v, 20) + Math.max(0, v - 20) * per6;
+        const conv = (v, per5) => Math.min(v, 20) + Math.max(0, v - 20) * per5;
         return {
           maxHp: 1467 + conv(a.sta, 10) - 20,
           maxMana: 1720 + conv(a.int, 15) - 20,
@@ -7978,7 +8053,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       baseHp: 1414,
       baseMana: 1373,
       derive(a) {
-        const conv = (v, per6) => Math.min(v, 20) + Math.max(0, v - 20) * per6;
+        const conv = (v, per5) => Math.min(v, 20) + Math.max(0, v - 20) * per5;
         return {
           maxHp: 1414 + conv(a.sta, 10) - 20,
           maxMana: 1373 + conv(a.int, 15) - 20,
@@ -8506,7 +8581,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cost: 340,
       cooldown: 18,
       effects: [{ type: "damage", min: 444, max: 472, coef: 0.429 }],
-      text: "A word of dark binding that inflicts 444 to 472 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 10% of your maximum health."
+      text: "A word of dark binding that inflicts 444 to 472 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 30% of your maximum health."
     },
     {
       id: "vampiric_embrace",
@@ -8862,7 +8937,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       baseHp: 1397,
       baseMana: 1436,
       derive(a) {
-        const conv = (v, per6) => Math.min(v, 20) + Math.max(0, v - 20) * per6;
+        const conv = (v, per5) => Math.min(v, 20) + Math.max(0, v - 20) * per5;
         return {
           maxHp: 1397 + conv(a.sta, 10) - 20,
           maxMana: 1436 + conv(a.int, 15) - 20,
@@ -9102,30 +9177,29 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/classes/druid/talent-data.js
-  var SOURCE8 = { site: "foreverchanges.pro/talents/druid", build: "1.60.1.70532", extracted: "2026-10-23" };
-  var per4 = (values, fn) => values.map(fn);
+  var SOURCE8 = { site: "foreverchanges.pro/talents/druid", build: "1.60.1.70707", extracted: "2026-10-31" };
   var trees8 = [
     {
       id: "balance",
       name: "Balance",
       icon: "spell_nature_starfall",
       talents: [
-        { id: "improved_wrath", name: "Improved Wrath", icon: "spell_nature_abolishmagic", tier: 0, col: 1, max: 5, ranks: per4([["0.1", 10], ["0.2", 20], ["0.3", 30], ["0.4", 40], ["0.5", 50]], (v) => `Reduces the cast time of your Wrath spell by ${v[0]} sec and its Mana cost by ${v[1]}%.`) },
-        { id: "genesis", name: "Genesis", icon: "spell_arcane_arcane03", tier: 0, col: 2, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Increases the periodic damage and healing done by your spells and abilities by ${v[0]}%.`) },
-        { id: "moonglow", name: "Moonglow", icon: "spell_nature_sentinal", tier: 1, col: 0, max: 3, ranks: per4([[8], [17], [25]], (v) => `Reduces the Mana cost of your damaging spells by ${v[0]}%.`) },
-        { id: "improved_moonfire", name: "Improved Moonfire", icon: "spell_nature_starfall", tier: 1, col: 1, max: 2, ranks: per4([[5], [10]], (v) => `Increases the damage and critical strike chance of your Moonfire spell by ${v[0]}%.`) },
-        { id: "natures_majesty", name: "Nature's Majesty", icon: "inv_staff_01", tier: 1, col: 2, max: 2, ranks: per4([[2], [4]], (v) => `Increases your critical strike chance with spells and melee attacks by ${v[0]}%.`) },
-        { id: "natures_reach", name: "Nature's Reach", icon: "spell_nature_naturetouchgrow", tier: 1, col: 3, max: 2, ranks: per4([[10, 2], [20, 4]], (v) => `Increases the range of your offensive Balance spells by ${v[0]}% and improves your chance to hit by ${v[1]}%.`) },
-        { id: "improved_entangling_roots", name: "Improved Entangling Roots", icon: "spell_nature_stranglevines", tier: 2, col: 0, max: 3, ranks: per4([[25, 25], [50, 50], [75, 75]], (v) => `Increases the damage done by your Entangling Roots spell by ${v[0]}%, and its victims can take up to ${v[1]}% more damage without interrupting the effect.`) },
+        { id: "improved_wrath", name: "Improved Wrath", icon: "spell_nature_abolishmagic", tier: 0, col: 1, max: 5, ranks: ["Reduces the cast time of your Wrath spell by 0.1 sec and its Mana cost by 10%.", "Reduces the cast time of your Wrath spell by 0.2 sec and its Mana cost by 20%.", "Reduces the cast time of your Wrath spell by 0.3 sec and its Mana cost by 30%.", "Reduces the cast time of your Wrath spell by 0.4 sec and its Mana cost by 40%.", "Reduces the cast time of your Wrath spell by 0.5 sec and its Mana cost by 50%."] },
+        { id: "genesis", name: "Genesis", icon: "spell_arcane_arcane03", tier: 0, col: 2, max: 5, ranks: ["Increases the periodic damage and healing done by your spells and abilities by 2%.", "Increases the periodic damage and healing done by your spells and abilities by 4%.", "Increases the periodic damage and healing done by your spells and abilities by 6%.", "Increases the periodic damage and healing done by your spells and abilities by 8%.", "Increases the periodic damage and healing done by your spells and abilities by 10%."] },
+        { id: "moonglow", name: "Moonglow", icon: "spell_nature_sentinal", tier: 1, col: 0, max: 3, ranks: ["Reduces the Mana cost of your damaging spells by 8%.", "Reduces the Mana cost of your damaging spells by 17%.", "Reduces the Mana cost of your damaging spells by 25%."] },
+        { id: "improved_moonfire", name: "Improved Moonfire", icon: "spell_nature_starfall", tier: 1, col: 1, max: 2, ranks: ["Increases the damage and critical strike chance of your Moonfire spell by 5%.", "Increases the damage and critical strike chance of your Moonfire spell by 10%."] },
+        { id: "natures_majesty", name: "Nature's Majesty", icon: "inv_staff_01", tier: 1, col: 2, max: 2, ranks: ["Increases your critical strike chance with spells and melee attacks by 2%.", "Increases your critical strike chance with spells and melee attacks by 4%."] },
+        { id: "natures_reach", name: "Nature's Reach", icon: "spell_nature_naturetouchgrow", tier: 1, col: 3, max: 2, ranks: ["Increases the range of your offensive Balance spells by 10% and improves your chance to hit by 2%.", "Increases the range of your offensive Balance spells by 20% and improves your chance to hit by 4%."] },
+        { id: "improved_entangling_roots", name: "Improved Entangling Roots", icon: "spell_nature_stranglevines", tier: 2, col: 0, max: 3, ranks: ["Increases the damage done by your Entangling Roots spell by 25%, and its victims can take up to 25% more damage without interrupting the effect.", "Increases the damage done by your Entangling Roots spell by 50%, and its victims can take up to 50% more damage without interrupting the effect.", "Increases the damage done by your Entangling Roots spell by 75%, and its victims can take up to 75% more damage without interrupting the effect."] },
         { id: "natures_splendor", name: "Nature's Splendor", icon: "spell_nature_natureresistancetotem", tier: 2, col: 2, max: 1, req: "natures_majesty", ranks: ["Increases the duration of your Moonfire and Rejuvenation spells by 3 sec, your Regrowth spell by 6 sec, and your Insect Swarm spell by 2 sec."] },
-        { id: "insect_swarm", name: "Insect Swarm", icon: "spell_nature_insectswarm", tier: 3, col: 0, max: 1, ranks: ["The enemy target is swarmed by insects, decreasing their chance to hit with attacks by 2% and causing 48 Nature damage over 12 sec."] },
-        { id: "vengeance", name: "Vengeance", icon: "spell_nature_purge", tier: 3, col: 1, max: 5, req: "improved_moonfire", ranks: per4([[20], [40], [60], [80], [100]], (v) => `Increases the critical strike damage bonus of your Arcane and Nature spells by ${v[0]}%.`) },
-        { id: "improved_starfire", name: "Improved Starfire", icon: "spell_arcane_starfire", tier: 3, col: 2, max: 5, ranks: per4([["0.1", 3], ["0.2", 6], ["0.3", 9], ["0.4", 12], ["0.5", 15]], (v) => `Reduces the cast time of Starfire by ${v[0]} sec and Starfire has a ${v[1]}% chance to stun its target for 3 sec.`) },
-        { id: "overgrowth", name: "Overgrowth", icon: "inv_misc_herb_15", tier: 4, col: 0, max: 2, ranks: per4([[1], [2]], (v) => `Increases the maximum number of targets you may have affected by Entangling Roots by ${v[0]}.`) },
+        { id: "insect_swarm", name: "Insect Swarm", icon: "spell_nature_insectswarm", tier: 3, col: 0, max: 1, active: true, ranks: ["The enemy target is swarmed by insects, decreasing their chance to hit with attacks by 2% and causing 48 Nature damage over 12 sec."] },
+        { id: "vengeance", name: "Vengeance", icon: "spell_nature_purge", tier: 3, col: 1, max: 5, req: "improved_moonfire", ranks: ["Increases the critical strike damage bonus of your Arcane and Nature spells by 20%.", "Increases the critical strike damage bonus of your Arcane and Nature spells by 40%.", "Increases the critical strike damage bonus of your Arcane and Nature spells by 60%.", "Increases the critical strike damage bonus of your Arcane and Nature spells by 80%.", "Increases the critical strike damage bonus of your Arcane and Nature spells by 100%."] },
+        { id: "improved_starfire", name: "Improved Starfire", icon: "spell_arcane_starfire", tier: 3, col: 2, max: 5, ranks: ["Reduces the cast time of Starfire by 0.1 sec and Starfire has a 3% chance to stun its target for 3 sec.", "Reduces the cast time of Starfire by 0.2 sec and Starfire has a 6% chance to stun its target for 3 sec.", "Reduces the cast time of Starfire by 0.3 sec and Starfire has a 9% chance to stun its target for 3 sec.", "Reduces the cast time of Starfire by 0.4 sec and Starfire has a 12% chance to stun its target for 3 sec.", "Reduces the cast time of Starfire by 0.5 sec and Starfire has a 15% chance to stun its target for 3 sec."] },
+        { id: "overgrowth", name: "Overgrowth", icon: "inv_misc_herb_15", tier: 4, col: 0, max: 2, ranks: ["Increases the maximum number of targets you may have affected by Entangling Roots by 1.", "Increases the maximum number of targets you may have affected by Entangling Roots by 2."] },
         { id: "natures_grace", name: "Nature's Grace", icon: "spell_nature_naturesblessing", tier: 4, col: 1, max: 1, ranks: ["All non-periodic spell criticals grace you with a blessing of nature, increasing your spellcasting speed and reducing your global cooldown by 10% for 3 sec."] },
-        { id: "eclipse", name: "Eclipse", icon: "ability_druid_eclipse", tier: 4, col: 2, max: 3, ranks: per4([["0.17"], ["0.33"], ["0.50"]], (v) => `Your Wrath spell reduces the cast time of your next 2 Starfire spells by ${v[0]} sec. Stores up to 4 charges. Lasts 15 sec.`) },
-        { id: "moonfury", name: "Moonfury", icon: "spell_nature_moonglow", tier: 5, col: 1, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases the damage done by your Arcane and Nature spells by ${v[0]}%.`) },
-        { id: "moonkin_form", name: "Moonkin Form", icon: "spell_nature_forceofnature", tier: 6, col: 1, max: 1, ranks: ["Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their spell Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells.\n\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects."] }
+        { id: "eclipse", name: "Eclipse", icon: "ability_druid_eclipse", tier: 4, col: 2, max: 3, ranks: ["Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.17 sec. Stores up to 4 charges. Lasts 15 sec.", "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.33 sec. Stores up to 4 charges. Lasts 15 sec.", "Your Wrath spell reduces the cast time of your next 2 Starfire spells by 0.50 sec. Stores up to 4 charges. Lasts 15 sec."] },
+        { id: "moonfury", name: "Moonfury", icon: "spell_nature_moonglow", tier: 5, col: 1, max: 5, ranks: ["Increases the damage done by your Arcane and Nature spells by 2%.", "Increases the damage done by your Arcane and Nature spells by 4%.", "Increases the damage done by your Arcane and Nature spells by 6%.", "Increases the damage done by your Arcane and Nature spells by 8%.", "Increases the damage done by your Arcane and Nature spells by 10%."] },
+        { id: "moonkin_form", name: "Moonkin Form", icon: "spell_nature_forceofnature", tier: 6, col: 1, max: 1, active: true, ranks: ["Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells.\n\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects."] }
       ]
     },
     {
@@ -9133,26 +9207,26 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Feral Combat",
       icon: "ability_racial_bearform",
       talents: [
-        { id: "ferocity", name: "Ferocity", icon: "ability_hunter_pet_hyena", tier: 0, col: 1, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by ${v[0]} Rage or Energy.`) },
-        { id: "heart_of_the_wild", name: "Heart of the Wild", icon: "spell_holy_blessingofagility", tier: 0, col: 2, max: 5, ranks: per4([[2, 4, 2], [4, 8, 4], [6, 12, 6], [8, 16, 8], [10, 20, 10]], (v) => `Increases your Intellect by ${v[0]}%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by ${v[1]}% and while in Cat Form your Strength is increased by ${v[2]}%.`) },
-        { id: "feral_swiftness", name: "Feral Swiftness", icon: "spell_nature_spiritwolf", tier: 1, col: 0, max: 2, ranks: per4([[15, 2], [30, 4]], (v) => `Increases your movement speed while in Cat Form by ${v[0]}%, and increases your chance to Dodge by ${v[1]}%.`) },
-        { id: "feral_instinct", name: "Feral Instinct", icon: "ability_ambush", tier: 1, col: 1, max: 3, ranks: per4([[10, 1], [20, 2], [30, 3]], (v) => `Increases damage done by your Swipe ability by ${v[0]}% and reduces the chance enemies have to detect you while Prowling as if you were ${v[1]} level${v[1] > 1 ? "s" : ""} higher.`) },
-        { id: "brutal_impact", name: "Brutal Impact", icon: "ability_druid_bash", tier: 1, col: 2, max: 2, ranks: per4([["0.5", 15], [1, 30]], (v) => `Increases the stun duration of your Bash and Pounce abilities by ${v[0]} sec and reduces the cooldown of Bash by ${v[1]} sec.`) },
-        { id: "thick_hide", name: "Thick Hide", icon: "inv_misc_pelt_bear_03", tier: 1, col: 3, max: 3, ranks: per4([[178, "0.67"], [179, "1.33"], [180, "2.00"]], (v) => `While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain ${v[0]} additional base Armor per level and another ${v[1]} base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.`) },
-        { id: "shredding_attacks", name: "Shredding Attacks", icon: "spell_shadow_vampiricaura", tier: 2, col: 0, max: 3, ranks: per4([[6, 1], [12, 2], [18, 3]], (v) => `Reduces the Energy cost of your Shred ability by ${v[0]} and reduces the Rage cost of your Lacerate ability by ${v[1]}.`) },
-        { id: "savage_fury", name: "Savage Fury", icon: "ability_druid_ravage", tier: 2, col: 1, max: 2, ranks: per4([[5], [10]], (v) => `Increases the damage caused by your Claw, Rake, Shred, Maul, and Swipe abilities by ${v[0]}%.`) },
-        { id: "feral_charge", name: "Feral Charge", icon: "ability_hunter_pet_bear", tier: 2, col: 2, max: 1, ranks: ["Requires Bear Form, Dire Bear Form\nCharge an enemy, immobilizing them and interrupting any spell they are casting for 4 sec.\n\nLeap behind an enemy."] },
-        { id: "sharpened_claws", name: "Sharpened Claws", icon: "inv_misc_monsterclaw_04", tier: 2, col: 3, max: 2, ranks: per4([[3], [6]], (v) => `Increases your critical strike chance while in Bear Form, Dire Bear Form, or Cat Form by ${v[0]}%.`) },
-        { id: "shifting_power", name: "Shifting Power", icon: "spell_druid_displacement", tier: 3, col: 0, max: 1, req: "shredding_attacks", ranks: ["Instantly convert 55% of base Mana into 40 Energy. Shifting Power's cost is reduced by effects that reduce the cost of Shapeshifting."] },
-        { id: "primal_bite", name: "Primal Bite", icon: "ability_racial_cannibalize", tier: 3, col: 1, max: 1, req: "savage_fury", ranks: ["Bite the target, dealing 100% normal damage plus 26 and generating a high amount of threat."] },
-        { id: "predatory_strikes", name: "Predatory Strikes", icon: "ability_hunter_pet_cat", tier: 3, col: 2, max: 3, ranks: per4([[50], [100], [150]], (v) => `Increases your melee Attack Power in Cat Form, Bear Form, and Dire Bear Form by ${v[0]}% of your level.`) },
-        { id: "blood_frenzy", name: "Blood Frenzy", icon: "ability_ghoulfrenzy", tier: 3, col: 3, max: 2, req: "sharpened_claws", ranks: per4([[50, 50], [100, 100]], (v) => `Gives you a ${v[0]}% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a ${v[1]}% chance to add an additional Combo Point.`) },
-        { id: "improved_shifting_power", name: "Improved Shifting Power", icon: "ability_hunter_aspectmastery", tier: 4, col: 0, max: 2, req: "shifting_power", ranks: per4([[4], [8]], (v) => `Reduces the cooldown of your Shifting Power spell by ${v[0]} sec.`) },
-        { id: "leader_of_the_pack", name: "Leader of the Pack", icon: "spell_nature_unyeildingstamina", tier: 4, col: 1, max: 1, ranks: ["While in Cat Form, Bear Form, or Dire Bear Form, the Leader of the Pack increases the melee and ranged Critical Strike chance of all party or raid members within 45 yards by 3%."] },
-        { id: "natural_instinct", name: "Natural Instinct", icon: "ability_druid_predatoryinstincts", tier: 4, col: 3, max: 2, ranks: per4([[10, 12], [20, 25]], (v) => `Increases the critical strike damage bonus of your melee abilities by ${v[0]}% and increases your spell healing by ${v[1]}% of your Intellect.`) },
-        { id: "natural_reaction", name: "Natural Reaction", icon: "ability_bullrush", tier: 5, col: 0, max: 5, ranks: per4([[1, 20], [2, 40], [3, 60], [4, 80], [5, 100]], (v) => `Increases your dodge chance by ${v[0]}%, and gives you a ${v[1]}% chance to gain 5 Rage each time you dodge.`) },
-        { id: "rend_and_tear", name: "Rend and Tear", icon: "ability_druid_primalagression", tier: 5, col: 2, max: 5, req: "predatory_strikes", ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases damage done by your melee abilities on Bleeding targets by ${v[0]}%.`) },
-        { id: "berserk", name: "Berserk", icon: "ability_druid_berserk", tier: 6, col: 1, max: 1, req: "leader_of_the_pack", ranks: ["Requires Cat Form, Bear Form, Dire Bear Form\nCauses your Primal Bite ability to strike up to 3 targets, removes its cooldown, and increases the critical strike chance of your Combo Point-generating abilities by 100%. Clears and grants immunity to Fear effects for the duration. Lasts 15 sec."] }
+        { id: "ferocity", name: "Ferocity", icon: "ability_hunter_pet_hyena", tier: 0, col: 1, max: 5, ranks: ["Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 1 Rage or Energy.", "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 2 Rage or Energy.", "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 3 Rage or Energy.", "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 4 Rage or Energy.", "Reduces the cost of your Maul, Primal Bite, Swipe, Claw, and Rake abilities by 5 Rage or Energy."] },
+        { id: "furor", name: "Furor", icon: "spell_holy_blessingofstamina", tier: 0, col: 2, max: 5, ranks: ["Gives you a 20% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 20% of the Energy you had when last in Cat Form, plus 2 Energy per second spent outside Bear Form or Dire Bear Form, up to 20 Energy.", "Gives you a 40% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 40% of the Energy you had when last in Cat Form, plus 4 Energy per second spent outside Bear Form or Dire Bear Form, up to 40 Energy.", "Gives you a 60% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 60% of the Energy you had when last in Cat Form, plus 6 Energy per second spent outside Bear Form or Dire Bear Form, up to 60 Energy.", "Gives you a 80% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 80% of the Energy you had when last in Cat Form, plus 8 Energy per second spent outside Bear Form or Dire Bear Form, up to 80 Energy.", "Gives you a 100% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores 100% of the Energy you had when last in Cat Form, plus 10 Energy per second spent outside Bear Form or Dire Bear Form, up to 100 Energy."] },
+        { id: "feral_swiftness", name: "Feral Swiftness", icon: "spell_nature_spiritwolf", tier: 1, col: 0, max: 2, ranks: ["Increases your movement speed while in Cat Form by 15%, and increases your chance to Dodge by 2%.", "Increases your movement speed while in Cat Form by 30%, and increases your chance to Dodge by 4%."] },
+        { id: "feral_instinct", name: "Feral Instinct", icon: "ability_ambush", tier: 1, col: 1, max: 3, ranks: ["Increases damage done by your Swipe ability by 10% and reduces the chance enemies have to detect you while Prowling as if you were 1 level higher.", "Increases damage done by your Swipe ability by 20% and reduces the chance enemies have to detect you while Prowling as if you were 2 levels higher.", "Increases damage done by your Swipe ability by 30% and reduces the chance enemies have to detect you while Prowling as if you were 3 levels higher."] },
+        { id: "brutal_impact", name: "Brutal Impact", icon: "ability_druid_bash", tier: 1, col: 2, max: 2, ranks: ["Increases the stun duration of your Bash and Pounce abilities by 0.5 sec and reduces the cooldown of Bash by 15 sec.", "Increases the stun duration of your Bash and Pounce abilities by 1 sec and reduces the cooldown of Bash by 30 sec."] },
+        { id: "thick_hide", name: "Thick Hide", icon: "inv_misc_pelt_bear_03", tier: 1, col: 3, max: 3, ranks: ["While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 178 additional base Armor per level and another 0.67 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.", "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 179 additional base Armor per level and another 1.33 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.", "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 180 additional base Armor per level and another 2.00 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms."] },
+        { id: "shredding_attacks", name: "Shredding Attacks", icon: "spell_shadow_vampiricaura", tier: 2, col: 0, max: 3, ranks: ["Reduces the Energy cost of your Shred ability by 6 and reduces the Rage cost of your Lacerate ability by 1.", "Reduces the Energy cost of your Shred ability by 12 and reduces the Rage cost of your Lacerate ability by 2.", "Reduces the Energy cost of your Shred ability by 18 and reduces the Rage cost of your Lacerate ability by 3."] },
+        { id: "savage_fury", name: "Savage Fury", icon: "ability_druid_ravage", tier: 2, col: 1, max: 2, ranks: ["Increases the damage caused by your Claw, Rake, Shred, Maul, and Swipe abilities by 5%.", "Increases the damage caused by your Claw, Rake, Shred, Maul, and Swipe abilities by 10%."] },
+        { id: "feral_charge", name: "Feral Charge", icon: "ability_hunter_pet_bear", tier: 2, col: 2, max: 1, active: true, ranks: ["Requires Bear Form, Dire Bear Form\nCharge an enemy, immobilizing them and interrupting any spell they are casting for 4 sec.\n\nLeap behind an enemy."] },
+        { id: "sharpened_claws", name: "Sharpened Claws", icon: "inv_misc_monsterclaw_04", tier: 2, col: 3, max: 2, ranks: ["Increases your critical strike chance while in Bear Form, Dire Bear Form, or Cat Form by 3%.", "Increases your critical strike chance while in Bear Form, Dire Bear Form, or Cat Form by 6%."] },
+        { id: "predatory_strikes", name: "Predatory Strikes", icon: "ability_hunter_pet_cat", tier: 3, col: 0, max: 3, ranks: ["Increases your melee Attack Power in Cat Form, Bear Form, and Dire Bear Form by 50% of your level.", "Increases your melee Attack Power in Cat Form, Bear Form, and Dire Bear Form by 100% of your level.", "Increases your melee Attack Power in Cat Form, Bear Form, and Dire Bear Form by 150% of your level."] },
+        { id: "lacerate", name: "Lacerate", icon: "ability_druid_lacerate", tier: 3, col: 1, max: 1, req: "savage_fury", active: true, ranks: ["Lacerates the enemy target, making them bleed for 20 damage over 15 sec plus 10% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to 5 times on the same target."] },
+        { id: "predatory_discipline", name: "Predatory Discipline", icon: "spell_druid_savagery", tier: 3, col: 2, max: 1, ranks: ["Your Ferocious Bite ability no longer converts extra Energy into damage, but still deals extra damage based on your excess Energy."] },
+        { id: "blood_frenzy", name: "Blood Frenzy", icon: "ability_ghoulfrenzy", tier: 3, col: 3, max: 2, req: "sharpened_claws", ranks: ["Gives you a 50% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a 50% chance to add an additional Combo Point.", "Gives you a 100% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a 100% chance to add an additional Combo Point."] },
+        { id: "leader_of_the_pack", name: "Leader of the Pack", icon: "spell_nature_unyeildingstamina", tier: 4, col: 1, max: 1, ranks: ["While in Cat Form, Bear Form, or Dire Bear Form, the Leader of the Pack increases the Critical Strike chance of all party or raid members within 45 yards by 3%."] },
+        { id: "natural_instinct", name: "Natural Instinct", icon: "ability_druid_predatoryinstincts", tier: 4, col: 3, max: 2, ranks: ["Increases the critical strike damage bonus of your melee abilities by 10% and increases your spell healing by 12% of your Intellect.", "Increases the critical strike damage bonus of your melee abilities by 20% and increases your spell healing by 25% of your Intellect."] },
+        { id: "rend_and_tear", name: "Rend and Tear", icon: "ability_druid_primalagression", tier: 5, col: 0, max: 5, req: "predatory_strikes", ranks: ["Increases damage done by your melee abilities on Bleeding targets by 2%.", "Increases damage done by your melee abilities on Bleeding targets by 4%.", "Increases damage done by your melee abilities on Bleeding targets by 6%.", "Increases damage done by your melee abilities on Bleeding targets by 8%.", "Increases damage done by your melee abilities on Bleeding targets by 10%."] },
+        { id: "natural_reaction", name: "Natural Reaction", icon: "ability_bullrush", tier: 5, col: 3, max: 5, ranks: ["Increases your dodge chance by 1%, and gives you a 20% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 2%, and gives you a 40% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 3%, and gives you a 60% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 4%, and gives you a 80% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 5%, and gives you a 100% chance to gain 5 Rage each time you dodge."] },
+        { id: "primal_bite", name: "Primal Bite", icon: "ability_racial_cannibalize", tier: 6, col: 1, max: 1, req: "leader_of_the_pack", active: true, ranks: ["Bite the target, dealing 100% normal damage plus 42 and generating a high amount of threat."] },
+        { id: "shifting_power", name: "Shifting Power", icon: "spell_druid_displacement", tier: 6, col: 2, max: 1, req: "predatory_discipline", active: true, ranks: ["Instantly convert 55% of base Mana into 40 Energy. Shifting Power's cost is reduced by effects that reduce the cost of Shapeshifting."] }
       ]
     },
     {
@@ -9160,23 +9234,43 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Restoration",
       icon: "spell_nature_healingtouch",
       talents: [
-        { id: "natures_focus", name: "Nature's Focus", icon: "spell_nature_healingwavegreater", tier: 0, col: 1, max: 5, ranks: per4([[14], [28], [42], [56], [70]], (v) => `Gives your Arcane and Nature spells a ${v[0]}% chance to not lose casting time when you take damage.`) },
-        { id: "furor", name: "Furor", icon: "spell_holy_blessingofstamina", tier: 0, col: 2, max: 5, ranks: per4([[20, 2], [40, 4], [60, 6], [80, 8], [100, 10]], (v) => `Gives you a ${v[0]}% chance to gain 10 Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores ${v[0]}% of the Energy you had when last in Cat Form, plus ${v[1]} Energy per second spent outside Bear Form or Dire Bear Form, up to ${v[0]} Energy.`) },
-        { id: "naturalist", name: "Naturalist", icon: "spell_nature_healingtouch", tier: 1, col: 0, max: 5, ranks: per4([["0.1", 1], ["0.2", 2], ["0.3", 3], ["0.4", 4], ["0.5", 5]], (v) => `Reduces the cast time of your Healing Touch spell by ${v[0]} sec and increases all damage you deal by ${v[1]}%.`) },
-        { id: "subtlety", name: "Subtlety", icon: "ability_eyeoftheowl", tier: 1, col: 1, max: 3, ranks: per4([[10], [20], [30]], (v) => `Reduces the threat generated by your Nature and Arcane spells by ${v[0]}%.`) },
-        { id: "natural_shapeshifter", name: "Natural Shapeshifter", icon: "spell_nature_wispsplode", tier: 1, col: 2, max: 3, ranks: per4([[10], [20], [30]], (v) => `Reduces the mana cost of all shapeshifting by ${v[0]}%.`) },
-        { id: "reflection", name: "Reflection", icon: "spell_frost_windwalkon", tier: 2, col: 1, max: 3, ranks: per4([[17], [33], [50]], (v) => `Allows ${v[0]}% of your Mana regeneration to continue while casting.`) },
-        { id: "gift_of_nature", name: "Gift of Nature", icon: "spell_nature_protectionformnature", tier: 2, col: 2, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases the effect of all your healing spells by ${v[0]}%.`) },
-        { id: "gift_of_the_earthmother", name: "Gift of the Earthmother", icon: "spell_nature_spiritarmor", tier: 2, col: 3, max: 1, ranks: ["Reduces the global cooldown by 0.5 seconds on your Rejuvenation, Swiftmend, and Wild Growth spells."] },
-        { id: "tranquil_spirit", name: "Tranquil Spirit", icon: "spell_holy_elunesgrace", tier: 3, col: 1, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Reduces the mana cost of your Healing Touch and Tranquility spells by ${v[0]}%.`) },
-        { id: "improved_rejuvenation", name: "Improved Rejuvenation", icon: "spell_nature_rejuvenation", tier: 3, col: 2, max: 3, ranks: per4([[5], [10], [15]], (v) => `Increases the effect of your Rejuvenation spell by ${v[0]}%.`) },
-        { id: "swiftmend", name: "Swiftmend", icon: "inv_relics_idolofrejuvenation", tier: 3, col: 3, max: 1, ranks: ["Instantly heals a target with an active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of one of those spells."] },
-        { id: "natures_swiftness", name: "Nature's Swiftness", icon: "spell_nature_ravenform", tier: 4, col: 0, max: 1, req: "naturalist", ranks: ["When activated, your next Nature spell becomes an instant cast spell."] },
-        { id: "living_spirit", name: "Living Spirit", icon: "spell_nature_giftofthewaterspirit", tier: 4, col: 1, max: 3, ranks: per4([[5], [10], [15]], (v) => `Increases your Spirit by ${v[0]}%.`) },
-        { id: "improved_tranquility", name: "Improved Tranquility", icon: "spell_nature_tranquility", tier: 4, col: 3, max: 2, ranks: per4([[50, 30], [100, 60]], (v) => `Reduces threat caused by Tranquility by ${v[0]}% and its cooldown by ${v[1]}%.`) },
-        { id: "improved_regrowth", name: "Improved Regrowth", icon: "spell_nature_resistnature", tier: 5, col: 2, max: 5, req: "improved_rejuvenation", ranks: per4([[10], [20], [30], [40], [50]], (v) => `Increases the critical effect chance of your Regrowth spell by ${v[0]}%.`) },
-        { id: "wild_growth", name: "Wild Growth", icon: "ability_druid_flourish", tier: 6, col: 1, max: 1, req: "living_spirit", ranks: ["Heals the target and their party for 336 over 7 sec. Party members must be within 43.5 yards of target. The amount healed is applied quickly at first, and slows down as Wild Growth reaches its full duration."] }
+        { id: "natures_focus", name: "Nature's Focus", icon: "spell_nature_healingwavegreater", tier: 0, col: 1, max: 5, ranks: ["Gives your Arcane and Nature spells a 14% chance to not lose casting time when you take damage.", "Gives your Arcane and Nature spells a 28% chance to not lose casting time when you take damage.", "Gives your Arcane and Nature spells a 42% chance to not lose casting time when you take damage.", "Gives your Arcane and Nature spells a 56% chance to not lose casting time when you take damage.", "Gives your Arcane and Nature spells a 70% chance to not lose casting time when you take damage."] },
+        { id: "heart_of_the_wild", name: "Heart of the Wild", icon: "spell_holy_blessingofagility", tier: 0, col: 2, max: 5, ranks: ["Increases your Intellect by 2%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 4% and while in Cat Form your Strength is increased by 2%.", "Increases your Intellect by 4%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 8% and while in Cat Form your Strength is increased by 4%.", "Increases your Intellect by 6%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 12% and while in Cat Form your Strength is increased by 6%.", "Increases your Intellect by 8%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 16% and while in Cat Form your Strength is increased by 8%.", "Increases your Intellect by 10%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by 20% and while in Cat Form your Strength is increased by 10%."] },
+        { id: "naturalist", name: "Naturalist", icon: "spell_nature_healingtouch", tier: 1, col: 0, max: 5, ranks: ["Reduces the cast time of your Healing Touch and Wild Growth spells by 0.1 sec and increases all damage you deal by 2%.", "Reduces the cast time of your Healing Touch and Wild Growth spells by 0.2 sec and increases all damage you deal by 4%.", "Reduces the cast time of your Healing Touch and Wild Growth spells by 0.3 sec and increases all damage you deal by 6%.", "Reduces the cast time of your Healing Touch and Wild Growth spells by 0.4 sec and increases all damage you deal by 8%.", "Reduces the cast time of your Healing Touch and Wild Growth spells by 0.5 sec and increases all damage you deal by 10%."] },
+        { id: "reflection", name: "Reflection", icon: "spell_frost_windwalkon", tier: 1, col: 1, max: 3, ranks: ["Allows 17% of your Mana regeneration to continue while casting.", "Allows 33% of your Mana regeneration to continue while casting.", "Allows 50% of your Mana regeneration to continue while casting."] },
+        { id: "natural_shapeshifter", name: "Natural Shapeshifter", icon: "spell_nature_wispsplode", tier: 1, col: 2, max: 3, ranks: ["Reduces the mana cost of all shapeshifting by 10%.", "Reduces the mana cost of all shapeshifting by 20%.", "Reduces the mana cost of all shapeshifting by 30%."] },
+        { id: "subtlety", name: "Subtlety", icon: "ability_eyeoftheowl", tier: 2, col: 1, max: 3, ranks: ["Reduces the threat generated by your Nature and Arcane spells by 10%.", "Reduces the threat generated by your Nature and Arcane spells by 20%.", "Reduces the threat generated by your Nature and Arcane spells by 30%."] },
+        { id: "gift_of_nature", name: "Gift of Nature", icon: "spell_nature_protectionformnature", tier: 2, col: 2, max: 5, ranks: ["Increases the effect of all your healing spells by 2%.", "Increases the effect of all your healing spells by 4%.", "Increases the effect of all your healing spells by 6%.", "Increases the effect of all your healing spells by 8%.", "Increases the effect of all your healing spells by 10%."] },
+        { id: "bloom", name: "Bloom", icon: "inv_misc_herb_felblossom", tier: 2, col: 3, max: 1, ranks: ["When your Rejuvenation or Regrowth spell expires due to its duration, the target is instantly healed for an amount equal to 100% of your Spirit. If either spell expires due to being dispelled, the target is healed for 50% of your Spirit instead."] },
+        { id: "tranquil_spirit", name: "Tranquil Spirit", icon: "spell_holy_elunesgrace", tier: 3, col: 1, max: 5, ranks: ["Reduces the mana cost of your Healing Touch and Tranquility spells by 2%.", "Reduces the mana cost of your Healing Touch and Tranquility spells by 4%.", "Reduces the mana cost of your Healing Touch and Tranquility spells by 6%.", "Reduces the mana cost of your Healing Touch and Tranquility spells by 8%.", "Reduces the mana cost of your Healing Touch and Tranquility spells by 10%."] },
+        { id: "improved_rejuvenation", name: "Improved Rejuvenation", icon: "spell_nature_rejuvenation", tier: 3, col: 2, max: 3, ranks: ["Increases the effect of your Rejuvenation spell by 5%.", "Increases the effect of your Rejuvenation spell by 10%.", "Increases the effect of your Rejuvenation spell by 15%."] },
+        { id: "swiftmend", name: "Swiftmend", icon: "inv_relics_idolofrejuvenation", tier: 3, col: 3, max: 1, active: true, ranks: ["Instantly heals a target with your active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of the consumed spell."] },
+        { id: "natures_swiftness", name: "Nature's Swiftness", icon: "spell_nature_ravenform", tier: 4, col: 0, max: 1, req: "naturalist", active: true, ranks: ["When activated, your next Nature spell becomes an instant cast spell."] },
+        { id: "living_spirit", name: "Living Spirit", icon: "spell_nature_giftofthewaterspirit", tier: 4, col: 1, max: 3, ranks: ["Increases your Spirit by 5%.", "Increases your Spirit by 10%.", "Increases your Spirit by 15%."] },
+        { id: "improved_tranquility", name: "Improved Tranquility", icon: "spell_nature_tranquility", tier: 4, col: 3, max: 2, ranks: ["Reduces threat caused by Tranquility by 50% and its cooldown by 30%.", "Reduces threat caused by Tranquility by 100% and its cooldown by 60%."] },
+        { id: "improved_regrowth", name: "Improved Regrowth", icon: "spell_nature_resistnature", tier: 5, col: 2, max: 5, req: "improved_rejuvenation", ranks: ["Increases the critical effect chance of your Regrowth spell by 10%.", "Increases the critical effect chance of your Regrowth spell by 20%.", "Increases the critical effect chance of your Regrowth spell by 30%.", "Increases the critical effect chance of your Regrowth spell by 40%.", "Increases the critical effect chance of your Regrowth spell by 50%."] },
+        { id: "wild_growth", name: "Wild Growth", icon: "ability_druid_flourish", tier: 6, col: 1, max: 1, req: "living_spirit", active: true, ranks: ["Heals the target and their party for 336 over 7 sec. Party members must be within 43.5 yards of target. The amount healed is applied quickly at first, and slows down as Wild Growth reaches its full duration."] }
       ]
+    }
+  ];
+
+  // src/classes/druid/talent-history.js
+  var talentHistory3 = [
+    {
+      // 1.60.1.70707 (October 30): Feral and Restoration reorganized. In the same places of the client's trees, Primal
+      // Bite became Lacerate, Berserk became Primal Bite (now the last talent of Feral), Shifting Power became Predatory
+      // Discipline and Gift of the Earthmother became Bloom; Improved Shifting Power left (Shifting Power moved to the
+      // last row); Furor went to Feral Combat and Heart of the Wild to Restoration.
+      until: "1.60.1.70707",
+      date: "October 30",
+      order: [
+        ["improved_wrath", "genesis", "moonglow", "improved_moonfire", "natures_majesty", "natures_reach", "improved_entangling_roots", "natures_splendor", "insect_swarm", "vengeance", "improved_starfire", "overgrowth", "natures_grace", "eclipse", "moonfury", "moonkin_form"],
+        ["ferocity", "heart_of_the_wild", "feral_swiftness", "feral_instinct", "brutal_impact", "thick_hide", "shredding_attacks", "savage_fury", "feral_charge", "sharpened_claws", "shifting_power", "primal_bite", "predatory_strikes", "blood_frenzy", "improved_shifting_power", "leader_of_the_pack", "natural_instinct", "natural_reaction", "rend_and_tear", "berserk"],
+        ["natures_focus", "furor", "naturalist", "subtlety", "natural_shapeshifter", "reflection", "gift_of_nature", "gift_of_the_earthmother", "tranquil_spirit", "improved_rejuvenation", "swiftmend", "natures_swiftness", "living_spirit", "improved_tranquility", "improved_regrowth", "wild_growth"]
+      ],
+      renamed: { primal_bite: "lacerate", berserk: "primal_bite", shifting_power: "predatory_discipline", gift_of_the_earthmother: "bloom" },
+      removed: { improved_shifting_power: "Improved Shifting Power" },
+      names: { primal_bite: "Primal Bite", berserk: "Berserk", shifting_power: "Shifting Power", gift_of_the_earthmother: "Gift of the Earthmother" }
     }
   ];
 
@@ -9202,9 +9296,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     ["Remove Curse", "spell_holy_removecurse", "restoration", "b10", 30, 0, 0, 0, "Dispels 1 Curse or Bane from a friendly target."],
     ["Abolish Poison", "spell_nature_nullifypoison_02", "restoration", "b16", 30, 0, 0, 0, "Attempts to cure 1 poison effect on the target, and 1 more poison effect every 2 seconds for 8 sec."],
     ["Tranquility", "spell_nature_tranquility", "restoration", 925, 0, "ch", 300, 0, "Regenerates all nearby party members within 20 yards for 285 every 2 sec for 10 sec. Druid must channel to maintain the spell."],
-    ["Wild Growth", "ability_druid_flourish", "restoration", 1050, 40, 0, 6, 1, "Heals the target and their party for 679 over 7 sec. Party members must be within 43.5 yds of target. The amount healed is applied quickly at first, and slows down as Wild Growth reaches its full duration."],
+    ["Wild Growth", "ability_druid_flourish", "restoration", 1050, 40, 3, 6, 1, "Heals the target and their party for 679 over 7 sec. Party members must be within 43.5 yds of target. The amount healed is applied quickly at first, and slows down as Wild Growth reaches its full duration."],
     ["Gift of the Wild", "spell_nature_regeneration", "restoration", 1200, 40, 0, 0, 0, "Gives the Gift of the Wild to all party and raid members, increasing armor by 385, all attributes by 16 and all resistances by 27 for 1 hr."],
-    ["Swiftmend", "inv_relics_idolofrejuvenation", "restoration", "b20", 40, 0, 15, 1, "Instantly heals a target with an active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of one of those spells."]
+    ["Swiftmend", "inv_relics_idolofrejuvenation", "restoration", "b20", 40, 0, 15, 1, "Instantly heals a target with your active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of the consumed spell."]
   ];
 
   // src/classes/druid/abilities.js
@@ -9332,7 +9426,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       talent: "moonkin_form",
       setsOption: ["form", "moonkin"],
       effects: [{ type: "setForm", aura: "moonkin_form" }],
-      text: "Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their spell Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells."
+      text: "Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells."
     },
     /* ---------- Feral Combat: forms ---------- */
     shift(
@@ -9424,12 +9518,13 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       ...cat,
       cost: 35,
       finisher: true,
-      // Every point of Energy left after the cost adds 2.7 damage and is used up. Attack power: 3% per combo point (ESTIMATE).
+      // Every point of Energy left after the cost adds 2.7 damage and is used up (kept with Predatory Discipline).
+      // Attack power: 3% per combo point (ESTIMATE).
       effects: [
         { type: "custom", run: (g) => {
           const s = g.player.res.energy;
           g.player.biteEnergy = s.power;
-          s.power = 0;
+          if (!g.rank("predatory_discipline")) s.power = 0;
         } },
         { type: "meleeDamage", name: "Ferocious Bite", dynamic: (g, ctx) => {
           const x = 2.7 * (g.player.biteEnergy || 0);
@@ -9474,7 +9569,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       target: "self",
       cost: basePct5(0.55),
       powerType: "mana",
-      cooldown: 16,
+      cooldown: 8,
       talent: "shifting_power",
       requires: { form: ["cat"] },
       tags: ["shapeshift"],
@@ -9516,6 +9611,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cost: 15,
       threat: 285,
       dotThreatMult: 0.5,
+      talent: "lacerate",
       // ESTIMATE: TBC values
       // A hit of 10% weapon damage per application already on the target (none on the first), then one more application.
       effects: [{
@@ -9542,11 +9638,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       talent: "primal_bite",
       threat: 200,
       // ESTIMATE: "a high amount of threat"
-      // Berserk: up to 3 targets.
-      effects: [
-        { type: "weaponDamage", hand: "main", weaponPct: 1, flat: 77, when: (g) => !findAura(g.player, "berserk") },
-        { type: "aoeMelee", center: "target", radius: 5, maxTargets: 3, hand: "main", weaponPct: 1, flat: 77, name: "Primal Bite", when: (g) => !!findAura(g.player, "berserk") }
-      ],
+      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1, flat: 77 }],
       text: "Bite the target, dealing 100% normal damage plus 77 and generating a high amount of threat."
     },
     {
@@ -9582,20 +9674,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         { type: "custom", when: (g) => g.form() === "cat", run: (g, ctx) => leapBehind(g, ctx) }
       ],
       text: "Bear: charge an enemy, immobilizing them and interrupting any spell they are casting for 4 sec. Cat: leap behind an enemy."
-    },
-    {
-      id: "berserk",
-      name: "Berserk",
-      icon: "ability_druid_berserk",
-      tree: "feral_combat",
-      schools: ["physical"],
-      target: "self",
-      cooldown: 180,
-      gcd: false,
-      talent: "berserk",
-      requires: { form: ["cat", "bear"] },
-      effects: [{ type: "applyAura", to: "self", aura: "berserk" }],
-      text: "Causes your Primal Bite ability to strike up to 3 targets, removes its cooldown, and increases the critical strike chance of your Combo Point-generating abilities by 100%. Clears and grants immunity to Fear effects for the duration. Lasts 15 sec."
     },
     /* ---------- Restoration ---------- */
     {
@@ -9777,9 +9855,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       icon: "spell_nature_forceofnature",
       kind: "buff",
       flags: { form: "moonkin" },
-      mods: () => [add("critChance", 0.03, (ctx) => !ctx.melee && !!ctx.ability && !hasSchool(ctx, "physical"))],
-      // Moonkin Aura, the Druid included
-      desc: () => "Spell critical strike chance increased by 3% (Moonkin Aura). Omen of Clarity's chance doubled."
+      mods: () => [add("critChance", 0.03)],
+      // Moonkin Aura, the Druid included (all critical strikes since 1.60.1.70707)
+      desc: () => "Critical strike chance increased by 3% (Moonkin Aura). Omen of Clarity's chance doubled."
     },
     /* ---------- buffs ---------- */
     prowl: {
@@ -9801,18 +9879,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       duration: 15,
       mods: () => [set("cost", 0, (ctx) => clearcastable(ctx))],
       desc: () => "Your next damage spell or offensive ability costs no Mana, Rage or Energy."
-    },
-    berserk: {
-      id: "berserk",
-      name: "Berserk",
-      icon: "ability_druid_berserk",
-      kind: "buff",
-      duration: 15,
-      mods: () => [
-        add("critChance", 1, (ctx) => !!ctx.ability && !!ctx.ability.builder && !ctx.periodic),
-        set("cooldown", 0, (ctx) => isAbility(ctx, "primal_bite"))
-      ],
-      desc: () => "Combo point attacks always crit. Primal Bite has no cooldown and hits up to 3 targets."
     },
     enrage: {
       id: "enrage",
@@ -9940,33 +10006,33 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       id: "bear",
       tree: "feral_combat",
       name: "Bear",
-      points: "7/44/0",
+      points: "7/39/5",
       gearRole: "bear",
       scenario: "raid-boss",
-      blurb: "The tank side of Feral, for the Tank test: Dire Bear Form with Thick Hide, Natural Reaction and Heart of the Wild. Maul on every swing, Lacerate up to 5, Primal Bite on cooldown and Swipe to fill; Demoralizing Roar on the boss, Frenzied Regeneration and Barkskin for the bad moments, Growl if the raid pulls it away.",
+      blurb: "The tank side of Feral, for the Tank test: Dire Bear Form with Thick Hide, Natural Reaction and Heart of the Wild (now in Restoration). Maul on every swing, Lacerate up to 5, Primal Bite on cooldown and Swipe to fill; Demoralizing Roar on the boss, Frenzied Regeneration and Barkskin for the bad moments, Growl if the raid pulls it away.",
       options: { form: "bear" },
-      source: { site: "Daniel", url: "index.html#c=druid&t=050002-55230232020132012551&b=maul.lacerate.primal_bite.swipe.demoralizing_roar.growl.enrage.frenzied_regeneration.barkskin.berserk.challenging_roar&g=mc_bear&o=form%3Abear", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (9/42/0)." },
+      source: { site: "Daniel", url: "index.html#c=druid&t=050002-5023023202310212551-05&b=maul.lacerate.primal_bite.swipe.demoralizing_roar.growl.enrage.frenzied_regeneration.barkskin.challenging_roar&g=mc_bear&o=form%3Abear", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (7/44/0) adjusted for build 1.60.1.70707." },
       talents: {
         genesis: 5,
         natures_reach: 2,
         ferocity: 5,
-        heart_of_the_wild: 5,
         feral_swiftness: 2,
         feral_instinct: 3,
         thick_hide: 2,
         shredding_attacks: 3,
         savage_fury: 2,
         sharpened_claws: 2,
-        primal_bite: 1,
+        lacerate: 1,
         predatory_strikes: 3,
         blood_frenzy: 2,
         leader_of_the_pack: 1,
         natural_instinct: 2,
         natural_reaction: 5,
         rend_and_tear: 5,
-        berserk: 1
+        primal_bite: 1,
+        heart_of_the_wild: 5
       },
-      bar: ["maul", "lacerate", "primal_bite", "swipe", "demoralizing_roar", "growl", "enrage", "frenzied_regeneration", "barkskin", "berserk", "challenging_roar"]
+      bar: ["maul", "lacerate", "primal_bite", "swipe", "demoralizing_roar", "growl", "enrage", "frenzied_regeneration", "barkskin", "challenging_roar"]
     },
     {
       id: "cat",
@@ -9974,52 +10040,52 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Cat",
       points: "9/34/8",
       gearRole: "cat",
-      blurb: "The damage side of Feral: Cat Form with Shifting Power and Furor for energy. Prowl and Ravage, keep Rake and Rip up, Shred from behind (Shredding Attacks makes it cheap), Ferocious Bite with the rest; Berserk makes the builders crit, Shifting Power turns mana into 40 Energy.",
+      blurb: "The damage side of Feral: Cat Form with Shifting Power and Furor for energy. Prowl and Ravage, keep Rake and Rip up, Shred from behind (Shredding Attacks makes it cheap), Ferocious Bite with the rest (Predatory Discipline keeps the extra Energy); Shifting Power turns mana into 40 Energy.",
       options: { form: "cat" },
-      source: { site: "Daniel", url: "index.html#c=druid&t=050022-55000032021032212051-05003&b=shred.rake.rip.claw.ferocious_bite.shifting_power.berserk.dash.prowl.ravage&g=mc_cat&o=form%3Acat", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (9/34/8)." },
+      source: { site: "Daniel", url: "index.html#c=druid&t=050022-55200032023012125001-05003&b=shred.rake.rip.claw.ferocious_bite.shifting_power.dash.prowl.ravage&g=mc_cat&o=form%3Acat", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (9/34/8) adjusted for build 1.60.1.70707." },
       talents: {
         genesis: 5,
         natures_majesty: 2,
         natures_reach: 2,
         ferocity: 5,
-        heart_of_the_wild: 5,
+        furor: 5,
+        feral_swiftness: 2,
         shredding_attacks: 3,
         savage_fury: 2,
         sharpened_claws: 2,
-        shifting_power: 1,
+        predatory_discipline: 1,
         predatory_strikes: 3,
         blood_frenzy: 2,
-        improved_shifting_power: 2,
         leader_of_the_pack: 1,
         natural_instinct: 2,
         rend_and_tear: 5,
-        berserk: 1,
-        furor: 5,
+        shifting_power: 1,
+        heart_of_the_wild: 5,
         natural_shapeshifter: 3
       },
-      bar: ["shred", "rake", "rip", "claw", "ferocious_bite", "shifting_power", "berserk", "dash", "prowl", "ravage"]
+      bar: ["shred", "rake", "rip", "claw", "ferocious_bite", "shifting_power", "dash", "prowl", "ravage"]
     },
     {
       id: "restoration",
       name: "Restoration",
-      points: "11/5/35",
+      points: "11/0/40",
       gearRole: "caster",
       scenario: "raid-healing",
-      blurb: "A healer build for the Healing test, in caster form: Rejuvenation and Regrowth on the tank and whoever is hurt, Swiftmend to cash a heal over time in at once, Wild Growth on a hurt party, Healing Touch for big heals (instant with Nature's Swiftness), Tranquility when the whole raid is low, Innervate for mana. Gift of Nature adds 10% healing.",
+      blurb: "A healer build for the Healing test, in caster form: Rejuvenation and Regrowth on the tank and whoever is hurt (Bloom heals once more when they run out), Swiftmend to cash a heal over time in at once, Wild Growth on a hurt party, Healing Touch for big heals (instant with Nature's Swiftness), Tranquility when the whole raid is low, Innervate for mana. Gift of Nature adds 10% healing.",
       options: { form: "none" },
-      source: { site: "Daniel", url: "index.html#c=druid&t=05012201-05-5050035103113251&b=rejuvenation.regrowth.swiftmend.wild_growth.healing_touch.tranquility.natures_swiftness.abolish_poison.remove_curse.innervate.major_mana_potion&g=mc_caster&o=form%3Anone", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (11/5/35)." },
+      source: { site: "Daniel", url: "index.html#c=druid&t=05012201--5553005103113251&b=rejuvenation.regrowth.swiftmend.wild_growth.healing_touch.tranquility.natures_swiftness.abolish_poison.remove_curse.innervate.major_mana_potion&g=mc_caster&o=form%3Anone", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (11/5/35) adjusted for build 1.60.1.70707." },
       talents: {
         genesis: 5,
         improved_moonfire: 1,
         natures_majesty: 2,
         natures_reach: 2,
         natures_splendor: 1,
-        heart_of_the_wild: 5,
         natures_focus: 5,
+        heart_of_the_wild: 5,
         naturalist: 5,
         reflection: 3,
         gift_of_nature: 5,
-        gift_of_the_earthmother: 1,
+        bloom: 1,
         improved_rejuvenation: 3,
         swiftmend: 1,
         natures_swiftness: 1,
@@ -10043,6 +10109,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var shapeshift = (ctx) => !!ctx.ability && (ctx.ability.tags || []).includes("shapeshift");
   var bleeding = (ctx) => !!ctx.target && ctx.target.auras.some((a) => (a.def.tags || []).includes("bleed"));
   var landedRes5 = (res) => res && (res.outcome === "hit" || res.outcome === "crit" || res.outcome === "glance");
+  var BLOOM = { id: "bloom", name: "Bloom", icon: "inv_misc_herb_felblossom", schools: ["nature"], tags: ["heal"] };
   var PAWS = {
     cat: { type: "paws", family: "paws", name: "Cat paws", speed: 1, min: 38, max: 52, twoHand: false, ranged: false, ammo: 0 },
     bear: { type: "paws", family: "paws", name: "Bear paws", speed: 2.5, min: 95, max: 130, twoHand: false, ranged: false, ammo: 0 }
@@ -10070,7 +10137,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       baseHp: 1483,
       baseMana: 1244,
       derive(a) {
-        const conv = (v, per6) => Math.min(v, 20) + Math.max(0, v - 20) * per6;
+        const conv = (v, per5) => Math.min(v, 20) + Math.max(0, v - 20) * per5;
         return {
           maxHp: 1483 + conv(a.sta, 10) - 20,
           maxMana: 1244 + conv(a.int, 15) - 20,
@@ -10090,6 +10157,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     // Form bar beside the action bar (press a form again to return to caster form).
     stanceBar: { label: "Forms", abilities: ["dire_bear_form", "cat_form", "moonkin_form"] },
     trees: trees8,
+    talentHistory: talentHistory3,
+    // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities8, ...extra8.abilities],
     // the rest of the spellbook: spellbook.js
     auras: { ...auras8, ...extra8.auras },
@@ -10188,7 +10257,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     talents: {
       /* ---------- Balance ---------- */
       improved_wrath: { mods: (r) => [add("castTime", -0.1 * r, (ctx) => isAbility(ctx, "wrath")), mult("cost", 1 - 0.1 * r, (ctx) => isAbility(ctx, "wrath"))] },
-      genesis: { mods: (r) => [mult("damageMult", 1 + 0.01 * r, (ctx) => !!ctx.periodic)] },
+      genesis: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx) => !!ctx.periodic), mult("healMult", 1 + 0.02 * r, (ctx) => !!ctx.periodic)] },
       moonglow: { mods: (r) => [mult("cost", 1 - [0.08, 0.17, 0.25][r - 1], (ctx) => damageSpell(ctx) && !shapeshift(ctx))] },
       improved_moonfire: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "moonfire")), add("critChance", 0.05 * r, (ctx) => isAbility(ctx, "moonfire") && !ctx.periodic)] },
       natures_majesty: { mods: (r) => [add("critChance", 0.02 * r)] },
@@ -10226,9 +10295,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       moonkin_form: { teaches: "moonkin_form" },
       /* ---------- Feral Combat ---------- */
       ferocity: { mods: (r) => [add("cost", -r, (ctx) => isAbility(ctx, "maul", "primal_bite", "swipe", "claw", "rake"))] },
-      heart_of_the_wild: {
-        mods: (r, g) => [{ key: "attributes", fn: (a) => ({ ...a, int: a.int * (1 + 0.02 * r), str: g.form() === "cat" ? a.str * (1 + 0.02 * r) : a.str, sta: g.form() === "bear" ? a.sta * (1 + 0.04 * r) : a.sta }) }]
-      },
+      furor: { mods: () => [] },
+      // read by Cat Form and Dire Bear Form (auras.js)
       feral_instinct: { mods: (r) => [mult("damageMult", 1 + 0.1 * r, (ctx) => isAbility(ctx, "swipe"))] },
       shredding_attacks: { mods: (r) => [add("cost", -6 * r, (ctx) => isAbility(ctx, "shred")), add("cost", -r, (ctx) => isAbility(ctx, "lacerate"))] },
       savage_fury: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "claw", "rake", "shred", "maul", "swipe"))] },
@@ -10252,6 +10320,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
           });
         }
       },
+      lacerate: { teaches: "lacerate" },
+      predatory_discipline: { mods: () => [] },
+      // read by Ferocious Bite (abilities.js): the extra Energy is not used up
       shifting_power: { teaches: "shifting_power" },
       primal_bite: { teaches: "primal_bite" },
       predatory_strikes: { mods: (r, g) => [add("attackPower", 0.5 * r * g.cls.stats.level, (ctx, g2) => feral(g2))] },
@@ -10265,19 +10336,28 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
           });
         }
       },
-      improved_shifting_power: { mods: (r) => [add("cooldown", -4 * r, (ctx) => isAbility(ctx, "shifting_power"))] },
-      leader_of_the_pack: { mods: () => [add("critChance", 0.03, (ctx, g) => !!ctx.melee && feral(g))] },
+      leader_of_the_pack: { mods: () => [add("critChance", 0.03, (ctx, g) => feral(g))] },
       natural_instinct: { mods: (r) => [mult("critBonusMult", 1 + 0.1 * r, meleeAbility)] },
       rend_and_tear: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx) => meleeAbility(ctx) && bleeding(ctx))] },
-      berserk: { teaches: "berserk" },
       /* ---------- Restoration ---------- */
       subtlety: { mods: (r) => [mult("threatMult", 1 - 0.1 * r, (ctx) => hasSchool(ctx, "nature") || hasSchool(ctx, "arcane"))] },
       natures_focus: { mods: (r) => [focus(0.14 * r, (ctx) => hasSchool(ctx, "arcane") || hasSchool(ctx, "nature"))] },
-      furor: { mods: () => [] },
-      // read by Cat Form and Dire Bear Form (auras.js)
-      naturalist: { mods: (r) => [mult("damageMult", 1 + 0.01 * r), add("castTime", -0.1 * r, (ctx) => isAbility(ctx, "healing_touch"))] },
+      heart_of_the_wild: {
+        mods: (r, g) => [{ key: "attributes", fn: (a) => ({ ...a, int: a.int * (1 + 0.02 * r), str: g.form() === "cat" ? a.str * (1 + 0.02 * r) : a.str, sta: g.form() === "bear" ? a.sta * (1 + 0.04 * r) : a.sta }) }]
+      },
+      naturalist: { mods: (r) => [mult("damageMult", 1 + 0.02 * r), add("castTime", -0.1 * r, (ctx) => isAbility(ctx, "healing_touch", "wild_growth"))] },
       gift_of_nature: { mods: (r) => [mult("healMult", 1 + 0.02 * r)] },
-      gift_of_the_earthmother: { mods: () => [add("gcd", -0.5, (ctx) => isAbility(ctx, "rejuvenation", "swiftmend", "wild_growth"))] },
+      // A Rejuvenation or Regrowth that runs its full time heals once more, for the Druid's Spirit (half when dispelled:
+      // nothing in the lab dispels a friend's buff).
+      bloom: {
+        listen(game, r, on) {
+          on("aura:remove", ({ aura: aura2, unit, reason }) => {
+            if (reason !== "expired" || aura2.source !== game.player || !["rejuvenation", "regrowth"].includes(aura2.id) || !unit || unit.dead) return;
+            const n = game.stats().spi;
+            healHit(game, { castId: ++game.castSeq, caster: game.player, target: unit, schools: ["nature"], ability: BLOOM }, { min: n, max: n, coef: 0, canCrit: false, name: "Bloom" });
+          });
+        }
+      },
       tranquil_spirit: { mods: (r) => [mult("cost", 1 - 0.02 * r, (ctx) => isAbility(ctx, "healing_touch", "tranquility"))] },
       improved_rejuvenation: { mods: (r) => [mult("healMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "rejuvenation"))] },
       swiftmend: { teaches: "swiftmend" },
@@ -10293,28 +10373,28 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
 
   // src/classes/shaman/talent-data.js
   var SOURCE9 = { site: "foreverchanges.pro/talents/shaman", build: "1.60.1.70532", extracted: "2026-10-23" };
-  var per5 = (values, fn) => values.map(fn);
+  var per4 = (values, fn) => values.map(fn);
   var trees9 = [
     {
       id: "elemental_combat",
       name: "Elemental Combat",
       icon: "spell_nature_lightning",
       talents: [
-        { id: "convection", name: "Convection", icon: "spell_nature_wispsplode", tier: 0, col: 1, max: 5, ranks: per5([[2], [4], [6], [8], [10]], (v) => `Reduces the mana cost of your Shock, Lightning Bolt, Lava Burst, and Chain Lightning spells by ${v[0]}%.`) },
-        { id: "concussion", name: "Concussion", icon: "spell_nature_earthshock", tier: 0, col: 2, max: 5, ranks: per5([[1], [2], [3], [4], [5]], (v) => `Increases the damage done by your Lightning Bolt, Chain Lightning, and Earth Shock spells by ${v[0]}%.`) },
-        { id: "elemental_devastation", name: "Elemental Devastation", icon: "spell_fire_elementaldevastation", tier: 1, col: 0, max: 3, ranks: per5([[3], [6], [9]], (v) => `Your Critical Strikes with direct damage spells increase your chance to get a Critical Strike with melee attacks by ${v[0]}% for 10 sec.`) },
-        { id: "reverberation", name: "Reverberation", icon: "spell_frost_frostward", tier: 1, col: 1, max: 5, ranks: per5([["0.2"], ["0.4"], ["0.6"], ["0.8"], ["1.0"]], (v) => `Reduces the cooldown of your Shock spells by ${v[0]} sec.`) },
-        { id: "elemental_alacrity", name: "Elemental Alacrity", icon: "spell_lightning_lightningbolt01", tier: 1, col: 2, max: 3, ranks: per5([["0.17"], ["0.33"], ["0.50"]], (v) => `Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by ${v[0]} sec.`) },
-        { id: "call_of_flame", name: "Call of Flame", icon: "spell_fire_immolation", tier: 1, col: 3, max: 3, ranks: per5([[5, 3], [10, 6], [15, 9]], (v) => `Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by ${v[0]}%, as well as increases the duration of your Flame Shock spell by ${v[1]} sec.`) },
+        { id: "convection", name: "Convection", icon: "spell_nature_wispsplode", tier: 0, col: 1, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Reduces the mana cost of your Shock, Lightning Bolt, Lava Burst, and Chain Lightning spells by ${v[0]}%.`) },
+        { id: "concussion", name: "Concussion", icon: "spell_nature_earthshock", tier: 0, col: 2, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Increases the damage done by your Lightning Bolt, Chain Lightning, and Earth Shock spells by ${v[0]}%.`) },
+        { id: "elemental_devastation", name: "Elemental Devastation", icon: "spell_fire_elementaldevastation", tier: 1, col: 0, max: 3, ranks: per4([[3], [6], [9]], (v) => `Your Critical Strikes with direct damage spells increase your chance to get a Critical Strike with melee attacks by ${v[0]}% for 10 sec.`) },
+        { id: "reverberation", name: "Reverberation", icon: "spell_frost_frostward", tier: 1, col: 1, max: 5, ranks: per4([["0.2"], ["0.4"], ["0.6"], ["0.8"], ["1.0"]], (v) => `Reduces the cooldown of your Shock spells by ${v[0]} sec.`) },
+        { id: "elemental_alacrity", name: "Elemental Alacrity", icon: "spell_lightning_lightningbolt01", tier: 1, col: 2, max: 3, ranks: per4([["0.17"], ["0.33"], ["0.50"]], (v) => `Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by ${v[0]} sec.`) },
+        { id: "call_of_flame", name: "Call of Flame", icon: "spell_fire_immolation", tier: 1, col: 3, max: 3, ranks: per4([[5, 3], [10, 6], [15, 9]], (v) => `Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by ${v[0]}%, as well as increases the duration of your Flame Shock spell by ${v[1]} sec.`) },
         { id: "elemental_focus", name: "Elemental Focus", icon: "spell_shadow_manaburn", tier: 2, col: 0, max: 1, ranks: ["Gives you a 10% chance to enter a Clearcasting state after casting any Fire, Frost, or Nature damage spell. The Clearcasting state reduces the mana cost of your next damage spell by 100%."] },
-        { id: "elemental_warding", name: "Elemental Warding", icon: "spell_nature_spiritarmor", tier: 2, col: 1, max: 3, ranks: per5([[3], [7], [10]], (v) => `Reduces damage taken from Fire, Frost, and Nature effects by ${v[0]}%.`) },
-        { id: "trial_by_fire", name: "Trial by Fire", icon: "spell_fire_sealoffire", tier: 3, col: 0, max: 2, ranks: per5([[10, 2], [20, 4]], (v) => `Increases the damage done by your Fire Nova spell by ${v[0]}% and reduces its cooldown by ${v[1]} sec, and increases the duration of your Magma Totem by ${v[0]} sec.`) },
-        { id: "eye_of_the_storm", name: "Eye of the Storm", icon: "spell_nature_eyeofthestorm", tier: 3, col: 1, max: 3, ranks: per5([[23], [47], [70]], (v) => `Gives your Lightning Bolt, Chain Lightning, and Lava Burst spells a ${v[0]}% chance to not lose casting time when you take damage.`) },
+        { id: "elemental_warding", name: "Elemental Warding", icon: "spell_nature_spiritarmor", tier: 2, col: 1, max: 3, ranks: per4([[3], [7], [10]], (v) => `Reduces damage taken from Fire, Frost, and Nature effects by ${v[0]}%.`) },
+        { id: "trial_by_fire", name: "Trial by Fire", icon: "spell_fire_sealoffire", tier: 3, col: 0, max: 2, ranks: per4([[10, 2], [20, 4]], (v) => `Increases the damage done by your Fire Nova spell by ${v[0]}% and reduces its cooldown by ${v[1]} sec, and increases the duration of your Magma Totem by ${v[0]} sec.`) },
+        { id: "eye_of_the_storm", name: "Eye of the Storm", icon: "spell_nature_eyeofthestorm", tier: 3, col: 1, max: 3, ranks: per4([[23], [47], [70]], (v) => `Gives your Lightning Bolt, Chain Lightning, and Lava Burst spells a ${v[0]}% chance to not lose casting time when you take damage.`) },
         { id: "earthbound", name: "Earthbound", icon: "spell_nature_stranglevines", tier: 3, col: 3, max: 1, ranks: ["Your Earthbind Totem Immobilizes nearby targets for 5 sec when cast."] },
-        { id: "elemental_reach", name: "Elemental Reach", icon: "spell_nature_stormreach", tier: 4, col: 0, max: 2, ranks: per5([[3, 10], [6, 20]], (v) => `Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by ${v[0]} yards and reduces the cooldown of Totemic Projection by ${v[1]} sec.`) },
+        { id: "elemental_reach", name: "Elemental Reach", icon: "spell_nature_stormreach", tier: 4, col: 0, max: 2, ranks: per4([[3, 10], [6, 20]], (v) => `Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by ${v[0]} yards and reduces the cooldown of Totemic Projection by ${v[1]} sec.`) },
         { id: "lava_burst", name: "Lava Burst", icon: "spell_shaman_lavaburst", tier: 4, col: 1, max: 1, ranks: ["You hurl molten lava at the target, dealing 114 to 145 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage."] },
-        { id: "lightning_overload", name: "Lightning Overload", icon: "spell_nature_lightningoverload", tier: 4, col: 2, max: 3, req: "elemental_alacrity", ranks: per5([[3], [7], [10]], (v) => `Gives your Lightning Bolt and Chain Lightning spells a ${v[0]}% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.`) },
-        { id: "elemental_fury", name: "Elemental Fury", icon: "spell_fire_volcano", tier: 5, col: 2, max: 5, req: "lightning_overload", ranks: per5([[20], [40], [60], [80], [100]], (v) => `Increases the critical strike damage bonus of your Searing and Magma Totems and your Fire, Frost, and Nature spells by ${v[0]}%.`) },
+        { id: "lightning_overload", name: "Lightning Overload", icon: "spell_nature_lightningoverload", tier: 4, col: 2, max: 3, req: "elemental_alacrity", ranks: per4([[3], [7], [10]], (v) => `Gives your Lightning Bolt and Chain Lightning spells a ${v[0]}% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.`) },
+        { id: "elemental_fury", name: "Elemental Fury", icon: "spell_fire_volcano", tier: 5, col: 2, max: 5, req: "lightning_overload", ranks: per4([[20], [40], [60], [80], [100]], (v) => `Increases the critical strike damage bonus of your Searing and Magma Totems and your Fire, Frost, and Nature spells by ${v[0]}%.`) },
         { id: "elemental_mastery", name: "Elemental Mastery", icon: "spell_nature_wispheal", tier: 6, col: 1, max: 1, req: "lava_burst", ranks: ["Gain mastery over Fire and Lightning, reducing the cast time of Lightning Bolt and Lava Burst by 0.5 sec, and removing the cooldown from Chain Lightning. Lasts 15 sec."] }
       ]
     },
@@ -10323,23 +10403,23 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Enhancement",
       icon: "spell_nature_lightningshield",
       talents: [
-        { id: "earths_grasp", name: "Earth's Grasp", icon: "spell_nature_stoneclawtotem", tier: 0, col: 0, max: 2, ranks: per5([[25, 10], [50, 20]], (v) => `Increases the health of your Stoneclaw Totem by ${v[0]}% and the radius of your Earthbind Totem by ${v[1]}%.`) },
-        { id: "thundering_strikes", name: "Thundering Strikes", icon: "ability_thunderbolt", tier: 0, col: 1, max: 5, ranks: per5([[1], [2], [3], [4], [5]], (v) => `Improves your chance to get a critical strike with all spells and attacks by ${v[0]}%.`) },
-        { id: "ancestral_knowledge", name: "Ancestral Knowledge", icon: "spell_shadow_grimward", tier: 0, col: 2, max: 5, ranks: per5([[2], [4], [6], [8], [10]], (v) => `Increases your Intellect by ${v[0]}%.`) },
-        { id: "guardian_totems", name: "Guardian Totems", icon: "spell_nature_stoneskintotem", tier: 1, col: 0, max: 2, ranks: per5([[10, 1], [20, 2]], (v) => `Increases the amount of damage reduced by your Stoneskin Totem and Windwall Totem by ${v[0]}% and reduces the cooldown of your Grounding Totem by ${v[1]} sec.`) },
-        { id: "mental_dexterity", name: "Mental Dexterity", icon: "spell_nature_mentalquickness", tier: 1, col: 1, max: 3, ranks: per5([[33], [67], [100]], (v) => `Increases your Attack Power by an amount equal to ${v[0]}% of your Intellect.`) },
-        { id: "improved_ghost_wolf", name: "Improved Ghost Wolf", icon: "spell_nature_spiritwolf", tier: 1, col: 2, max: 2, ranks: per5([["1.0"], ["3.0"]], (v) => `Reduces the cast time of your Ghost Wolf spell by ${v[0]} sec, and Ghost Wolf may be used indoors.`) },
-        { id: "improved_lightning_shield", name: "Improved Lightning Shield", icon: "spell_nature_lightningshield", tier: 1, col: 3, max: 3, ranks: per5([[5], [10], [15]], (v) => `Increases the damage done by your Lightning Shield orbs by ${v[0]}%.`) },
-        { id: "elemental_weapons", name: "Elemental Weapons", icon: "spell_fire_flametounge", tier: 2, col: 0, max: 3, ranks: per5([[7, 13, 5], [13, 27, 10], [20, 40, 15]], (v) => `Increases the melee attack power bonus of your Rockbiter Weapon by ${v[0]}%, your Windfury Weapon effect by ${v[1]}% and increases the damage caused by your Flametongue Weapon and Frostbrand Weapon by ${v[2]}%.`) },
+        { id: "earths_grasp", name: "Earth's Grasp", icon: "spell_nature_stoneclawtotem", tier: 0, col: 0, max: 2, ranks: per4([[25, 10], [50, 20]], (v) => `Increases the health of your Stoneclaw Totem by ${v[0]}% and the radius of your Earthbind Totem by ${v[1]}%.`) },
+        { id: "thundering_strikes", name: "Thundering Strikes", icon: "ability_thunderbolt", tier: 0, col: 1, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Improves your chance to get a critical strike with all spells and attacks by ${v[0]}%.`) },
+        { id: "ancestral_knowledge", name: "Ancestral Knowledge", icon: "spell_shadow_grimward", tier: 0, col: 2, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases your Intellect by ${v[0]}%.`) },
+        { id: "guardian_totems", name: "Guardian Totems", icon: "spell_nature_stoneskintotem", tier: 1, col: 0, max: 2, ranks: per4([[10, 1], [20, 2]], (v) => `Increases the amount of damage reduced by your Stoneskin Totem and Windwall Totem by ${v[0]}% and reduces the cooldown of your Grounding Totem by ${v[1]} sec.`) },
+        { id: "mental_dexterity", name: "Mental Dexterity", icon: "spell_nature_mentalquickness", tier: 1, col: 1, max: 3, ranks: per4([[33], [67], [100]], (v) => `Increases your Attack Power by an amount equal to ${v[0]}% of your Intellect.`) },
+        { id: "improved_ghost_wolf", name: "Improved Ghost Wolf", icon: "spell_nature_spiritwolf", tier: 1, col: 2, max: 2, ranks: per4([["1.0"], ["3.0"]], (v) => `Reduces the cast time of your Ghost Wolf spell by ${v[0]} sec, and Ghost Wolf may be used indoors.`) },
+        { id: "improved_lightning_shield", name: "Improved Lightning Shield", icon: "spell_nature_lightningshield", tier: 1, col: 3, max: 3, ranks: per4([[5], [10], [15]], (v) => `Increases the damage done by your Lightning Shield orbs by ${v[0]}%.`) },
+        { id: "elemental_weapons", name: "Elemental Weapons", icon: "spell_fire_flametounge", tier: 2, col: 0, max: 3, ranks: per4([[7, 13, 5], [13, 27, 10], [20, 40, 15]], (v) => `Increases the melee attack power bonus of your Rockbiter Weapon by ${v[0]}%, your Windfury Weapon effect by ${v[1]}% and increases the damage caused by your Flametongue Weapon and Frostbrand Weapon by ${v[2]}%.`) },
         { id: "shamanistic_focus", name: "Shamanistic Focus", icon: "spell_nature_elementalabsorption", tier: 2, col: 2, max: 1, ranks: ["Reduces the mana cost of your Shock and Lightning Shield spells by 45%."] },
-        { id: "anticipation", name: "Anticipation", icon: "spell_nature_mirrorimage", tier: 2, col: 3, max: 3, ranks: per5([[2], [4], [6]], (v) => `Increases your chance to dodge by an additional ${v[0]}%.`) },
-        { id: "toughness", name: "Toughness", icon: "spell_holy_devotion", tier: 3, col: 0, max: 5, ranks: per5([[2], [4], [6], [8], [10]], (v) => `Increases your Stamina by ${v[0]}%.`) },
-        { id: "flurry", name: "Flurry", icon: "ability_ghoulfrenzy", tier: 3, col: 1, max: 5, req: "mental_dexterity", ranks: per5([[5], [10], [15], [20], [25]], (v) => `Increases your attack speed by ${v[0]}% for your next 3 swings after dealing a melee critical strike.`) },
+        { id: "anticipation", name: "Anticipation", icon: "spell_nature_mirrorimage", tier: 2, col: 3, max: 3, ranks: per4([[2], [4], [6]], (v) => `Increases your chance to dodge by an additional ${v[0]}%.`) },
+        { id: "toughness", name: "Toughness", icon: "spell_holy_devotion", tier: 3, col: 0, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases your Stamina by ${v[0]}%.`) },
+        { id: "flurry", name: "Flurry", icon: "ability_ghoulfrenzy", tier: 3, col: 1, max: 5, req: "mental_dexterity", ranks: per4([[5], [10], [15], [20], [25]], (v) => `Increases your attack speed by ${v[0]}% for your next 3 swings after dealing a melee critical strike.`) },
         { id: "stormstrike", name: "Stormstrike", icon: "ability_shaman_stormstrike", tier: 3, col: 2, max: 1, ranks: ["Instantly strike for normal weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."] },
         { id: "spirit_weapons", name: "Spirit Weapons", icon: "ability_parry", tier: 4, col: 0, max: 1, ranks: ["Gives a chance to parry enemy melee attacks, reduces all threat generated by your attacks by 30% while Rockbiter Weapon is not active, and increases all threat generated by 30% while Rockbiter Weapon is active."] },
-        { id: "mental_quickness", name: "Mental Quickness", icon: "spell_nature_sleep", tier: 4, col: 1, max: 2, ranks: per5([[15], [30]], (v) => `Increases your spell damage and healing by up to ${v[0]}% of your Intellect.`) },
-        { id: "improved_stormstrike", name: "Improved Stormstrike", icon: "spell_shaman_improvedstormstrike", tier: 4, col: 2, max: 2, req: "stormstrike", ranks: per5([[50], [100]], (v) => `When you Stormstrike, you have a ${v[0]}% chance to gain 50% mana regeneration while casting spells for 15 sec, and Stormstrike's cooldown has a ${v[0]}% chance to reset each time you Dodge or Parry.`) },
-        { id: "maelstrom_weapon", name: "Maelstrom Weapon", icon: "spell_shaman_maelstromweapon", tier: 5, col: 2, max: 5, ranks: per5([[4], [8], [12], [16], [20]], (v) => `When you deal damage with a melee attack, you have a chance to reduce the cast time and Mana cost of your next Lightning Bolt spell by ${v[0]}%. Stacks up to 5 times. Lasts 30 sec.`) },
+        { id: "mental_quickness", name: "Mental Quickness", icon: "spell_nature_sleep", tier: 4, col: 1, max: 2, ranks: per4([[15], [30]], (v) => `Increases your spell damage and healing by up to ${v[0]}% of your Intellect.`) },
+        { id: "improved_stormstrike", name: "Improved Stormstrike", icon: "spell_shaman_improvedstormstrike", tier: 4, col: 2, max: 2, req: "stormstrike", ranks: per4([[50], [100]], (v) => `When you Stormstrike, you have a ${v[0]}% chance to gain 50% mana regeneration while casting spells for 15 sec, and Stormstrike's cooldown has a ${v[0]}% chance to reset each time you Dodge or Parry.`) },
+        { id: "maelstrom_weapon", name: "Maelstrom Weapon", icon: "spell_shaman_maelstromweapon", tier: 5, col: 2, max: 5, ranks: per4([[4], [8], [12], [16], [20]], (v) => `When you deal damage with a melee attack, you have a chance to reduce the cast time and Mana cost of your next Lightning Bolt spell by ${v[0]}%. Stacks up to 5 times. Lasts 30 sec.`) },
         { id: "rage_of_the_farseer", name: "Rage of the Farseer", icon: "spell_nature_bloodlust", tier: 6, col: 1, max: 1, req: "mental_quickness", ranks: ["Increases your attack speed by 30% for 25 sec."] }
       ]
     },
@@ -10348,21 +10428,21 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Restoration",
       icon: "spell_nature_magicimmunity",
       talents: [
-        { id: "improved_healing_wave", name: "Improved Healing Wave", icon: "spell_nature_magicimmunity", tier: 0, col: 1, max: 5, ranks: per5([["0.1"], ["0.2"], ["0.3"], ["0.4"], ["0.5"]], (v) => `Reduces the casting time of your Healing Wave spell by ${v[0]} sec.`) },
-        { id: "tidal_focus", name: "Tidal Focus", icon: "spell_frost_manarecharge", tier: 0, col: 2, max: 5, ranks: per5([[1], [2], [3], [4], [5]], (v) => `Reduces the Mana cost of your healing spells by ${v[0]}% and improves your chance to hit by ${v[0]}%.`) },
-        { id: "mindfulness", name: "Mindfulness", icon: "spell_nature_sleep", tier: 1, col: 0, max: 3, ranks: per5([[17], [33], [50]], (v) => `Allows ${v[0]}% of your Mana regeneration to continue while casting.`) },
-        { id: "natural_grace", name: "Natural Grace", icon: "spell_nature_healingtouch", tier: 1, col: 1, max: 3, ranks: per5([[5], [10], [15]], (v) => `Reduces the threat generated by your spells by ${v[0]}%.`) },
-        { id: "totemic_focus", name: "Totemic Focus", icon: "spell_nature_moonglow", tier: 1, col: 2, max: 5, ranks: per5([[5], [10], [15], [20], [25]], (v) => `Reduces the Mana cost of your totems and any spells that summon or move them by ${v[0]}%.`) },
-        { id: "improved_reincarnation", name: "Improved Reincarnation", icon: "spell_nature_reincarnation", tier: 1, col: 3, max: 2, ranks: per5([[10, 2], [20, 4]], (v) => `Reduces the cooldown of your Reincarnation spell by ${v[0]} min, increases your maximum health by ${v[1]}%, and increases the amount of health and Mana you reincarnate with by an additional ${v[0]}%.`) },
-        { id: "ancestral_healing", name: "Ancestral Healing", icon: "spell_nature_undyingstrength", tier: 2, col: 0, max: 3, ranks: per5([[8], [17], [25]], (v) => `Increases your target's armor value by ${v[0]}% for 15 sec after getting a critical effect from one of your healing spells.`) },
-        { id: "healing_focus", name: "Healing Focus", icon: "spell_nature_healingwavelesser", tier: 2, col: 1, max: 3, ranks: per5([[23], [47], [70]], (v) => `Gives your healing spells a ${v[0]}% chance to not lose casting time when you take damage.`) },
+        { id: "improved_healing_wave", name: "Improved Healing Wave", icon: "spell_nature_magicimmunity", tier: 0, col: 1, max: 5, ranks: per4([["0.1"], ["0.2"], ["0.3"], ["0.4"], ["0.5"]], (v) => `Reduces the casting time of your Healing Wave spell by ${v[0]} sec.`) },
+        { id: "tidal_focus", name: "Tidal Focus", icon: "spell_frost_manarecharge", tier: 0, col: 2, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Reduces the Mana cost of your healing spells by ${v[0]}% and improves your chance to hit by ${v[0]}%.`) },
+        { id: "mindfulness", name: "Mindfulness", icon: "spell_nature_sleep", tier: 1, col: 0, max: 3, ranks: per4([[17], [33], [50]], (v) => `Allows ${v[0]}% of your Mana regeneration to continue while casting.`) },
+        { id: "natural_grace", name: "Natural Grace", icon: "spell_nature_healingtouch", tier: 1, col: 1, max: 3, ranks: per4([[5], [10], [15]], (v) => `Reduces the threat generated by your spells by ${v[0]}%.`) },
+        { id: "totemic_focus", name: "Totemic Focus", icon: "spell_nature_moonglow", tier: 1, col: 2, max: 5, ranks: per4([[5], [10], [15], [20], [25]], (v) => `Reduces the Mana cost of your totems and any spells that summon or move them by ${v[0]}%.`) },
+        { id: "improved_reincarnation", name: "Improved Reincarnation", icon: "spell_nature_reincarnation", tier: 1, col: 3, max: 2, ranks: per4([[10, 2], [20, 4]], (v) => `Reduces the cooldown of your Reincarnation spell by ${v[0]} min, increases your maximum health by ${v[1]}%, and increases the amount of health and Mana you reincarnate with by an additional ${v[0]}%.`) },
+        { id: "ancestral_healing", name: "Ancestral Healing", icon: "spell_nature_undyingstrength", tier: 2, col: 0, max: 3, ranks: per4([[8], [17], [25]], (v) => `Increases your target's armor value by ${v[0]}% for 15 sec after getting a critical effect from one of your healing spells.`) },
+        { id: "healing_focus", name: "Healing Focus", icon: "spell_nature_healingwavelesser", tier: 2, col: 1, max: 3, ranks: per4([[23], [47], [70]], (v) => `Gives your healing spells a ${v[0]}% chance to not lose casting time when you take damage.`) },
         { id: "water_shield", name: "Water Shield", icon: "ability_shaman_watershield", tier: 2, col: 2, max: 1, ranks: ["The caster is surrounded by 3 globes of water. When a spell, melee, or ranged attack hits the caster or when one of the caster's spells gets a critical result, 2% of maximum mana is restored to the caster, expending one water globe. Only one globe will activate every few seconds. Lasts 10 min.\n\nOnly one Elemental Shield can be active on the Shaman at any one time."] },
-        { id: "tidal_mastery", name: "Tidal Mastery", icon: "spell_nature_tranquility", tier: 3, col: 0, max: 5, ranks: per5([[1], [2], [3], [4], [5]], (v) => `Increases the critical effect chance of your healing spells by ${v[0]}%.`) },
-        { id: "restorative_totems", name: "Restorative Totems", icon: "spell_nature_manaregentotem", tier: 3, col: 1, max: 5, ranks: per5([[5, 10], [10, 20], [15, 30], [20, 40], [25, 50]], (v) => `Increases the effect of your Mana Spring Totem by ${v[0]}% and increases the effect of your Healing Stream Totem by ${v[1]}%.`) },
+        { id: "tidal_mastery", name: "Tidal Mastery", icon: "spell_nature_tranquility", tier: 3, col: 0, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Increases the critical effect chance of your healing spells by ${v[0]}%.`) },
+        { id: "restorative_totems", name: "Restorative Totems", icon: "spell_nature_manaregentotem", tier: 3, col: 1, max: 5, ranks: per4([[5, 10], [10, 20], [15, 30], [20, 40], [25, 50]], (v) => `Increases the effect of your Mana Spring Totem by ${v[0]}% and increases the effect of your Healing Stream Totem by ${v[1]}%.`) },
         { id: "mana_tide_totem", name: "Mana Tide Totem", icon: "spell_frost_summonwaterelemental", tier: 3, col: 2, max: 1, ranks: ["Summons a Mana Tide Totem with 5 health at the feet of the caster for 12 sec that restores 88 mana every 3 seconds to group members within 30 yards."] },
-        { id: "healing_way", name: "Healing Way", icon: "spell_nature_healingway", tier: 4, col: 1, max: 3, ranks: per5([[8], [17], [25]], (v) => `Increases the amount healed by your Healing Wave spell by ${v[0]}%.`) },
+        { id: "healing_way", name: "Healing Way", icon: "spell_nature_healingway", tier: 4, col: 1, max: 3, ranks: per4([[8], [17], [25]], (v) => `Increases the amount healed by your Healing Wave spell by ${v[0]}%.`) },
         { id: "natures_swiftness", name: "Nature's Swiftness", icon: "spell_nature_ravenform", tier: 4, col: 2, max: 1, ranks: ["When activated, your next Nature spell with a casting time less than 10 sec. becomes an instant cast spell."] },
-        { id: "purification", name: "Purification", icon: "spell_frost_wizardmark", tier: 5, col: 2, max: 5, ranks: per5([[2], [4], [6], [8], [10]], (v) => `Increases the effectiveness of your healing spells by ${v[0]}%.`) },
+        { id: "purification", name: "Purification", icon: "spell_frost_wizardmark", tier: 5, col: 2, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases the effectiveness of your healing spells by ${v[0]}%.`) },
         { id: "riptide", name: "Riptide", icon: "spell_nature_riptide", tier: 6, col: 1, max: 1, req: "healing_way", ranks: ["Heals a friendly target for 486 to 534, an additional 445 over 15 sec, and increases the effectiveness of your Chain Heal casts directly on that target by 25%."] }
       ]
     }
@@ -11015,7 +11095,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       baseHp: 1280,
       baseMana: 1520,
       derive(a) {
-        const conv = (v, per6) => Math.min(v, 20) + Math.max(0, v - 20) * per6;
+        const conv = (v, per5) => Math.min(v, 20) + Math.max(0, v - 20) * per5;
         return {
           maxHp: 1280 + conv(a.sta, 10) - 20,
           maxMana: 1520 + conv(a.int, 15) - 20,
