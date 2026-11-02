@@ -7120,7 +7120,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         lightning_reflexes: 5,
         lacerating_strikes: 1
       },
-      bar: ["raptor_strike", "lacerate", "strider_kick", "mongoose_bite", "immolation_trap", "explosive_trap", "serpent_sting", "rapid_fire", "major_mana_potion"]
+      bar: ["raptor_strike", "lacerate", "strider_kick", "mongoose_bite", "immolation_trap", "explosive_trap", "serpent_sting", "rapid_fire", "hunters_mark", "major_mana_potion"]
     }
   ];
 
