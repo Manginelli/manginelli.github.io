@@ -3051,7 +3051,6 @@
       points: "32/3/16",
       blurb: "Arcane Blast to build, Arcane Wrath and Arcane Missiles to spend, Arcane Power and Presence of Mind for the burst. Frost on the side: Permafrost, Frost Channeling and Improved Blizzard.",
       options: { arcaneIntellect: "true" },
-      source: { site: "Daniel", url: "index.html#c=mage&t=050205203100311531-3-203002333&b=arcane_blast.arcane_missiles.arcane_wrath.presence_of_mind.arcane_power.arcane_explosion.blizzard.evocation.mana_ruby.major_mana_potion.blink.frost_nova&g=preraid", counted: "2026-10-23", reviewed: "2026-10-23", changed: "Daniel's build, replacing the community's most planned one (TalentsForever, 47/4/0). 1.60.1.70685 (2026-10-29): Arcane Focus removed, its 5 points to Improved Channeling; Elemental Precision is now Precision." },
       talents: {
         improved_channeling: 5,
         missile_barrage: 2,
@@ -3081,7 +3080,6 @@
       points: "10/38/3",
       blurb: "Fireball and Scorch, Fire Blast and Pyroblast, with Combustion and Blast Wave. Master of Elements and Critical Mass keep the crits coming; Frostfire Bolt from the trainer.",
       options: { arcaneIntellect: "true" },
-      source: { site: "Daniel", url: "index.html#c=mage&t=050005-55520301230133131-003&b=fireball.scorch.fire_blast.pyroblast.combustion.blast_wave.frostfire_bolt.flamestrike.evocation.mana_ruby.major_mana_potion.blink&g=preraid", counted: "2026-10-23", reviewed: "2026-10-23", changed: "Daniel's build, replacing the community's most planned one (TalentsForever, 21/28/2). 1.60.1.70685 (2026-10-29): Arcane Focus removed, its 5 points to Improved Channeling; Improved Fireball is now Accelerant; Critical Mass down to 3 ranks, its 2 points to Incineration (now 5 ranks); Elemental Precision is now Precision." },
       talents: {
         improved_channeling: 5,
         arcane_concentration: 5,
@@ -3109,7 +3107,6 @@
       points: "12/0/39",
       blurb: "Frostbolt and Ice Lance: Fingers of Frost and Shatter turn Ice Lance into a crit. Ice Barrier, Ice Block and Cold Snap to stay alive; Arcane Concentration for free casts.",
       options: { arcaneIntellect: "true" },
-      source: { site: "Daniel", url: "index.html#c=mage&t=050205--053530031121331251&b=frostbolt.ice_lance.cone_of_cold.ice_barrier.frost_nova.ice_block.cold_snap.blizzard.evocation.mana_ruby.major_mana_potion.blink&g=preraid", counted: "2026-10-23", reviewed: "2026-10-23", changed: "Daniel's build, replacing the community's most planned one (TalentsForever, 2/3/46). 1.60.1.70685 (2026-10-29): Arcane Focus removed, its 5 points to Improved Channeling; Elemental Precision is now Precision." },
       talents: {
         improved_channeling: 5,
         arcane_subtlety: 2,
@@ -4006,7 +4003,6 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       points: "39/11/1",
       blurb: "Daggers and Mutilate, Venom and Cold Blood. Slice and Dice and Rupture up, Eviscerate with Seal Fate. Opportunity from Subtlety for Ambush.",
       options: { mainHand: "dagger", offHand: "dagger", mhPoison: "instant", ohPoison: "deadly" },
-      source: { site: "Daniel", url: "index.html#c=rogue&t=00530312551521051-005303-001&b=mutilate.eviscerate.slice_and_dice.rupture.venom.sinister_strike.thistle_tea.expose_armor.cold_blood.ambush.garrote.stealth&g=preraid&o=mainHand%3Adagger", counted: "2026-10-23", reviewed: "2026-10-23", changed: "Daniel's build, replacing the community's most planned one (TalentsForever, 38/11/2)." },
       talents: {
         malice: 5,
         ruthlessness: 3,
@@ -4034,7 +4030,6 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       points: "18/33/0",
       blurb: "Swords, Sinister Strike and Hack and Slash, Blade Flurry and Adrenaline Rush. Slice and Dice up, Eviscerate and Rupture as finishers.",
       options: { mainHand: "sword", offHand: "sword", mhPoison: "instant", ohPoison: "instant" },
-      source: { site: "Daniel", url: "index.html#c=rogue&t=005303025-32030320201515231&b=sinister_strike.eviscerate.backstab.slice_and_dice.rupture.adrenaline_rush.blade_flurry.thistle_tea.expose_armor.vanish.garrote.stealth&g=preraid&o=offHand%3Asword%2CohPoison%3Ainstant", counted: "2026-10-23", reviewed: "2026-10-23", changed: "Daniel's build, replacing the community's most planned one (TalentsForever, 18/33/0)." },
       talents: {
         malice: 5,
         ruthlessness: 3,
@@ -4063,7 +4058,6 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       points: "15/0/36",
       blurb: "Daggers from the shadows: Ambush and Premeditation, Hemorrhage and Ghostly Strike, Cutthroat and Thousand Cuts. Preparation resets Vanish for another opener.",
       options: { mainHand: "dagger", offHand: "dagger", mhPoison: "instant", ohPoison: "instant" },
-      source: { site: "Daniel", url: "index.html#c=rogue&t=005302005--5021203310013211551&b=ghostly_strike.hemorrhage.rupture.ambush.garrote.slice_and_dice.eviscerate.preparation.stealth.premeditation.expose_armor.vanish&g=preraid&o=mainHand%3Adagger%2CohPoison%3Ainstant", counted: "2026-10-23", reviewed: "2026-10-23", changed: "Daniel's build, replacing the community's most planned one (TalentsForever, 16/12/23)." },
       talents: {
         malice: 5,
         ruthlessness: 3,
@@ -5042,7 +5036,6 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       gearRole: "dps",
       blurb: "A two-hander with Mortal Strike, Slam (Improved Slam keeps the swing going), Overpower and Rend; Spearing Strike and Sweeping Strikes. Fury on the side for Cruelty and Unbridled Wrath.",
       options: { mainHand: "two_hand_sword", offHand: "none" },
-      source: { site: "Daniel", url: "index.html#c=warrior&t=30305213132515201-0525-2&b=slam.rend.overpower.mortal_strike.execute.spearing_strike.thunder_clap.charge.heroic_strike.sweeping_strikes.bloodrage.recklessness&g=mc", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (37/12/2)." },
       talents: {
         improved_heroic_strike: 3,
         improved_rend: 3,
@@ -5072,7 +5065,6 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       gearRole: "dps",
       blurb: "Two weapons in Berserker Stance. Bloodthirst and Whirlwind on cooldown, Heroic Strike to spend rage, Flurry from crits and Death Wish for burst.",
       options: { mainHand: "sword", offHand: "sword", stance: "berserker" },
-      source: { site: "Daniel", url: "index.html#c=warrior&t=02305013-05253005152210501&b=bloodthirst.whirlwind.heroic_strike.rend.execute.slam.hamstring.berserker_rage.bloodrage.death_wish.recklessness&g=mc&o=mainHand%3Asword%2CoffHand%3Asword%2Cstance%3Aberserker", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (17/34/0)." },
       talents: {
         deflection: 2,
         improved_rend: 3,
@@ -5102,7 +5094,6 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       scenario: "raid-boss",
       blurb: "A tank build for the Tank test: sword and shield in Defensive Stance. Shield Slam and Revenge on cooldown, Sunder Armor to fill, Heroic Strike with spare rage; Shield Block for Revenge and fewer hits, Shield Wall and Last Stand for the bad moments. Defiance raises the threat, Shield Specialization and Master of Defense turn blocks, dodges and parries into rage.",
       options: { mainHand: "sword", offHand: "shield", stance: "defensive" },
-      source: { site: "Daniel", url: "index.html#c=warrior&t=05-0501-250533120331021351&b=heroic_strike.revenge.sunder_armor.shield_slam.shield_block.thunder_clap.rend.demoralizing_shout.taunt.shield_wall.last_stand.bloodrage&g=mc_tank&o=mainHand%3Asword%2CoffHand%3Ashield%2Cstance%3Adefensive", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (7/5/39)." },
       talents: {
         deflection: 5,
         cruelty: 5,
@@ -6110,7 +6101,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       scenario: "raid-healing",
       blurb: "A healer build for the Healing test: Oath of Light on the tank (Holy Light, Flash of Light and Holy Shock heal it for more), Holy Light on the tank, Flash of Light for cheap top-ups, Holy Shock from 20 yards; Light's Vigil on a friend turns the next Holy Shock into a heal for their whole party. Illumination gives mana back on crits, Divine Favor makes one heal crit. Lay on Hands when someone is about to die.",
       options: { mainHand: "mace", offHand: "shield", blessing: "wisdom", righteousFury: "auto", aura: "concentration_aura" },
-      source: { site: "Daniel", url: "index.html#c=paladin&t=50320215022101251-503220002-05&b=holy_light.flash_of_light.holy_shock.lights_vigil.oath_of_light.divine_favor.lay_on_hands.divine_shield.cleanse.major_mana_potion&g=mc_healer&o=mainHand%3Amace%2CoffHand%3Ashield%2Cblessing%3Awisdom%2CrighteousFury%3Aauto%2Caura%3Aconcentration_aura", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (34/12/5) adjusted for build 1.60.1.70707." },
       talents: {
         spiritual_focus: 5,
         healing_light: 3,
@@ -6142,7 +6132,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       scenario: "raid-boss",
       blurb: "A tank build for the Tank test: one-hander and shield, Righteous Fury and Devotion Aura. Seal of Fury turns Holy damage into an absorb shield and its Judgement taunts; Swift Judgement is a second Judgement. Holy Strike (sooner with Shieldsworn, and it sets off Holy Shield), Hammer of the Righteous and Consecration for threat, Holy Shield up for blocks. Templar's Bulwark, Divine Protection and Lay on Hands for the bad moments.",
       options: { mainHand: "sword", offHand: "shield", blessing: "kings", righteousFury: "on", aura: "devotion_aura" },
-      source: { site: "Daniel", url: "index.html#c=paladin&t=-05302102513501531-54203&b=seal_of_fury.judgement.holy_strike.hammer_of_the_righteous.consecration.holy_shield.swift_judgement.templars_bulwark.divine_protection.lay_on_hands.holy_light.major_mana_potion&g=mc_tank&o=mainHand%3Asword%2CoffHand%3Ashield%2Cblessing%3Akings%2CrighteousFury%3Aon%2Caura%3Adevotion_aura", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (0/35/16) adjusted for build 1.60.1.70707." },
       talents: {
         redoubt: 5,
         precision: 3,
@@ -6171,7 +6160,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       gearRole: "melee",
       blurb: "A two-hander with Seal of Command. Judgement and Holy Strike on cooldown; Unsealed Wrath stores copies of your Seal on each swing, and changing Seals sets them off. Vengeance stacks from crits, Champion of the Light turns Intellect into spell power and makes Hammer of Wrath faster.",
       options: { mainHand: "two_hand_mace", offHand: "none", blessing: "might", righteousFury: "auto", aura: "retribution_aura" },
-      source: { site: "Daniel", url: "index.html#c=paladin&t=050050002-503-05233301001301351&b=seal_of_command.judgement.holy_strike.seal_of_righteousness.consecration.hammer_of_wrath.seal_of_the_crusader.hammer_of_justice.major_mana_potion&g=mc&o=mainHand%3Atwo_hand_mace%2CoffHand%3Anone%2Cblessing%3Amight%2CrighteousFury%3Aauto%2Caura%3Aretribution_aura", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (9/8/34) adjusted for build 1.60.1.70707." },
       talents: {
         divine_strength: 5,
         improved_seals: 5,
@@ -7061,7 +7049,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       points: "31/20/0",
       blurb: "A cat at your side and two hawks in the air. Bestial Wrath and Intimidation for the pet, Frenzy from its crits, Aimed Shot, Multi-Shot and Arcane Shot from range.",
       options: { ranged: "bow", mainHand: "two_hand_axe", offHand: "none" },
-      source: { site: "Daniel", url: "index.html#c=hunter&t=5120021505101251-00532500005&b=arcane_shot.aimed_shot.serpent_sting.hunters_mark.summon_hawk.multi_shot.bestial_wrath.intimidation.rapid_fire.volley.major_mana_potion&g=mc", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (31/20/0)." },
       talents: {
         deadly_aspects: 5,
         endurance_training: 1,
@@ -7089,7 +7076,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       points: "5/43/3",
       blurb: "No pet (Lone Wolf, +20% damage). Aimed Shot and Multi-Shot on cooldown, Arcane Shot and Serpent Sting in between, Sniper Shot from far away, Mortal Shots for big crits.",
       options: { ranged: "bow", mainHand: "two_hand_axe", offHand: "none" },
-      source: { site: "Daniel", url: "index.html#c=hunter&t=5-0053552511523051-3&b=arcane_shot.aimed_shot.serpent_sting.sniper_shot.multi_shot.hunters_mark.volley.rapid_fire.major_mana_potion&g=mc", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (5/41/5)." },
       talents: {
         deadly_aspects: 5,
         lethal_attacks: 5,
@@ -7115,7 +7101,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       points: "5/11/35",
       blurb: "A melee Hunter with two axes and no pet (Lone Wolf). Raptor Strike and Strider Kick on cooldown, Lacerate up, Mongoose Bite whenever Expose Prey lights it, Explosive Trap at your feet.",
       options: { ranged: "bow", mainHand: "axe", offHand: "axe" },
-      source: { site: "Daniel", url: "index.html#c=hunter&t=5-005005001-500230230250222151&b=raptor_strike.lacerate.strider_kick.mongoose_bite.immolation_trap.explosive_trap.serpent_sting.rapid_fire.major_mana_potion&g=mc&o=mainHand%3Aaxe%2CoffHand%3Aaxe", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (5/11/35)." },
       talents: {
         deadly_aspects: 5,
         lethal_attacks: 5,
@@ -7934,7 +7919,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       points: "35/11/5",
       blurb: "Sacrifice the Imp for 15% more Shadow damage, then keep Corruption, Bane of Agony and Siphon Life up, channel Wrack to make them hurt more, and fill with Shadow Bolt (instant with Nightfall). Life Tap for mana.",
       options: { shards: 10 },
-      source: { site: "Daniel", url: "index.html#c=warlock&t=05500320035201351-0050203001-05&b=corruption.bane_of_agony.shadow_bolt.wrack.siphon_life.bane_of_doom.curse_of_the_elements.drain_life.death_coil.life_tap.demonic_sacrifice.major_mana_potion&g=mc", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (35/11/5)." },
       talents: {
         suppression: 5,
         improved_corruption: 5,
@@ -7961,7 +7945,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       points: "0/32/19",
       blurb: "Sacrifice the Imp for 15% more Shadow damage, then call a Succubus with Fel Domination: Demonic Pact keeps the sacrifice, and Soul Link, Demonic Knowledge and Master Demonologist add more. Shadow Bolt and Corruption do the rest.",
       options: { shards: 10 },
-      source: { site: "Daniel", url: "index.html#c=warlock&t=-0305003201221301351-00503250031&b=conflagrate.immolate.soul_fire.corruption.bane_of_agony.shadow_bolt.searing_pain.curse_of_the_elements.life_tap.fel_domination.demonic_sacrifice.major_mana_potion&g=mc", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (5/33/13)." },
       talents: {
         improved_imp: 3,
         unholy_power: 5,
@@ -7991,7 +7974,6 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       points: "10/3/38",
       blurb: "Sacrifice the Succubus for 15% more Fire damage. Immolate, Conflagrate it, and fill with Incinerate (25% more on an Immolated target); Ruin doubles the crit bonus and Shadow and Flame chains the two schools.",
       options: { shards: 10, demon: "succubus" },
-      source: { site: "Daniel", url: "index.html#c=warlock&t=055-03-0550355103101351&b=immolate.incinerate.conflagrate.soul_fire.shadow_bolt.shadowburn.bane_of_havoc.curse_of_the_elements.hellfire.life_tap.rain_of_fire.major_mana_potion&g=mc&o=demon%3Asuccubus", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (5/11/35)." },
       talents: {
         suppression: 5,
         improved_corruption: 5,
@@ -8834,7 +8816,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       scenario: "raid-healing",
       blurb: "A shield healer for the Healing test: Power Word: Shield on whoever is about to be hit (Soul Warding takes the cooldown away), Penance on a friend, Flash Heal and Greater Heal; Renewed Hope crits on shielded targets and Divine Aegis turns crits into more shields. Inner Focus and Power Infusion for the hard moments.",
       options: { race: "dwarf" },
-      source: { site: "Daniel", url: "index.html#c=priest&t=005005031330011531-0350510303&b=power_word_shield.penance.flash_heal.greater_heal.renew.holy_nova.prayer_of_healing.inner_focus.power_infusion.desperate_prayer.cure_disease.major_mana_potion&g=mc&o=race%3Adwarf", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (33/18/0)." },
       talents: {
         twin_disciplines: 5,
         mental_strength: 5,
@@ -8863,7 +8844,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       scenario: "raid-healing",
       blurb: "A healer build for the Healing test: Renew and Prayer of Mending on the tank, Greater Heal and Heal for big heals (Divine Fury makes them faster), Flash Heal when it is urgent, Prayer of Healing on a hurt party. Spiritual Guidance and Spiritual Healing add healing; Litany of Light gives mana back for mixing heals.",
       options: { race: "dwarf" },
-      source: { site: "Daniel", url: "index.html#c=priest&t=00500500133001-03505103030121531&b=heal.greater_heal.flash_heal.renew.prayer_of_mending.prayer_of_healing.power_word_shield.holy_nova.inner_focus.desperate_prayer.binding_heal.major_mana_potion&g=mc&o=race%3Adwarf", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (19/32/0)." },
       talents: {
         twin_disciplines: 5,
         mental_strength: 5,
@@ -8892,7 +8872,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       points: "17/0/34",
       blurb: "Shadowform for 10% more damage, half-cost spells and 200% crits. Keep Shadow Word: Pain and Devouring Plague up, Mind Blast and Shadow Word: Death on cooldown, Mind Flay in between; Shadow Weaving stacks up to 10% more.",
       options: { race: "undead" },
-      source: { site: "Daniel", url: "index.html#c=priest&t=00530500103--50052001251302251&b=mind_flay.mind_blast.shadow_word_pain.devouring_plague.shadow_word_death.vampiric_embrace.inner_focus.dark_sacrifice.major_mana_potion&g=mc&o=race%3Aundead", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (14/0/37)." },
       talents: {
         twin_disciplines: 5,
         silent_resolve: 3,
@@ -9981,7 +9960,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       gearRole: "caster",
       blurb: "Moonkin Form for 3% more spell crit and twice the Omen of Clarity. Keep Insect Swarm and Moonfire up, then Wrath to store Eclipse charges and Starfire to spend them (2.5 sec casts with Improved Starfire). Vengeance doubles the crit bonus and Nature's Grace speeds up the next casts.",
       options: { form: "moonkin" },
-      source: { site: "Daniel", url: "index.html#c=druid&t=5532220115501351--505&b=wrath.moonfire.insect_swarm.starfire.hurricane.faerie_fire.innervate.major_mana_potion&g=mc_caster&o=form%3Amoonkin", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (36/0/15)." },
       talents: {
         improved_wrath: 5,
         genesis: 5,
@@ -10011,7 +9989,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       scenario: "raid-boss",
       blurb: "The tank side of Feral, for the Tank test: Dire Bear Form with Thick Hide, Natural Reaction and Heart of the Wild (now in Restoration). Maul on every swing, Lacerate up to 5, Primal Bite on cooldown and Swipe to fill; Demoralizing Roar on the boss, Frenzied Regeneration and Barkskin for the bad moments, Growl if the raid pulls it away.",
       options: { form: "bear" },
-      source: { site: "Daniel", url: "index.html#c=druid&t=050002-5023023202310212551-05&b=maul.lacerate.primal_bite.swipe.demoralizing_roar.growl.enrage.frenzied_regeneration.barkskin.challenging_roar&g=mc_bear&o=form%3Abear", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (7/44/0) adjusted for build 1.60.1.70707." },
       talents: {
         genesis: 5,
         natures_reach: 2,
@@ -10042,7 +10019,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       gearRole: "cat",
       blurb: "The damage side of Feral: Cat Form with Shifting Power and Furor for energy. Prowl and Ravage, keep Rake and Rip up, Shred from behind (Shredding Attacks makes it cheap), Ferocious Bite with the rest (Predatory Discipline keeps the extra Energy); Shifting Power turns mana into 40 Energy.",
       options: { form: "cat" },
-      source: { site: "Daniel", url: "index.html#c=druid&t=050022-55200032023012125001-05003&b=shred.rake.rip.claw.ferocious_bite.shifting_power.dash.prowl.ravage&g=mc_cat&o=form%3Acat", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (9/34/8) adjusted for build 1.60.1.70707." },
       talents: {
         genesis: 5,
         natures_majesty: 2,
@@ -10073,7 +10049,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       scenario: "raid-healing",
       blurb: "A healer build for the Healing test, in caster form: Rejuvenation and Regrowth on the tank and whoever is hurt (Bloom heals once more when they run out), Swiftmend to cash a heal over time in at once, Wild Growth on a hurt party, Healing Touch for big heals (instant with Nature's Swiftness), Tranquility when the whole raid is low, Innervate for mana. Gift of Nature adds 10% healing.",
       options: { form: "none" },
-      source: { site: "Daniel", url: "index.html#c=druid&t=05012201--5553005103113251&b=rejuvenation.regrowth.swiftmend.wild_growth.healing_touch.tranquility.natures_swiftness.abolish_poison.remove_curse.innervate.major_mana_potion&g=mc_caster&o=form%3Anone", counted: "2026-10-25", reviewed: "2026-10-31", changed: "Daniel's build (11/5/35) adjusted for build 1.60.1.70707." },
       talents: {
         genesis: 5,
         improved_moonfire: 1,
@@ -10968,7 +10943,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       gearRole: "caster",
       blurb: "Searing Totem down, Flame Shock up, Lava Burst on cooldown (20% more on a Flame Shocked target), Lightning Bolt in between (2 sec casts with Elemental Alacrity), Earth Shock when Flame Shock has time left. Elemental Fury doubles the crit bonus, Lightning Overload adds free half bolts and Elemental Mastery speeds a burst. Water Shield gives mana back on crits.",
       options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon" },
-      source: { site: "Daniel", url: "index.html#c=shaman&t=5500331022001351-054-053200001&b=lightning_bolt.flame_shock.lava_burst.searing_totem.chain_lightning.elemental_mastery.water_shield.mana_spring_totem.magma_totem.fire_nova.call_of_the_elements.major_mana_potion&g=mc_caster&o=mainHand%3Amace%2CoffHand%3Ashield%2Cimbue%3Aflametongue_weapon", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (33/7/11)." },
       talents: {
         convection: 5,
         concussion: 5,
@@ -10997,7 +10971,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       gearRole: "melee",
       blurb: "A two-hander with Windfury Weapon, Strength of Earth and Grace of Air totems. Stormstrike on cooldown, then Earth Shock into its 20%; Flurry speeds swings after crits and Maelstrom Weapon turns the hits into instant Lightning Bolts. Rage of the Farseer for 30% attack speed. Mental Dexterity turns Intellect into attack power.",
       options: { mainHand: "two_hand_mace", offHand: "none", imbue: "windfury_weapon" },
-      source: { site: "Daniel", url: "index.html#c=shaman&t=053-055030031005112251-0531&b=stormstrike.flame_shock.frost_shock.lightning_bolt.searing_totem.rage_of_the_farseer.strength_of_earth_totem.mana_spring_totem.magma_totem.fire_nova.call_of_the_elements.major_mana_potion&g=mc_melee&o=imbue%3Awindfury_weapon", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (18/33/0)." },
       talents: {
         concussion: 5,
         elemental_devastation: 3,
@@ -11027,7 +11000,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       scenario: "raid-healing",
       blurb: "A healer build for the Healing test: Riptide on the tank, Chain Heal into hurt groups (25% more on a Riptide target), Healing Wave for big heals and Lesser Healing Wave when it is urgent; Nature's Swiftness for an instant one. Water Shield, Mana Spring and Mana Tide Totem keep the mana up, Healing Stream Totem heals your party.",
       options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon" },
-      source: { site: "Daniel", url: "index.html#c=shaman&t=-005-5530503315513151&b=healing_wave.lesser_healing_wave.chain_heal.riptide.natures_swiftness.water_shield.mana_spring_totem.healing_stream_totem.mana_tide_totem.cure_poison.call_of_the_elements.major_mana_potion&g=mc_caster&o=mainHand%3Amace%2CoffHand%3Ashield%2Cimbue%3Aflametongue_weapon", counted: "2026-10-25", reviewed: "2026-10-25", changed: "Daniel's build, replacing the one before (0/10/41)." },
       talents: {
         ancestral_knowledge: 5,
         improved_healing_wave: 5,
