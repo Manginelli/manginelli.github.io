@@ -28,8 +28,17 @@
       <span class="brand-title">Forever Class Lab</span>
       <span class="brand-tag">beta</span>
     </a>
-    <div class="class-pick" id="classPick" aria-label="Class"></div>
-    <div class="builds" id="builds" aria-label="Suggested builds"></div>
+    <!-- Phones, compact header: the class and spec (opens the class and spec menu) and "..." (the links). -->
+    <div class="top-mini" id="topMini">
+      <button class="mini-cls" id="miniCls" aria-expanded="false" aria-controls="topPick" aria-label="Class"></button>
+      <button class="mini-cls mini-spec-btn" id="miniSpec" aria-expanded="false" aria-controls="topPick" aria-label="Spec"></button>
+      <a class="kofi mini-kofi" href="https://ko-fi.com/manginelli" target="_blank" rel="noopener" aria-label="Support the lab on Ko-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M16 11.5h1.6a2.4 2.4 0 0 1 0 4.8H16"/><path d="M8 3.5c-.8.9-.8 2 0 3M11.5 3.5c-.8.9-.8 2 0 3"/></svg><span>Support</span></a>
+      <button class="mini-more" id="miniMore" aria-expanded="false" aria-label="More">⋯</button>
+    </div>
+    <div class="top-pick" id="topPick">
+      <div class="class-pick" id="classPick" aria-label="Class"></div>
+      <div class="builds" id="builds" aria-label="Suggested builds"></div>
+    </div>
     <div class="links">
       <button class="ghost" id="linkBtn" aria-expanded="false" aria-controls="linkBox">Import / Export</button>
       <button class="ghost" id="shareBtn">Copy link</button>
@@ -42,6 +51,7 @@
         <div class="link-row"><input id="linkInput" type="text" placeholder="FCL1-..." autocomplete="off" spellcheck="false"><button class="ghost small" id="linkGo">Import</button></div>
         <label class="link-check"><input type="checkbox" id="barOnly"> Only the action bar (keep my talents)</label>
         <p class="link-note" id="linkNote" role="status"></p>
+        <button class="ghost small link-close" id="linkClose">Close</button>
       </div>
     </div>
   </header>

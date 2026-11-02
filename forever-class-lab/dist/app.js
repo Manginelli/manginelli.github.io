@@ -9095,11 +9095,11 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       // Mana back (5% of the base cost per rank) when a heal follows a different one.
       litany_of_light: {
         listen(game, r, on) {
-          let last = null;
+          let last2 = null;
           on("cast:success", ({ ability }) => {
             if (!isHeal(ability)) return;
-            if (last && last !== ability.id) game.gainPower("mana", 0.05 * r * (typeof ability.cost === "function" ? ability.cost(game) : ability.cost || 0));
-            last = ability.id;
+            if (last2 && last2 !== ability.id) game.gainPower("mana", 0.05 * r * (typeof ability.cost === "function" ? ability.cost(game) : ability.cost || 0));
+            last2 = ability.id;
           });
         }
       },
@@ -12505,6 +12505,204 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     );
   }
 
+  // src/ui/picker.js
+  var classesByName = () => Object.values(CLASSES).sort((a, b) => a.name.localeCompare(b.name));
+  var specTree = (cls, b) => cls.trees.find((t) => t.id === (b.tree || b.id)) || null;
+  var buildTip = (b) => `<div class="tt-title">${b.name} <span class="tt-sub">${b.points}</span></div><div class="tt-sub">My build of this spec: talents, bar and weapons. Change anything after.</div>`;
+  function renderClassMenu(root, app) {
+    root.innerHTML = "";
+    root.setAttribute("role", "radiogroup");
+    for (const c of classesByName()) {
+      const on = c === app.cls;
+      const b = h("button", { class: `class-btn${on ? " on" : ""}`, role: "radio", "aria-checked": String(on), "aria-label": c.name, style: { "--c": c.color } }, icon(c.icon, "class-icon"));
+      b.addEventListener("click", () => {
+        if (c === app.cls) return;
+        app.setClass(c.id);
+        if ((app.cls.builds || []).length) app.setBuild(app.cls.builds[0]);
+      });
+      bindTip(b, () => `<div class="tt-title" style="color:${c.color}">${c.name}</div>`);
+      root.append(b);
+    }
+    const cur = h("span", { class: "class-name", style: { color: app.cls.color } }, app.cls.name);
+    root.append(cur);
+  }
+  function renderSpecButtons(root, app) {
+    const active = app.activeBuild();
+    root.innerHTML = "";
+    root.append(h("span", { class: "builds-class", style: { color: app.cls.color } }, app.cls.name));
+    const builds10 = app.cls.builds || [];
+    if (!builds10.length) return;
+    for (const b of builds10) {
+      const t = specTree(app.cls, b);
+      const el = h(
+        "button",
+        { class: `build-btn${b === active ? " on" : ""}`, "aria-pressed": String(b === active), onclick: () => app.setBuild(b) },
+        t ? icon(t.icon, "spec-icon") : null,
+        b.name
+      );
+      bindTip(el, () => buildTip(b));
+      root.append(el);
+    }
+    const blank = h("button", { class: "build-btn blank", onclick: () => app.clearBuild() }, "Blank");
+    bindTip(blank, () => '<div class="tt-sub">No talents, empty bar.</div>');
+    root.append(blank);
+  }
+
+  // src/ui/mobile.js
+  var MIN_ARENA = 200;
+  var CAM_SPAN = 26;
+  var body = () => document.body;
+  var isLandscape = () => innerWidth > innerHeight && innerHeight <= 500;
+  function applyMobile(app) {
+    if (!app.touch) return;
+    const b = body();
+    b.classList.toggle("land", isLandscape());
+    const compact = b.dataset.view === "play";
+    b.classList.toggle("m-compact", compact);
+    if (!compact) closeMenus();
+    treeTabs(app);
+    refreshMini(app);
+    if (app.arena) requestAnimationFrame(() => app.arena.resize());
+  }
+  var MENUS = { "top-cls-open": "miniCls", "top-spec-open": "miniSpec", "top-more-open": "miniMore" };
+  function closeMenus() {
+    body().classList.remove(...Object.keys(MENUS));
+    for (const id of Object.values(MENUS)) {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute("aria-expanded", "false");
+    }
+  }
+  function openMenu(cls) {
+    closeMenus();
+    body().classList.add(cls);
+    const btn = document.getElementById(MENUS[cls]);
+    if (btn) btn.setAttribute("aria-expanded", "true");
+  }
+  function refreshMini(app) {
+    const c = document.getElementById("miniCls"), s = document.getElementById("miniSpec");
+    if (!c || !s) return;
+    const b = app.activeBuild(), t = b && specTree(app.cls, b);
+    const caret = () => h("span", { class: "mini-caret", "aria-hidden": "true" }, "\u25BE");
+    c.replaceChildren(icon(app.cls.icon, "class-icon"), h("span", { class: "mini-name", style: { color: app.cls.color } }, app.cls.name), caret());
+    s.replaceChildren(t ? icon(t.icon, "spec-icon") : "", h("span", { class: "mini-spec" }, b ? b.name : "Custom"), caret());
+  }
+  function treeTabs(app) {
+    const root = document.getElementById("tab-talents"), wrap = root && root.querySelector(".tal-trees");
+    if (!wrap) return;
+    const trees10 = [...wrap.querySelectorAll(".tal-tree")];
+    const pts = trees10.map((_, i) => treePoints(app.cls.trees, app.talents, i));
+    const b = app.activeBuild(), key = `${app.cls.id}:${b ? b.name : ""}`;
+    if (app._treeKey !== key || app._tree == null || app._tree >= trees10.length) {
+      app._treeKey = key;
+      app._tree = Math.max(0, pts.indexOf(Math.max(...pts)));
+    }
+    let bar = root.querySelector(".tree-tabs");
+    if (!bar) {
+      bar = h("div", { class: "tree-tabs", role: "tablist", "aria-label": "Talent tree" });
+      wrap.before(bar);
+    }
+    bar.replaceChildren(...trees10.map((t, i) => {
+      const img = t.querySelector(".tal-tree-icon"), name = t.querySelector(".tal-tree-name");
+      const tab = h(
+        "button",
+        { class: `tree-tab${i === app._tree ? " on" : ""}`, role: "tab", "aria-selected": String(i === app._tree) },
+        img ? img.cloneNode() : null,
+        h("span", { class: "tree-tab-name" }, name ? name.textContent : ""),
+        h("b", {}, String(pts[i]))
+      );
+      tab.addEventListener("click", () => {
+        app._tree = i;
+        treeTabs(app);
+      });
+      return tab;
+    }));
+    trees10.forEach((t, i) => {
+      t.hidden = i !== app._tree;
+    });
+  }
+  function afterHud(app) {
+    if (!app.touch) return;
+    for (const f of $$(".hud .frame")) {
+      const name = f.querySelector(".frame-name"), hp = f.querySelector(".bar.hp");
+      if (name && hp && name.parentElement !== hp) hp.append(name);
+    }
+  }
+  function afterPanels(app) {
+    if (app.touch) {
+      treeTabs(app);
+      refreshMini(app);
+    }
+  }
+  function mountMobile(app) {
+    if (!app.touch) return;
+    const toggle = (cls) => {
+      if (body().classList.contains(cls)) closeMenus();
+      else openMenu(cls);
+    };
+    for (const [cls, id] of Object.entries(MENUS)) {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("click", () => toggle(cls));
+    }
+    $("#topPick").addEventListener("click", (e) => {
+      if (e.target.closest(".class-btn") && body().classList.contains("top-cls-open")) setTimeout(() => openMenu("top-spec-open"), 0);
+      else if (e.target.closest(".build-btn")) setTimeout(closeMenus, 0);
+    });
+    $(".links").addEventListener("click", (e) => {
+      if (e.target.closest("#shareBtn, #feedbackBtn")) setTimeout(closeMenus, 0);
+    });
+    document.addEventListener("pointerdown", (e) => {
+      if (!e.target.closest(".top") && !e.target.closest(".link-box")) closeMenus();
+      const box = $("#linkBox");
+      if (box && !box.hidden && !e.target.closest(".link-box") && !e.target.closest("#linkBtn")) closeLinkBox();
+    });
+    $("#linkClose").addEventListener("click", closeLinkBox);
+    $("#linkBtn").addEventListener("click", closeMenus);
+    addEventListener("resize", () => applyMobile(app));
+    applyMobile(app);
+  }
+  function closeLinkBox() {
+    const box = $("#linkBox");
+    if (box) box.hidden = true;
+    const b = $("#linkBtn");
+    if (b) b.setAttribute("aria-expanded", "false");
+  }
+  var last = {};
+  var put = (el, k, v) => {
+    if (last[k] !== v) {
+      last[k] = v;
+      el.style.setProperty(k, v);
+    }
+  };
+  function layoutMobile(app) {
+    if (!app.touch) return;
+    const b = body(), stage = $(".stage"), hud = app.hudRoot;
+    if (!stage || !hud || b.dataset.view !== "play") return;
+    const sw = stage.clientWidth, sh = stage.clientHeight;
+    const bars = hud.querySelector(".bars"), sb = hud.querySelector(".stancebar");
+    let stanceW = 0;
+    if (sb) {
+      const n = [...sb.children].filter((x) => !x.hidden).length, slot = app._slot || 44;
+      const rows = Math.max(1, Math.min(n, 3)), cols = Math.max(1, Math.ceil(n / 3));
+      const s = Math.min(Math.round(slot * 0.72), Math.floor((2 * slot + 2 - (rows - 1) * 2) / rows));
+      stanceW = cols * s + (cols - 1) * 2 + 14;
+      put(hud, "--stance-rows", String(rows));
+      put(hud, "--stance-s", `${s}px`);
+      const bw = bars ? bars.clientWidth : sw - 24, barW = 6 * slot + 10;
+      put(hud, "--bar-shift", `${Math.max(0, Math.ceil(stanceW - (bw - barW) / 2))}px`);
+    }
+    const meter = $("#meter"), raid = $("#raidFrames");
+    const rh = raid && raid.offsetHeight ? raid.offsetHeight + 6 : 0;
+    const mh = !meter || b.classList.contains("fighting") && !rh ? 0 : meter.offsetHeight;
+    const top = mh + rh + 2, bh = bars ? bars.offsetHeight + 8 : 0;
+    const max = Math.max(34, Math.min(50, Math.floor((sw - 34 - stanceW) / 6)));
+    const cur = app._slot || max, free = sh - top - bh;
+    const next = Math.max(34, Math.min(max, cur + Math.floor((free - MIN_ARENA) / 2)));
+    app._slot = next;
+    put(hud, "--slot", `${next}px`);
+    put(stage, "--cv-top", `${top}px`);
+    put(stage, "--cv-bot", `${bh}px`);
+  }
+
   // src/ui/arena.js
   var SCHOOL = { arcane: "#d79bff", fire: "#ff8a2a", frost: "#8fd8ff", shadow: "#a58bff", nature: "#7bd36a", holy: "#ffe58a", physical: "#ffe27a" };
   var LANES = [[0, 0], [-46, -12], [46, -12], [-24, -30], [24, -30], [-70, -2], [70, -2], [0, -46], [-48, -46], [48, -46]];
@@ -12609,6 +12807,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     }
     draw() {
       const g = this.app.game, c = this.ctx, W = this.cv.width, H = this.cv.height, A = g.arena;
+      this.updateCam();
       const { s, ox, oy } = this.view();
       const X = (x) => ox + x * s, Y = (y) => oy + y * s;
       this.plates = /* @__PURE__ */ new Map();
@@ -13036,13 +13235,47 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       if (stage && stage.style.getPropertyValue("--meter-h") !== mh) stage.style.setProperty("--meter-h", mh);
       const rh = `${this.app.touch && raid && raid.offsetHeight ? raid.offsetHeight + 6 : 0}px`;
       if (stage && stage.style.getPropertyValue("--raid-h") !== rh) stage.style.setProperty("--raid-h", rh);
-      const padR = 16 * d;
+      let padR = 16 * d;
       const raidTop = this.app.touch && raid && raid.offsetHeight ? raid.offsetHeight + 8 : 0;
       const gapT = this.app.touch ? 26 : 36, gapB = this.app.touch ? 26 : 50;
-      const padTop = ((meter ? meter.offsetHeight : 60) + gapT + raidTop) * d, padBot = ((bars ? bars.offsetHeight : 140) + gapB) * d;
-      const padL = (!this.app.touch && raid && raid.offsetWidth ? raid.offsetWidth + 24 : 16) * d;
-      const s = Math.max(1, Math.min((W - padR - padL) / A.width, (H - padTop - padBot) / A.height));
-      return { s, ox: padL + (W - padR - padL - A.width * s) / 2, oy: padTop + (H - padTop - padBot - A.height * s) / 2 };
+      let padTop = ((meter ? meter.offsetHeight : 60) + gapT + raidTop) * d, padBot = ((bars ? bars.offsetHeight : 140) + gapB) * d;
+      let padL = (!this.app.touch && raid && raid.offsetWidth ? raid.offsetWidth + 24 : 16) * d;
+      if (this.app.touch) {
+        padTop = 24 * d;
+        padBot = 6 * d;
+        padL = padR = 8 * d;
+      }
+      const aw = W - padR - padL, ah = H - padTop - padBot;
+      const fit = Math.max(1, Math.min(aw / A.width, ah / A.height));
+      const cam = this.cam;
+      if (!cam) return { s: fit, ox: padL + (aw - A.width * fit) / 2, oy: padTop + (ah - A.height * fit) / 2 };
+      const s = Math.max(fit, Math.min(aw / cam.w, ah / cam.h));
+      const place = (lo, span, len, c) => len * s <= span ? lo + (span - len * s) / 2 : Math.min(lo, Math.max(lo + span - len * s, lo + span / 2 - c * s));
+      return { s, ox: place(padL, aw, A.width, cam.cx), oy: place(padTop, ah, A.height, cam.cy) };
+    }
+    // Phone camera: follows you, your target and who is near, smoothly, showing at least CAM_SPAN yards.
+    updateCam() {
+      const g = this.app.game;
+      if (!this.app.touch || !g) {
+        this.cam = null;
+        return;
+      }
+      const p = g.player, pts = [p], near = (u) => u && !u.dead && Math.hypot(u.x - p.x, u.y - p.y) < 32;
+      if (p.target && !p.target.dead) pts.push(p.target);
+      for (const u of [...g.enemies, ...g.allies || []]) if (near(u)) pts.push(u);
+      const mt = this.app.moveTarget;
+      if (mt && mt.x != null) pts.push(mt);
+      const xs = pts.map((u) => u.x), ys = pts.map((u) => u.y);
+      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      const want = { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, w: Math.max(x1 - x0 + 10, CAM_SPAN), h: Math.max(y1 - y0 + 10, CAM_SPAN * 0.6) };
+      const now = performance.now(), c = this.cam;
+      if (!c) {
+        this.cam = { ...want, t: now };
+        return;
+      }
+      const k = 1 - Math.exp(-(now - c.t) / 280);
+      for (const key of ["cx", "cy", "w", "h"]) c[key] += (want[key] - c[key]) * k;
+      c.t = now;
     }
     // A nameplate over an enemy, like the game's: its name and a thin health bar (red if it fights back, yellow if not).
     nameplate(e, x, y, isTarget) {
@@ -13238,7 +13471,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!msg.value.trim()) return;
-      const body = { cid: clientId(), type: "feedback", kind: chosen, message: msg.value, beta: beta.value, contact: contact.value, website: trap2.value, cls: ctx.cls, build: ctx.build, test: ctx.test, link: ctx.link };
+      const body2 = { cid: clientId(), type: "feedback", kind: chosen, message: msg.value, beta: beta.value, contact: contact.value, website: trap2.value, cls: ctx.cls, build: ctx.build, test: ctx.test, link: ctx.link };
       if (!ENDPOINT) {
         const text = `${KINDS[chosen]}
 
@@ -13255,7 +13488,7 @@ ${ctx.link}`;
       send.disabled = true;
       status.classList.remove("is-error");
       status.textContent = "Sending...";
-      const post = () => fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }).then((r) => r.json());
+      const post = () => fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body2) }).then((r) => r.json());
       try {
         let r = await post();
         if (!r.ok && r.error === "busy") {
@@ -13272,49 +13505,6 @@ ${ctx.link}`;
     });
     document.body.append(back);
     msg.focus();
-  }
-
-  // src/ui/picker.js
-  var classesByName = () => Object.values(CLASSES).sort((a, b) => a.name.localeCompare(b.name));
-  var specTree = (cls, b) => cls.trees.find((t) => t.id === (b.tree || b.id)) || null;
-  var buildTip = (b) => `<div class="tt-title">${b.name} <span class="tt-sub">${b.points}</span></div><div class="tt-sub">My build of this spec: talents, bar and weapons. Change anything after.</div>`;
-  function renderClassMenu(root, app) {
-    root.innerHTML = "";
-    root.setAttribute("role", "radiogroup");
-    for (const c of classesByName()) {
-      const on = c === app.cls;
-      const b = h("button", { class: `class-btn${on ? " on" : ""}`, role: "radio", "aria-checked": String(on), "aria-label": c.name, style: { "--c": c.color } }, icon(c.icon, "class-icon"));
-      b.addEventListener("click", () => {
-        if (c === app.cls) return;
-        app.setClass(c.id);
-        if ((app.cls.builds || []).length) app.setBuild(app.cls.builds[0]);
-      });
-      bindTip(b, () => `<div class="tt-title" style="color:${c.color}">${c.name}</div>`);
-      root.append(b);
-    }
-    const cur = h("span", { class: "class-name", style: { color: app.cls.color } }, app.cls.name);
-    root.append(cur);
-  }
-  function renderSpecButtons(root, app) {
-    const active = app.activeBuild();
-    root.innerHTML = "";
-    root.append(h("span", { class: "builds-class", style: { color: app.cls.color } }, app.cls.name));
-    const builds10 = app.cls.builds || [];
-    if (!builds10.length) return;
-    for (const b of builds10) {
-      const t = specTree(app.cls, b);
-      const el = h(
-        "button",
-        { class: `build-btn${b === active ? " on" : ""}`, "aria-pressed": String(b === active), onclick: () => app.setBuild(b) },
-        t ? icon(t.icon, "spec-icon") : null,
-        b.name
-      );
-      bindTip(el, () => buildTip(b));
-      root.append(el);
-    }
-    const blank = h("button", { class: "build-btn blank", onclick: () => app.clearBuild() }, "Blank");
-    bindTip(blank, () => '<div class="tt-sub">No talents, empty bar.</div>');
-    root.append(blank);
   }
 
   // src/ui/app.js
@@ -13451,7 +13641,10 @@ ${ctx.link}`;
         if (from === "player" && to === "raid" && !this.game.player.dead) this.game.emit("error", "The boss turned to the raid. Taunt it back!");
       });
       if (this.arena) this.arena.attach(this.game);
-      if (this.hudRoot) buildHud(this.hudRoot, this);
+      if (this.hudRoot) {
+        buildHud(this.hudRoot, this);
+        afterHud(this);
+      }
     }
     // Talents and gear change the character, so the fight starts over (like a respec).
     rebuild() {
@@ -13645,6 +13838,7 @@ ${ctx.link}`;
         renderSpellbook($("#tab-spells"), this);
       }
       if (view === "play") requestAnimationFrame(() => this.arena.resize());
+      applyMobile(this);
     }
     setGear(id) {
       this.gearId = id;
@@ -13700,11 +13894,15 @@ ${ctx.link}`;
       box.hidden = false;
       $("#startTest").textContent = `${this.scenario.name} test`;
       this.moveTarget = null;
+      document.body.classList.remove("fighting");
+      applyMobile(this);
     }
     start() {
       if (!this.game.frozen) return;
       this.game.frozen = false;
       $("#startOverlay").hidden = true;
+      document.body.classList.add("fighting");
+      applyMobile(this);
       const cv = $("#arena");
       if (cv) cv.focus({ preventScroll: true });
     }
@@ -13808,10 +14006,12 @@ ${ctx.link}`;
       });
       for (const b of $$(".touch-nav button")) b.addEventListener("click", () => this.showView(b.dataset.view));
       buildHud(this.hudRoot, this);
+      afterHud(this);
       this.mountClass();
       this.refreshPanels();
       this.showTab("talents");
       this.writeUrl();
+      mountMobile(this);
     }
     mountClass() {
       document.title = `${this.cls.name} \xB7 Forever Class Lab`;
@@ -13838,6 +14038,7 @@ ${ctx.link}`;
       renderSpellbook($("#tab-spells"), this);
       renderGear($("#tab-gear"), this);
       updateSheet($("#tab-gear"), this);
+      afterPanels(this);
       refreshTip();
     }
     bindKeys() {
@@ -13906,6 +14107,7 @@ ${ctx.link}`;
       this.last = now;
       this.stepMove();
       this.game.update(dt);
+      layoutMobile(this);
       this.arena.draw();
       updateHud(this.hudRoot, this);
       requestAnimationFrame((t) => this.frame(t));

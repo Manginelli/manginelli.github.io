@@ -500,7 +500,7 @@ body.touch .test-opt { padding: 4px 0; font-size: 13.5px; }
 body.touch .test-opt input[type=checkbox] { width: 18px; height: 18px; }
 body.touch .test-opt .seg-btn { padding: 5px 10px; font-size: 13px; }
 /* HUD block: full width, slots sized to the screen (6 per row, up to 56px) */
-body.touch .hud { --slot: min(50px, calc((100vw - 24px - 10px) / 6)); }
+body.touch .hud { --slot: min(50px, calc((var(--vw, 100vw) - 24px - 10px) / 6)); }
 body.touch .bars { left: 12px; right: 12px; bottom: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 body.touch .bars > span:empty { display: none; }
 body.touch .bars-mid { width: 100%; }
@@ -513,8 +513,6 @@ body.touch .slot-key, body.touch .stancebar .slot-key { display: none; }
 body.touch .actionbar { gap: 2px; }
 body.touch .keys-hint { display: none; }
 body.touch .sim-note { display: none; }
-body.touch .start-note { display: block; margin: 12px 0 0; font-size: 11px; line-height: 1.4; color: var(--game-dim); }
-body.touch .start-note a { color: var(--game-dim); }
 body.touch .error-text { top: calc(var(--meter-h, 64px) + var(--raid-h, 0px) + 40px); font-size: 15px; }
 body.touch .bar-hint { bottom: calc(2 * var(--slot) + 170px); }
 body.touch .start-btn kbd { display: none; }
@@ -556,7 +554,97 @@ body.touch .book-spell { padding: 5px; }
 .bar-edit-slots .slot.picked { box-shadow: inset 0 0 0 2px var(--game-yellow); }
 .bar-edit .hint { margin: 6px 0 4px; }
 
-/* A phone on its side has no room for the arena and the HUD: ask for portrait. */
-@media (orientation: landscape) and (max-height: 500px) {
-  body.touch::after { content: "Turn your phone upright to play the Forever Class Lab."; position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; text-align: center; background: var(--page); color: var(--parchment); font-family: var(--f-display); font-size: 20px; }
-}
+
+/* ---------- Phones, part 2 (src/ui/mobile.js does what the CSS cannot) ---------- */
+.top-pick { display: contents; }
+.top-mini, .link-close { display: none; }
+
+/* Compact header in Play (m-compact, set by mobile.js): the class and the spec, each opening its own menu over the
+   arena, the Ko-fi cup and "..." with Import / Export, Copy link and Feedback. */
+body.touch.m-compact .top { position: relative; z-index: 30; padding: 2px 10px; gap: 0; }
+body.touch.m-compact .top-mini { display: flex; align-items: center; gap: 8px; min-height: 40px; min-width: 0; }
+body.touch.m-compact .top-pick { display: none; }
+body.touch.m-compact .links { position: absolute; visibility: hidden; pointer-events: none; }
+body.touch.m-compact .links > .kofi { display: none; }
+body.touch.m-compact .links .link-box:not([hidden]) { visibility: visible; pointer-events: auto; }
+body.touch.m-compact.top-cls-open .top-pick, body.touch.m-compact.top-spec-open .top-pick, body.touch.m-compact.top-more-open .links { display: flex; flex-direction: column; gap: 8px; position: absolute; left: 0; right: 0; top: 100%; z-index: 31; visibility: visible; pointer-events: auto; margin: 0; padding: 10px 12px 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line-strong); background: linear-gradient(rgba(36, 29, 23, 0.98), rgba(36, 29, 23, 0.98)), var(--paint); background-size: auto, 900px; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6); }
+body.touch.m-compact.top-more-open .links { align-items: flex-start; gap: 2px; }
+body.touch.m-compact.top-more-open .links > .ghost { font-size: 15px; padding: 9px 0; }
+/* One menu at a time: the classes, or the specs. */
+body.touch.m-compact.top-cls-open .top-pick .builds, body.touch.m-compact.top-spec-open .top-pick .class-pick { display: none; }
+/* The class and the spec: two buttons. The spec gives way first on a narrow screen. */
+.mini-cls { flex: none; min-width: 0; display: flex; align-items: center; gap: 6px; background: transparent; border: 0; padding: 4px 2px; text-align: left; white-space: nowrap; }
+.mini-spec-btn { flex: 0 1 auto; overflow: hidden; margin-right: auto; }
+.mini-cls .class-icon { width: 28px; height: 28px; border-radius: 2px; flex: none; }
+.mini-cls .spec-icon { flex: none; }
+.mini-name { font-family: var(--f-display); font-size: 17px; }
+.mini-spec { min-width: 0; color: var(--parchment); font-size: 14px; overflow: hidden; text-overflow: ellipsis; }
+.mini-caret { flex: none; color: var(--muted); font-size: 11px; }
+.mini-more { flex: none; background: transparent; border: 1px solid var(--line-strong); border-radius: 2px; color: var(--parchment); font-size: 20px; line-height: 1; width: 40px; height: 34px; padding: 0; }
+body.top-cls-open #miniCls .mini-caret, body.top-spec-open #miniSpec .mini-caret, body.top-more-open .mini-more { color: var(--brass-lit); border-color: var(--brass); }
+/* Ko-fi on the compact line: only the cup, so a long class and spec still fit. */
+.top-mini .mini-kofi { display: inline-flex; flex: none; width: 34px; height: 34px; padding: 0; justify-content: center; }
+.top-mini .mini-kofi span { display: none; }
+.top-mini .mini-kofi svg { width: 17px; height: 17px; }
+/* Talents, Spellbook and Gear (the full header): Ko-fi on the title line, on the right, clear of the classes. */
+body.touch .top { position: relative; }
+body.touch .links { position: static; }
+body.touch:not([data-view="play"]) .brand { min-height: 44px; align-items: center; white-space: nowrap; padding-right: 146px; }
+body.touch:not([data-view="play"]) .links > .kofi { position: absolute; top: 11px; right: 12px; height: 34px; padding: 0 12px 0 10px; }
+
+/* The test's options only before Start; in the fight only Reset is left, floating at the top right. */
+body.touch.fighting .meter .test-row.sub { display: none; }
+body.touch.fighting .meter { left: auto; background: transparent; border: 0; padding: 6px 8px; }
+body.touch.fighting .test-pick { display: none; }
+/* Reset as a clear button, without the R key */
+body.touch .reset-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--game-dim); border-radius: 2px; background: rgba(255, 255, 255, 0.06); color: var(--game-text); font-size: 14px; padding: 5px 12px; }
+body.touch.fighting .reset-btn { background: var(--hud); }
+body.touch .reset-btn::before { content: "↻"; font-size: 16px; line-height: 1; }
+body.touch .reset-btn kbd { display: none; }
+
+/* HUD: no empty slots in the fight, the names inside the health bars, the stance bar as a column at the left edge
+   (sizes and the action bar's shift from mobile.js). */
+body.touch.fighting .actionbar .slot.empty { display: none; }
+body.touch .bar.hp .frame-name { position: absolute; left: 6px; top: 0; z-index: 2; max-width: 58%; line-height: 20px; font-size: 12px; text-align: left; }
+body.touch .bar.hp > span { text-align: right; padding-right: 6px; }
+body.touch .stancebar { position: absolute; left: 0; bottom: 0; display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--stance-rows, 3), var(--slot-s)); gap: 2px; --slot-s: var(--stance-s, 30px); }
+body.touch .actionbar { position: relative; left: var(--bar-shift, 0px); }
+
+/* The stage as a column: the arena in its own box between the test bar (and frames) and the HUD (mobile.js). */
+body.touch #arena { inset: auto; top: var(--cv-top, 0px); left: 0; width: 100%; height: calc(100% - var(--cv-top, 0px) - var(--cv-bot, 0px)); }
+body.touch .start-overlay { inset: auto; top: var(--cv-top, 0px); bottom: var(--cv-bot, 0px); left: 0; right: 0; padding: 8px; place-items: center; }
+body.touch .start-box { max-height: 100%; overflow: auto; }
+
+/* Import / Export in a window */
+body.touch .link-box { position: fixed; left: 12px; right: 12px; top: 12%; width: auto; z-index: 70; margin: 0; box-shadow: 0 0 0 100vmax rgba(10, 8, 6, 0.72), 0 20px 60px rgba(0, 0, 0, 0.6); }
+body.touch .link-close { display: block; justify-self: end; border: 1px solid var(--line-strong); border-radius: 2px; padding: 6px 14px; font-size: 14px; }
+
+/* In Talents, Spellbook and Gear the header scrolls away with the page: the body scrolls itself (so its overflow must
+   not pass to the viewport), the views bar stays at the bottom. */
+html:has(> body.touch) { overflow: hidden; }
+body.touch:not([data-view="play"]) { display: flex; flex-direction: column; overflow-y: auto; }
+body.touch:not([data-view="play"]) > * { flex-shrink: 0; }
+body.touch:not([data-view="play"]) .layout, body.touch:not([data-view="play"]) .panel { height: auto; overflow: visible; }
+body.touch:not([data-view="play"]) .touch-nav { position: sticky; bottom: 0; z-index: 20; }
+body.touch:not([data-view="play"]) .bar-edit { top: 0; }
+
+/* Gear's Advanced as a box of its own */
+body.touch details.advanced { margin-top: 26px; padding: 0; border: 1px solid var(--line-strong); border-radius: 2px; background: rgba(0, 0, 0, 0.22); }
+body.touch details.advanced summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; font-family: var(--f-display); font-size: 16px; color: var(--parchment); }
+body.touch details.advanced summary::-webkit-details-marker { display: none; }
+body.touch details.advanced summary::after { content: "▾"; color: var(--brass); font-size: 14px; transition: transform 0.15s; }
+body.touch details.advanced[open] summary::after { transform: rotate(180deg); }
+body.touch details.advanced[open] summary { border-bottom: 1px solid var(--line); }
+body.touch details.advanced > :not(summary) { margin-left: 14px; margin-right: 14px; }
+body.touch details.advanced > :last-child { margin-bottom: 14px; }
+
+/* Talents: one tree at a time, picked from tabs (mobile.js) */
+.tree-tabs { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 0 0 8px; padding: 4px 0; background: var(--page-2); }
+.tree-tab { display: flex; align-items: center; gap: 6px; min-width: 0; padding: 7px 6px; background: #0d0c0b; border: 1px solid #000; border-bottom: 2px solid transparent; color: var(--game-dim); font-family: var(--f-game); font-size: 13px; text-align: left; }
+.tree-tab img { width: 22px; height: 22px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px #000; }
+.tree-tab-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-tab b { font-family: var(--f-num); font-weight: 600; font-size: 14px; color: var(--game-yellow); }
+.tree-tab.on { color: var(--game-text); border-bottom-color: var(--cls); background: #1a1714; }
+
+/* A phone on its side (body.land, set by mobile.js) has no room for the arena and the HUD: ask for portrait. */
+body.touch.land::after { content: "Turn your phone upright to play the Forever Class Lab."; position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; text-align: center; background: var(--page); color: var(--parchment); font-family: var(--f-display); font-size: 20px; }
