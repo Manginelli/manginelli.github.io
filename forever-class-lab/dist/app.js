@@ -1789,6 +1789,12 @@
       const d = Object.values(this.cls.auras || {}).find((a) => a.flags && a.flags.form === form);
       return d ? d.name : form;
     }
+    // The stances or forms an ability can be used in: its requires.form, which modifier 'requiredForms' can widen
+    // (Vanguard: Charge in Defensive Stance too). Null when it needs none.
+    requiredForms(ab, ctx = this.newCtx(ab)) {
+      const f = ab.requires && ab.requires.form;
+      return f ? applyMods(this, "requiredForms", f, ctx) : null;
+    }
     // Who an ability is cast on: the enemy target, the friendly target (or yourself), or, for a spell that does both
     // (dual: Holy Shock, Penance), the friendly target when one is chosen (ctx.allyMode).
     newCtx(ab) {
@@ -1856,7 +1862,8 @@
       }
       if (req.shield && !weaponsOf(this).shield) return "Requires a Shield";
       if (req.ranged && !weaponsOf(this).ranged) return "Requires a Ranged Weapon";
-      if (req.form && !req.form.includes(this.form())) return `Requires ${req.form.map((f) => this.formName(f)).join(" or ")}`;
+      const forms = this.requiredForms(ab, ctx);
+      if (forms && !forms.includes(this.form())) return `Requires ${forms.map((f) => this.formName(f)).join(" or ")}`;
       if (req.formNot && req.formNot.includes(this.form())) return `Can't do that while in ${this.formName(this.form())}`;
       if (req.stealth && !isStealthed(p) && !applyMods(this, "ignoreStealthRequirement", false, ctx)) return "You must be stealthed";
       if (req.notInCombat && this.inCombat()) return "You are in combat";
@@ -1906,7 +1913,11 @@
       }
       const ctx = this.newCtx(ab);
       const why = this.blockReason(ab, ctx);
-      if (why) return this.fail(why);
+      if (why) {
+        const r = this.resourceOf(ab);
+        if (r.id === "rage" && ab.harmful && ab.range === "melee" && why === `Not enough ${r.label.toLowerCase()}` && weaponsOf(this).main) p.autoAttack = true;
+        return this.fail(why);
+      }
       if (ab.nextSwing) {
         p.nextSwing = p.nextSwing === id ? null : id;
         if (p.nextSwing) p.autoAttack = true;
@@ -5420,6 +5431,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       last_stand: { teaches: "last_stand" },
       improved_thunder_clap: { mods: (r) => [add("cost", -2 * r, (ctx) => isAbility(ctx, "thunder_clap"))] },
       improved_sunder_armor: { mods: (r) => [add("cost", -r, (ctx) => isAbility(ctx, "sunder_armor"))] },
+      // Vanguard (Forever): Charge is usable in Defensive Stance too (still out of combat only).
+      vanguard: { mods: () => [set("requiredForms", ["battle", "defensive"], (ctx) => isAbility(ctx, "charge"))] },
       concussion_blow: { teaches: "concussion_blow" },
       focused_rage: { mods: (r) => [add("cost", -r, (ctx) => offensive(ctx))] },
       bastion: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx, g) => !!warrior.weapons(g).shield)] },
@@ -11848,7 +11861,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var or = (list) => list.length > 1 ? `${list.slice(0, -1).join(", ")} or ${list[list.length - 1]}` : list[0];
   function requirements(game, ab) {
     const r = ab.requires || {}, out = [];
-    if (r.form) out.push(`Requires ${or(r.form.map((f) => game.formName(f)))}`);
+    const forms = game.requiredForms(ab);
+    if (forms) out.push(`Requires ${or(forms.map((f) => game.formName(f)))}`);
     if (r.formNot) out.push(`Not in ${or(r.formNot.map((f) => game.formName(f)))}`);
     if (r.stealth) out.push("Requires Stealth");
     if (r.behind) out.push("Must be behind the target");
@@ -13986,8 +14000,9 @@ ${ctx.link}`;
       this.hudRoot = $("#hud");
       this.arena = new Arena($("#arena"), this);
       this.arena.attach(this.game);
+      $("#arena").addEventListener("contextmenu", (e) => e.preventDefault());
       $("#arena").addEventListener("pointerdown", (e) => {
-        if (e.pointerType === "mouse" && e.button !== 0) return;
+        if (e.pointerType === "mouse" && e.button !== 0 && e.button !== 2) return;
         const t = this.arena.pick(e.clientX, e.clientY), touch = e.pointerType !== "mouse";
         if (t && t.kind === "ally") {
           this.game.setFriend(t);
