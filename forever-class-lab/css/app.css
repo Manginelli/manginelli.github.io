@@ -376,6 +376,10 @@ body.touch .slot.empty::after { content: "+"; position: absolute; inset: 0; disp
 
 /* header links: Import / Export, Copy link, Feedback */
 .links { margin-left: auto; position: relative; display: flex; gap: 14px; }
+/* Ko-fi button: the lab's own, no third-party script. Bronze keeps white text readable (4.9:1). */
+.kofi { display: inline-flex; align-items: center; gap: 6px; background: #9c6422; color: #fff; border-radius: 999px; padding: 4px 12px 4px 9px; font-size: 13px; font-weight: 500; line-height: 1.2; text-decoration: none; white-space: nowrap; transition: background .15s; }
+.kofi:hover { background: #b0742a; }
+.kofi svg { width: 15px; height: 15px; flex: none; }
 .link-box { position: absolute; right: 0; top: calc(100% + 8px); z-index: 40; width: min(420px, 92vw); background: var(--page-2); border: 1px solid var(--line-strong); border-radius: 2px; padding: 12px; display: grid; gap: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
 .link-box[hidden] { display: none; }
 .link-box label, .link-row span { font-size: 13px; color: var(--muted); }
@@ -467,6 +471,7 @@ body.touch .builds-class { display: inline; font-family: var(--f-display); font-
 body.touch .build-btn { padding: 7px 8px 6px; }
 body.touch .links { margin-left: 0; gap: 18px; border-top: 1px solid var(--line); padding-top: 3px; flex-wrap: wrap; }
 body.touch .links > .ghost { padding: 6px 0; font-size: 13.5px; }
+body.touch .links > .kofi { font-size: 13.5px; padding: 5px 12px 5px 9px; }
 body.touch .link-box { position: static; width: 100%; flex-basis: 100%; margin: 2px 0 6px; box-shadow: none; }
 /* iOS zooms the page into any field under 16px */
 body.touch input[type="text"], body.touch select, body.touch textarea { font-size: 16px; }
