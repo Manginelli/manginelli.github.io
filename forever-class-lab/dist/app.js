@@ -5617,8 +5617,17 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         run: (g, ctx) => {
           const p = ctx.caster;
           g.emit("fx", { kind: "nova", x: p.x, y: p.y, r: 8, schools: holy });
-          g.addZone({ kind: "area", x: p.x, y: p.y, radius: 8, duration: 8, schools: holy, label: "Consecration" });
-          g.enemies.filter((e) => !e.dead && dist(p, e) <= 8 + e.radius).slice(0, 4).forEach((e) => applyAura(g, e, g.auraDef("consecration"), { source: p, data: { ability: ctx.ability, castId: ctx.castId } }));
+          const hit2 = /* @__PURE__ */ new Set();
+          const consecrate = (g2, z) => {
+            for (const e of g2.enemies) {
+              if (hit2.size >= 4) return;
+              if (e.dead || hit2.has(e) || dist(z, e) > z.radius + e.radius) continue;
+              hit2.add(e);
+              applyAura(g2, e, g2.auraDef("consecration"), { source: p, duration: z.expires - g2.time, data: { ability: ctx.ability, castId: ctx.castId } });
+            }
+          };
+          const zone = g.addZone({ kind: "area", x: p.x, y: p.y, radius: 8, duration: 8, period: 0.1, schools: holy, label: "Consecration", onTick: consecrate });
+          consecrate(g, zone);
         }
       }],
       text: "Consecrates the land beneath the Paladin, doing 96 Holy damage over 8 sec to enemies who enter the area. The first 4 enemies who enter the area will take an additional 216 damage over 8 sec."
@@ -5781,6 +5790,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       tree: "protection",
       schools: holy,
       harmful: true,
+      startsAttack: true,
       target: "enemy",
       range: 10,
       cost: 100,
@@ -5840,6 +5850,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       tree: "protection",
       schools: holy,
       harmful: true,
+      startsAttack: true,
       target: "enemy",
       range: 10,
       cooldown: 60,
@@ -5867,6 +5878,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       tree: "retribution",
       schools: holy,
       harmful: true,
+      startsAttack: true,
       target: "enemy",
       range: 10,
       cost: basePct(0.06),
@@ -14112,6 +14124,7 @@ ${ctx.link}`;
         if (k === "r" && !e.repeat) this.resetFight();
         if (k === "escape") {
           this.game.cancelCast("cancelled");
+          this.game.endChannel("cancelled");
           this.game.stopAttack();
         }
       });
