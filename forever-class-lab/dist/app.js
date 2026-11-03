@@ -948,8 +948,9 @@
       const near = game.enemies.filter((e) => !e.dead && dist(c, e) <= ef.radius + e.radius).sort((a, b) => a === ctx.target ? -1 : b === ctx.target ? 1 : dist(c, a) - dist(c, b)).slice(0, ef.maxTargets || 99);
       if (ef.fx !== false) game.emit("fx", { kind: "nova", x: c.x, y: c.y, r: ef.radius, schools: ["physical"] });
       ctx.results = [];
+      const closest = near.slice().sort((a, b) => dist(c, a) - dist(c, b))[0];
       for (const t of near) {
-        const sub = { ...ctx, target: t };
+        const sub = { ...ctx, target: t, closest: t === closest };
         if (ef.min != null) ctx.results.push({ target: t, res: then(game, ef, sub, meleeHit(game, sub, ef)) });
         else EFFECTS.weaponDamage(game, { ...ef, type: "weaponDamage" }, sub), ctx.results.push({ target: t, res: sub.result });
       }
@@ -2235,7 +2236,7 @@
   };
 
   // src/common/data-version.js
-  var DATA_BUILD = "1.60.1.70707";
+  var DATA_BUILD = "1.60.1.70753";
   var LINK_DEFAULT = "1.60.1.70532";
 
   // src/classes/mage/talent-data.js
@@ -2251,8 +2252,8 @@
         { id: "arcane_resilience", name: "Arcane Resilience", icon: "spell_arcane_arcaneresilience", tier: 0, col: 2, max: 3, ranks: [25, 50, 75].map((n) => `Increases your Armor by an amount equal to ${n}% of your Intellect.`) },
         { id: "arcane_subtlety", name: "Arcane Subtlety", icon: "spell_holy_dispelmagic", tier: 1, col: 0, max: 2, ranks: [[8, 15], [15, 30]].map(([a, b]) => `Reduces your target's resistance to all your spells by ${a} and reduces the threat caused by your Arcane spells by ${b}%.`) },
         { id: "magic_absorption", name: "Magic Absorption", icon: "spell_nature_astralrecalgroup", tier: 1, col: 1, max: 2, ranks: [[5, 1], [10, 2]].map(([a, b]) => `Increases all your resistances by ${a} and causes all spells you fully resist to restore ${b}% of your total mana. Cannot trigger more often than 1 time per sec.`) },
-        { id: "arcane_concentration", name: "Arcane Concentration", icon: "spell_shadow_manaburn", tier: 1, col: 2, max: 5, ranks: [2, 4, 6, 8, 10].map((n) => `Gives you a ${n}% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%.`) },
-        { id: "missile_barrage", name: "Missile Barrage", icon: "ability_mage_missilebarrage", tier: 1, col: 3, max: 2, ranks: [[20, 10], [40, 20]].map(([a, b]) => `Gives your Arcane Blast spell a ${a}% chance, and your Arcane Wrath, Fireball, Frostbolt, Frost Blast, and Frostfire Bolt spells a ${b}% chance to reduce the channeled duration of your next Arcane Missiles spell by 50%, reduce the Mana cost by 100%, and missiles fire every 0.5 sec.`) },
+        { id: "arcane_concentration", name: "Arcane Concentration", icon: "spell_shadow_manaburn", tier: 1, col: 2, max: 5, notes: true, ranks: [2, 4, 6, 8, 10].map((n) => `Gives you a ${n}% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%.`) },
+        { id: "missile_barrage", name: "Missile Barrage", icon: "ability_mage_missilebarrage", tier: 1, col: 3, max: 2, notes: true, ranks: [[20, 10], [40, 20]].map(([a, b]) => `Gives your Arcane Blast spell a ${a}% chance, and your Arcane Wrath, Fireball, Frostbolt, Frost Blast, and Frostfire Bolt spells a ${b}% chance to reduce the channeled duration of your next Arcane Missiles spell by 50%, reduce the Mana cost by 100%, and missiles fire every 0.5 sec.`) },
         { id: "arcane_geometry", name: "Arcane Geometry", icon: "inv_ability_mage_radiantspark", tier: 2, col: 0, max: 2, ranks: [3, 6].map((n) => `Increases the range of your Arcane spells by ${n} yards.`) },
         { id: "arcane_impact", name: "Arcane Impact", icon: "spell_nature_wispsplode", tier: 2, col: 1, max: 3, ranks: [2, 4, 6].map((n) => `Increases the critical strike chance of your Arcane spells by ${n}%.`) },
         { id: "arcane_blast", name: "Arcane Blast", icon: "spell_arcane_blast", tier: 2, col: 3, max: 1, active: true, ranks: ["Teaches Arcane Blast: blasts the target with energy, dealing Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application."] },
@@ -2273,7 +2274,7 @@
       talents: [
         { id: "incineration", name: "Incineration", icon: "spell_fire_flameshock", tier: 0, col: 1, max: 5, ranks: [2, 4, 6, 8, 10].map((n) => `Increases the critical strike chance of your Fire Blast, Ice Lance, Arcane Blast, and Scorch spells by ${n}%.`) },
         { id: "accelerant", name: "Accelerant", icon: "spell_fire_flamebolt", tier: 0, col: 2, max: 5, ranks: [0.1, 0.2, 0.3, 0.4, 0.5].map((n) => `Reduces the casting time of your Fireball, Frostfire Bolt, and Arcane Wrath spells by ${n} sec.`) },
-        { id: "ignite", name: "Ignite", icon: "spell_fire_incinerate", tier: 1, col: 0, max: 5, ranks: [8, 16, 24, 32, 40].map((n) => `Your critical strikes from Fire damage spells cause the target to burn for an additional ${n}% of your spell's damage over 4 sec.`) },
+        { id: "ignite", name: "Ignite", icon: "spell_fire_incinerate", tier: 1, col: 0, max: 5, notes: true, ranks: [8, 16, 24, 32, 40].map((n) => `Your critical strikes from Fire damage spells cause the target to burn for an additional ${n}% of your spell's damage over 4 sec.`) },
         { id: "flame_throwing", name: "Flame Throwing", icon: "spell_fire_flare", tier: 1, col: 1, max: 2, ranks: [3, 6].map((n) => `Increases the range of your Fire spells by ${n} yards.`) },
         { id: "impact", name: "Impact", icon: "spell_fire_meteorstorm", tier: 1, col: 2, max: 3, ranks: [3, 7, 10].map((n) => `Gives your Fire spells a ${n}% chance to stun the target for 2 sec.`) },
         { id: "burning_soul", name: "Burning Soul", icon: "spell_fire_fire", tier: 2, col: 0, max: 3, ranks: [[23, 10], [47, 20], [70, 30]].map(([a, b]) => `Gives your Fire spells a ${a}% chance to not lose casting time when you take damage and reduces the threat caused by your Fire spells by ${b}%.`) },
@@ -3268,7 +3269,7 @@
           const rolled = /* @__PURE__ */ new Set();
           on("cast:success", ({ ability, ctx }) => {
             const a = findAura(game.player, "clearcasting");
-            if (a && ability.harmful && a.applied < game.time) removeAura(game, a, "consumed");
+            if (a && ability.harmful && a.applied < game.time && !ctx.barrage) removeAura(game, a, "consumed");
           });
           on("damage", (ev) => {
             if (!nonPeriodic(ev) || !landed2(ev) || !ev.ctx.ability || !ev.ctx.ability.harmful || rolled.has(ev.ctx.castId)) return;
@@ -3299,7 +3300,8 @@
       ignite: {
         listen(game, r, on) {
           on("damage", (ev) => {
-            if (!nonPeriodic(ev) || !crit(ev) || !hasSchool(ev.ctx, "fire")) return;
+            const fsTick = ev.periodic && ev.ctx.caster === game.player && isAbility(ev.ctx, "flamestrike");
+            if (!nonPeriodic(ev) && !fsTick || !crit(ev) || !hasSchool(ev.ctx, "fire")) return;
             const t = ev.ctx.target, p = game.player, old = findAura(t, "ignite", p);
             let pool = ev.res.amount * 0.08 * r;
             if (old) pool += (old.data.perTick || 0) * Math.max(0, Math.round((old.expires - game.time) / 2));
@@ -3442,7 +3444,7 @@
   };
 
   // src/classes/rogue/talent-data.js
-  var SOURCE2 = { site: "foreverchanges.pro/talents/rogue", build: "1.60.1.70532", extracted: "2026-10-23" };
+  var SOURCE2 = { site: "foreverchanges.pro/talents/rogue", build: "1.60.1.70753", extracted: "2026-11-03" };
   var per = (values, fn) => values.map(fn);
   var hackAndSlash = (n) => `Gives your melee weapon attacks a benefit depending on the weapon.
 Axe/Sword: Your successful melee attacks have a ${n}% chance to trigger an extra attack on the target.
@@ -3458,19 +3460,19 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
         { id: "remorseless_attacks", name: "Remorseless Attacks", icon: "ability_fiegndead", tier: 0, col: 1, max: 2, ranks: per([20, 40], (n) => `After killing a non-trivial enemy, gives you a ${n}% increased critical strike chance on your next Sinister Strike, Backstab, Ambush, Mutilate, or Ghostly Strike. Lasts 20 sec.`) },
         { id: "malice", name: "Malice", icon: "ability_racial_bloodrage", tier: 0, col: 2, max: 5, ranks: per([1, 2, 3, 4, 5], (n) => `Increases your critical strike chance with all attacks and Poisons by ${n}%.`) },
         { id: "ruthlessness", name: "Ruthlessness", icon: "ability_druid_disembowel", tier: 1, col: 0, max: 3, ranks: per([20, 40, 60], (n) => `Gives your finishing moves a ${n}% chance to add a Combo Point to your target.`) },
-        { id: "murder", name: "Murder", icon: "spell_shadow_deathscream", tier: 1, col: 1, max: 2, ranks: per([2, 4], (n) => `Increases all damage dealt by ${n}% against Humanoid and Giant targets.`) },
+        { id: "improved_expose_armor", name: "Improved Expose Armor", icon: "ability_warrior_riposte", tier: 1, col: 1, max: 2, notes: true, ranks: per([[5, 1], [10, 2]], ([a, b]) => `Reduces the Energy cost of your Expose Armor ability by ${a}, and refunds ${b} Combo Points when cast with 5 Combo Points.`) },
         { id: "improved_slice_and_dice", name: "Improved Slice and Dice", icon: "ability_rogue_slicedice", tier: 1, col: 3, max: 3, ranks: per([15, 30, 45], (n) => `Increases the duration of your Slice and Dice ability by ${n}%.`) },
-        { id: "relentless_strikes", name: "Relentless Strikes", icon: "ability_warrior_decisivestrike", tier: 2, col: 0, max: 1, ranks: ["Your finishing moves have a 20% chance per Combo Point to restore 25 Energy."] },
-        { id: "improved_expose_armor", name: "Improved Expose Armor", icon: "ability_warrior_riposte", tier: 2, col: 1, max: 2, ranks: per([[5, 1], [10, 2]], ([a, b]) => `Reduces the Energy cost of your Expose Armor ability by ${a}, and refunds ${b} Combo Points when cast with 5 Combo Points.`) },
-        { id: "lethality", name: "Lethality", icon: "ability_criticalstrike", tier: 2, col: 2, max: 5, req: "malice", ranks: per([4, 8, 12, 16, 20], (n) => `Increases the critical strike damage bonus of your Sinister Strike, Gouge, Backstab, Mutilate, Ghostly Strike, and Hemorrhage abilities by ${n}%.`) },
+        { id: "vigor", name: "Vigor", icon: "spell_nature_earthbindtotem", tier: 2, col: 0, max: 2, notes: true, ranks: per([5, 10], (n) => `Increases your maximum Energy by ${n}.`) },
+        { id: "blood_splatter", name: "Blood Splatter", icon: "ability_rogue_bloodsplatter", tier: 2, col: 1, max: 1, notes: true, ranks: ["Increases the duration of your Rupture ability by 6 sec and your Garrote ability by 9 sec."] },
+        { id: "lethality", name: "Lethality", icon: "ability_criticalstrike", tier: 2, col: 2, max: 2, req: "malice", notes: true, ranks: ["Increases the critical strike damage bonus of your Sinister Strike, Gouge, Backstab, Mutilate, Ghostly Strike, and Hemorrhage abilities by 10%.", "Increases the critical strike damage bonus of your Sinister Strike, Gouge, Backstab, Mutilate, Ghostly Strike, and Hemorrhage abilities by 20%."] },
         { id: "vile_poisons", name: "Vile Poisons", icon: "ability_rogue_feigndeath", tier: 3, col: 0, max: 5, ranks: per([[4, 8], [8, 16], [12, 24], [16, 32], [20, 40]], ([a, b]) => `Increases the damage dealt by your poisons by ${a}% and gives your poisons an additional ${b}% chance to resist dispel effects.`) },
         { id: "cold_blood", name: "Cold Blood", icon: "spell_ice_lament", tier: 3, col: 1, max: 1, active: true, ranks: ["When activated, increases the critical strike chance of your next Sinister Strike, Backstab, Ambush, Eviscerate, or Mutilate by 100%. 3 min cooldown."] },
         { id: "improved_poisons", name: "Improved Poisons", icon: "ability_poisons", tier: 3, col: 2, max: 5, ranks: per([[2, 10], [4, 20], [6, 30], [8, 40], [10, 50]], ([a, b]) => `Increases the chance to apply Poisons to your target by ${a}%, and gives Poison applications a ${b}% chance to not consume a charge.`) },
-        { id: "vigor", name: "Vigor", icon: "spell_nature_earthbindtotem", tier: 4, col: 0, max: 2, ranks: per([5, 10], (n) => `Increases your maximum Energy by ${n}.`) },
-        { id: "mutilate", name: "Mutilate", icon: "ability_rogue_deadlybrew", tier: 4, col: 1, max: 1, active: true, ranks: ["Teaches Mutilate: instantly attacks with both weapons for 75% weapon damage plus an additional amount with each weapon. Damage increased by 20% against Poisoned targets. Awards 2 Combo Points. Requires Daggers."] },
+        { id: "relentless_strikes", name: "Relentless Strikes", icon: "ability_warrior_decisivestrike", tier: 4, col: 0, max: 5, notes: true, ranks: ["Your finishing moves have a 4% chance per Combo Point to restore 25 Energy.", "Your finishing moves have a 8% chance per Combo Point to restore 25 Energy.", "Your finishing moves have a 12% chance per Combo Point to restore 25 Energy.", "Your finishing moves have a 16% chance per Combo Point to restore 25 Energy.", "Your finishing moves have a 20% chance per Combo Point to restore 25 Energy."] },
+        { id: "venom", name: "Venom", icon: "inv_sword_31", tier: 4, col: 1, max: 1, notes: true, ranks: ["Your Shank ability increases the damage of your Poisons by 30% and your chance to apply Poisons by 20% for 6 sec."] },
         { id: "improved_kidney_shot", name: "Improved Kidney Shot", icon: "ability_rogue_kidneyshot", tier: 4, col: 2, max: 2, ranks: per([5, 10], (n) => `Enemies Stunned by your Kidney Shot ability take ${n}% increased damage from your poisons and attacks.`) },
-        { id: "seal_fate", name: "Seal Fate", icon: "spell_shadow_chilltouch", tier: 5, col: 2, max: 5, ranks: per([20, 40, 60, 80, 100], (n) => `Your critical strikes from abilities that add Combo Points have a ${n}% chance to add an additional Combo Point.`) },
-        { id: "venom", name: "Venom", icon: "inv_sword_31", tier: 6, col: 1, max: 1, req: "mutilate", active: true, ranks: ["Teaches Venom: finishing move that increases the damage of your Poisons by 30% and your chance to apply Poisons by 10%. Lasts 9 sec, plus 3 sec per combo point after the first."] }
+        { id: "seal_fate", name: "Seal Fate", icon: "spell_shadow_chilltouch", tier: 5, col: 2, max: 3, notes: true, ranks: ["Your critical strikes from abilities that add Combo Points have a 33% chance to add an additional Combo Point.", "Your critical strikes from abilities that add Combo Points have a 66% chance to add an additional Combo Point.", "Your critical strikes from abilities that add Combo Points have a 100% chance to add an additional Combo Point."] },
+        { id: "mutilate", name: "Mutilate", icon: "ability_rogue_deadlybrew", tier: 6, col: 1, max: 1, notes: true, active: true, ranks: ["Teaches Mutilate: instantly attacks with both weapons for 90% weapon damage plus an additional amount with each weapon. Damage increased by 20% against Poisoned targets. Awards 2 Combo Points. Requires Daggers."] }
       ]
     },
     {
@@ -3478,22 +3480,24 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       name: "Combat",
       icon: "ability_backstab",
       talents: [
-        { id: "improved_eviscerate", name: "Improved Eviscerate", icon: "ability_rogue_eviscerate", tier: 0, col: 0, max: 3, ranks: per([7, 13, 20], (n) => `Increases the damage done by your Eviscerate ability by ${n}%.`) },
-        { id: "improved_sinister_strike", name: "Improved Sinister Strike", icon: "spell_shadow_ritualofsacrifice", tier: 0, col: 1, max: 2, ranks: per([3, 5], (n) => `Reduces the Energy cost of your Sinister Strike ability by ${n}.`) },
+        { id: "coup_de_grace", name: "Coup de Grace", icon: "ability_rogue_eviscerate", tier: 0, col: 0, max: 3, notes: true, ranks: ["Increases the damage done by your Eviscerate ability by 7%, and the damage and storage rate of your Death Mark ability by 7%.", "Increases the damage done by your Eviscerate ability by 13%, and the damage and storage rate of your Death Mark ability by 13%.", "Increases the damage done by your Eviscerate ability by 20%, and the damage and storage rate of your Death Mark ability by 20%."] },
+        { id: "efficient_strikes", name: "Efficient Strikes", icon: "spell_shadow_ritualofsacrifice", tier: 0, col: 1, max: 2, notes: true, ranks: ["Reduces the Energy cost of your Sinister Strike and Hemorrhage abilities by 3.", "Reduces the Energy cost of your Sinister Strike and Hemorrhage abilities by 5."] },
         { id: "lightning_reflexes", name: "Lightning Reflexes", icon: "spell_nature_invisibilty", tier: 0, col: 2, max: 5, ranks: per([1, 2, 3, 4, 5], (n) => `Increases your Dodge chance by ${n}%.`) },
         { id: "puncturing_wounds", name: "Puncturing Wounds", icon: "ability_backstab", tier: 1, col: 0, max: 3, ranks: per([[10, 5, 15], [20, 10, 30], [30, 15, 45]], ([a, b, c]) => `Increases the critical strike chance of your Backstab by ${a}% and your Mutilate by ${b}%, and gives Backstab a ${c}% chance to add an additional Combo Point.`) },
         { id: "deflection", name: "Deflection", icon: "ability_parry", tier: 1, col: 1, max: 3, ranks: per([2, 4, 6], (n) => `Increases your Parry chance by ${n}%.`) },
         { id: "precision", name: "Precision", icon: "ability_marksmanship", tier: 1, col: 2, max: 3, ranks: per([1, 2, 3], (n) => `Improves your chance to hit by ${n}%.`) },
+        { id: "improved_sprint", name: "Improved Sprint", icon: "ability_rogue_sprint", tier: 1, col: 3, max: 2, notes: true, ranks: per([50, 100], (n) => `Gives a ${n}% chance to remove all movement impairing effects when you activate your Sprint ability.`) },
         { id: "endurance", name: "Endurance", icon: "spell_shadow_shadowward", tier: 2, col: 0, max: 2, ranks: per([30, 60], (n) => `Reduces the cooldown of your Sprint and Evasion abilities by ${n}%.`) },
         { id: "riposte", name: "Riposte", icon: "ability_warrior_challange", tier: 2, col: 1, max: 1, req: "deflection", active: true, ranks: ["A strike that becomes active after parrying an opponent's attack. This attack deals 150% weapon damage and disarms the target for 6 sec. 10 Energy, 6 sec cooldown."] },
-        { id: "improved_sprint", name: "Improved Sprint", icon: "ability_rogue_sprint", tier: 2, col: 3, max: 2, ranks: per([50, 100], (n) => `Gives a ${n}% chance to remove all movement impairing effects when you activate your Sprint ability.`) },
+        { id: "composure", name: "Composure", icon: "ability_rogue_quickrecovery", tier: 2, col: 2, max: 2, notes: true, ranks: ["Increases the Energy cost reduction of your Poised ability by 5.", "Increases the Energy cost reduction of your Poised ability by 10."] },
         { id: "improved_kick", name: "Improved Kick", icon: "ability_kick", tier: 3, col: 0, max: 2, ranks: per([50, 100], (n) => `Gives your Kick ability a ${n}% chance to Silence the target for 2 sec.`) },
-        { id: "flawless_execution", name: "Flawless Execution", icon: "inv_sword_35", tier: 3, col: 1, max: 1, ranks: ["Reduces the Energy cost of your Eviscerate ability by 10."] },
-        { id: "dual_wield_specialization", name: "Dual Wield Specialization", icon: "ability_dualwield", tier: 3, col: 2, max: 5, req: "precision", ranks: per([5, 10, 15, 20, 25], (n) => `Increases the damage done by your off-hand weapon by ${n}%.`) },
+        { id: "flawless_execution", name: "Flawless Execution", icon: "inv_sword_35", tier: 3, col: 1, max: 1, notes: true, ranks: ["Reduces the Energy cost of your Eviscerate ability by 15."] },
+        { id: "aggression", name: "Aggression", icon: "ability_racial_avatar", tier: 3, col: 2, max: 3, notes: true, ranks: ["Increases the damage of your Sinister Strike and Eviscerate abilities by 5%.", "Increases the damage of your Sinister Strike and Eviscerate abilities by 10%.", "Increases the damage of your Sinister Strike and Eviscerate abilities by 15%."] },
+        { id: "weapon_expertise", name: "Weapon Expertise", icon: "spell_holy_blessingofstrength", tier: 3, col: 3, max: 2, notes: true, ranks: per([1, 2], (n) => `Reduces the chance for your attacks to be Dodged or Parried by ${n}%.`) },
+        { id: "dual_wield_specialization", name: "Dual Wield Specialization", icon: "ability_dualwield", tier: 4, col: 0, max: 2, req: "precision", notes: true, ranks: ["Increases the damage done by your off-hand weapon by 25%.", "Increases the damage done by your off-hand weapon by 50%."] },
         { id: "blade_flurry", name: "Blade Flurry", icon: "ability_warrior_punishingblow", tier: 4, col: 1, max: 1, active: true, ranks: ["Increases your melee attack speed by 20% and your melee attacks strike an additional nearby opponent. Lasts 15 sec. 25 Energy, 2 min cooldown."] },
         { id: "hack_and_slash", name: "Hack and Slash", icon: "inv_sword_27", tier: 4, col: 2, max: 5, ranks: per([1, 2, 3, 4, 5], hackAndSlash) },
-        { id: "weapon_expertise", name: "Weapon Expertise", icon: "spell_holy_blessingofstrength", tier: 5, col: 1, max: 2, req: "blade_flurry", ranks: per([1, 2], (n) => `Reduces the chance for your attacks to be Dodged or Parried by ${n}%.`) },
-        { id: "aggression", name: "Aggression", icon: "ability_racial_avatar", tier: 5, col: 2, max: 3, ranks: per([2, 4, 6], (n) => `Increases the damage of your Sinister Strike, Backstab, and Eviscerate abilities by ${n}%.`) },
+        { id: "flash_of_steel", name: "Flash of Steel", icon: "ability_rogue_focusedattacks", tier: 5, col: 1, max: 5, notes: true, ranks: ["Increases the Energy generated by your Shank ability by 3 and reduces its cooldown by 0.4 sec.", "Increases the Energy generated by your Shank ability by 6 and reduces its cooldown by 0.8 sec.", "Increases the Energy generated by your Shank ability by 9 and reduces its cooldown by 1.2 sec.", "Increases the Energy generated by your Shank ability by 12 and reduces its cooldown by 1.6 sec.", "Increases the Energy generated by your Shank ability by 15 and reduces its cooldown by 2.0 sec."] },
         { id: "adrenaline_rush", name: "Adrenaline Rush", icon: "spell_shadow_shadowworddominate", tier: 6, col: 1, max: 1, active: true, ranks: ["Increases your Energy regeneration rate by 100% for 15 sec. 5 min cooldown."] }
       ]
     },
@@ -3502,26 +3506,44 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       name: "Subtlety",
       icon: "ability_stealth",
       talents: [
-        { id: "camouflage", name: "Camouflage", icon: "ability_stealth", tier: 0, col: 0, max: 5, ranks: per([[3, 2], [6, 3], [9, 4], [12, 5], [15, 6]], ([a, b]) => `Reduces your speed penalty from your Stealth ability by ${a}% and reduces its cooldown by ${b} sec.`) },
+        { id: "setup", name: "Setup", icon: "spell_nature_mirrorimage", tier: 0, col: 0, max: 3, notes: true, ranks: ["Gives you a 15% chance to add a Combo Point to your target after Dodging one of their attacks or fully resisting one of their spells.", "Gives you a 30% chance to add a Combo Point to your target after Dodging one of their attacks or fully resisting one of their spells.", "Gives you a 45% chance to add a Combo Point to your target after Dodging one of their attacks or fully resisting one of their spells."] },
         { id: "master_of_deception", name: "Master of Deception", icon: "spell_shadow_charm", tier: 0, col: 1, max: 3, ranks: per([1, 2, 3], (n) => `Reduces the chance enemies have to detect you while in Stealth mode as if you were ${n} level${n > 1 ? "s" : ""} higher.`) },
-        { id: "opportunity", name: "Opportunity", icon: "ability_warrior_warcry", tier: 0, col: 2, max: 2, ranks: per([5, 10], (n) => `Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by ${n}%.`) },
-        { id: "setup", name: "Setup", icon: "spell_nature_mirrorimage", tier: 1, col: 0, max: 3, ranks: per([33, 67, 100], (n) => `Gives you a ${n}% chance to add a Combo Point to your target after Dodging one of their attacks or fully resisting one of their spells.`) },
-        { id: "elusiveness", name: "Elusiveness", icon: "spell_magic_lesserinvisibilty", tier: 1, col: 1, max: 2, ranks: per([45, 90], (n) => `Reduces the cooldown of your Vanish and Blind abilities by ${n} sec.`) },
+        { id: "opportunity", name: "Opportunity", icon: "ability_warrior_warcry", tier: 0, col: 2, max: 5, notes: true, ranks: ["Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 4%.", "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 8%.", "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 12%.", "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 16%.", "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 20%."] },
+        { id: "camouflage", name: "Camouflage", icon: "ability_stealth", tier: 1, col: 0, max: 3, notes: true, ranks: ["Reduces your speed penalty from your Stealth ability by 5% and reduces its cooldown by 2 sec.", "Reduces your speed penalty from your Stealth ability by 10% and reduces its cooldown by 4 sec.", "Reduces your speed penalty from your Stealth ability by 15% and reduces its cooldown by 6 sec."] },
+        { id: "dirty_deeds", name: "Dirty Deeds", icon: "spell_shadow_summonsuccubus", tier: 1, col: 1, max: 2, notes: true, ranks: per([10, 20], (n) => `Reduces the Energy cost of your Cheap Shot and Garrote abilities by ${n}, and your Garrote ability no longer requires you to be behind your target.`) },
         { id: "dirty_tricks", name: "Dirty Tricks", icon: "ability_sap", tier: 1, col: 2, max: 2, ranks: per([25, 50], (n) => `Reduces the Energy cost of your Sap and Blind abilities by ${n}%.`) },
         { id: "improved_ambush", name: "Improved Ambush", icon: "ability_rogue_ambush", tier: 1, col: 3, max: 3, ranks: per([15, 30, 45], (n) => `Increases the critical strike chance of your Ambush ability by ${n}%.`) },
         { id: "initiative", name: "Initiative", icon: "spell_shadow_fumble", tier: 2, col: 0, max: 3, ranks: per([33, 67, 100], (n) => `Gives you a ${n}% chance to add an additional combo point to your target when using your Ambush, Garrote, or Cheap Shot ability.`) },
-        { id: "ghostly_strike", name: "Ghostly Strike", icon: "spell_shadow_curse", tier: 2, col: 1, max: 1, active: true, ranks: ["Teaches Ghostly Strike: a strike that deals 125% (180% if a Dagger is equipped in your Main Hand) weapon damage and increases your chance to dodge by 15% for 7 sec. Awards 1 combo point. 40 Energy, 20 sec cooldown."] },
-        { id: "improved_distract", name: "Improved Distract", icon: "ability_rogue_distract", tier: 2, col: 2, max: 2, ranks: per([[3, 1], [5, 2]], ([a, b]) => `Increases the radius of your Distract ability by ${a} yds, and further reduces the Stealth detection of distracted enemies as though they were an additional ${b} level${b > 1 ? "s" : ""} lower.`) },
-        { id: "heightened_senses", name: "Heightened Senses", icon: "ability_ambush", tier: 3, col: 0, max: 2, ranks: per([[1, 2], [3, 4]], ([a, b]) => `Increases your Stealth detection as if you were ${a} level${a > 1 ? "s" : ""} higher and reduces your chance to be hit by spells and ranged attacks by ${b}%.`) },
-        { id: "premeditation", name: "Premeditation", icon: "spell_shadow_possession", tier: 3, col: 1, max: 1, active: true, ranks: ["Teaches Premeditation: adds 2 Combo Points to your target. You must add to or use those combo points within 20 sec or the combo points are lost. Must be stealthed. 2 min cooldown."] },
-        { id: "serrated_blades", name: "Serrated Blades", icon: "inv_sword_17", tier: 3, col: 2, max: 3, ranks: per([[3, 10], [6, 20], [9, 30]], ([a, b]) => `Causes your attacks to ignore ${a}% of your target's Armor and increases the damage dealt by your Rupture ability by ${b}%.`) },
-        { id: "dirty_deeds", name: "Dirty Deeds", icon: "spell_shadow_summonsuccubus", tier: 4, col: 0, max: 2, ranks: per([10, 20], (n) => `Reduces the Energy cost of your Cheap Shot and Garrote abilities by ${n}, and your Garrote ability no longer requires you to be behind your target.`) },
+        { id: "premeditation", name: "Premeditation", icon: "spell_shadow_possession", tier: 2, col: 1, max: 1, notes: true, active: true, ranks: ["Teaches Premeditation: adds 2 Combo Points to your target. You must add to or use those combo points within 20 sec or the combo points are lost. Must be stealthed. 2 min cooldown."] },
+        { id: "serrated_blades", name: "Serrated Blades", icon: "inv_sword_17", tier: 2, col: 2, max: 3, notes: true, ranks: per([[3, 10], [6, 20], [9, 30]], ([a, b]) => `Causes your attacks to ignore ${a}% of your target's Armor and increases the damage dealt by your Rupture ability by ${b}%.`) },
+        { id: "elusiveness", name: "Elusiveness", icon: "spell_magic_lesserinvisibilty", tier: 3, col: 0, max: 2, notes: true, ranks: per([45, 90], (n) => `Reduces the cooldown of your Vanish and Blind abilities by ${n} sec.`) },
+        { id: "ghostly_strike", name: "Ghostly Strike", icon: "spell_shadow_curse", tier: 3, col: 1, max: 1, notes: true, active: true, ranks: ["Teaches Ghostly Strike: a strike that deals 125% (180% if a Dagger is equipped in your Main Hand) weapon damage and increases your chance to dodge by 15% for 7 sec. Your next Ambush or Garrote within 7 sec does not require Stealth. Awards 1 combo point. 40 Energy, 20 sec cooldown."] },
+        { id: "quick_getaway", name: "Quick Getaway", icon: "ability_rogue_fleetfooted", tier: 3, col: 2, max: 2, notes: true, ranks: ["Increases the maximum number of targets you may have Sapped by 1 and increases your movement speed by 15% for 3 sec after sapping a target.", "Increases the maximum number of targets you may have Sapped by 1 and increases your movement speed by 30% for 3 sec after sapping a target."] },
+        { id: "heightened_senses", name: "Heightened Senses", icon: "ability_ambush", tier: 4, col: 0, max: 2, notes: true, ranks: per([[1, 2], [3, 4]], ([a, b]) => `Increases your Stealth detection as if you were ${a} level${a > 1 ? "s" : ""} higher and reduces your chance to be hit by spells and ranged attacks by ${b}%.`) },
         { id: "preparation", name: "Preparation", icon: "spell_shadow_antishadow", tier: 4, col: 1, max: 1, active: true, ranks: ["When activated, this ability immediately finishes the cooldown on your other Rogue abilities. 10 min cooldown."] },
-        { id: "hemorrhage", name: "Hemorrhage", icon: "spell_shadow_lifedrain", tier: 4, col: 2, max: 1, req: "serrated_blades", active: true, ranks: ["Teaches Hemorrhage: an instant strike that deals 100% weapon damage (145% if a Dagger is equipped) and causes the target to take 15% increased Rupture damage from the Rogue. Lasts 15 sec. Awards 1 Combo Point. 35 Energy."] },
-        { id: "quietus", name: "Quietus", icon: "ability_rogue_garrote", tier: 5, col: 0, max: 5, req: "dirty_deeds", ranks: per([2, 4, 6, 8, 10], (n) => `Your Sinister Strike, Ghostly Strike, and Hemorrhage abilities cause ${n}% more damage against targets below 35% health.`) },
-        { id: "cutthroat", name: "Cutthroat", icon: "classicon_rogue", tier: 5, col: 2, max: 5, ranks: per([3, 6, 9, 12, 15], (n) => `Your Backstab has a ${n}% chance to cause your next Ambush within 10 sec to not require Stealth.`) },
-        { id: "thousand_cuts", name: "Thousand Cuts", icon: "ability_rogue_rupture", tier: 6, col: 1, max: 1, req: "preparation", ranks: ["When your Rupture ability deals periodic damage, the Energy cost of your next Hemorrhage or Backstab ability within 10 sec is reduced by 3, stacking up to 5 times."] }
+        { id: "hemorrhage", name: "Hemorrhage", icon: "spell_shadow_lifedrain", tier: 4, col: 2, max: 1, req: "serrated_blades", notes: true, active: true, ranks: ["Teaches Hemorrhage: an instant strike that deals 100% weapon damage (145% if a Dagger is equipped) and causes the target to take 15% increased Rupture and Garrote damage from the Rogue. Lasts 15 sec. Awards 1 Combo Point. 35 Energy."] },
+        { id: "boot_knife", name: "Boot Knife", icon: "inv_throwingknife_02", tier: 5, col: 1, max: 5, notes: true, ranks: ["Gives your Shank ability a 20% chance to add 2 Combo Points to the target.", "Gives your Shank ability a 40% chance to add 2 Combo Points to the target.", "Gives your Shank ability a 60% chance to add 2 Combo Points to the target.", "Gives your Shank ability a 80% chance to add 2 Combo Points to the target.", "Gives your Shank ability a 100% chance to add 2 Combo Points to the target."] },
+        { id: "death_mark", name: "Death Mark", icon: "ability_rogue_slaughterfromtheshadows", tier: 6, col: 1, max: 1, notes: true, active: true, ranks: ["Finishing move that marks the target, storing a portion of the damage dealt by your attacks per Combo Point. Garrote and Rupture damage is stored at twice the rate. After 6 sec, the stored damage is dealt, up to a maximum increased by Attack Power and Critical Strike chance."] }
       ]
+    }
+  ];
+
+  // src/classes/rogue/talent-history.js
+  var talentHistory2 = [
+    {
+      // 1.60.1.70753 (November 3): trees remade from Blizzard's launch notes. Improved Eviscerate became Coup de Grace
+      // and Improved Sinister Strike became Efficient Strikes; Murder, Improved Distract, Quietus, Cutthroat and Thousand Cuts left; Blood Splatter, Composure,
+      // Flash of Steel, Quick Getaway, Boot Knife and Death Mark came in, and most talents moved or changed ranks.
+      until: "1.60.1.70753",
+      date: "November 3",
+      order: [
+        ["improved_gouge", "remorseless_attacks", "malice", "ruthlessness", "murder", "improved_slice_and_dice", "relentless_strikes", "improved_expose_armor", "lethality", "vile_poisons", "cold_blood", "improved_poisons", "vigor", "mutilate", "improved_kidney_shot", "seal_fate", "venom"],
+        ["improved_eviscerate", "improved_sinister_strike", "lightning_reflexes", "puncturing_wounds", "deflection", "precision", "endurance", "riposte", "improved_sprint", "improved_kick", "flawless_execution", "dual_wield_specialization", "blade_flurry", "hack_and_slash", "weapon_expertise", "aggression", "adrenaline_rush"],
+        ["camouflage", "master_of_deception", "opportunity", "setup", "elusiveness", "dirty_tricks", "improved_ambush", "initiative", "ghostly_strike", "improved_distract", "heightened_senses", "premeditation", "serrated_blades", "dirty_deeds", "preparation", "hemorrhage", "quietus", "cutthroat", "thousand_cuts"]
+      ],
+      renamed: { improved_eviscerate: "coup_de_grace", improved_sinister_strike: "efficient_strikes" },
+      removed: { murder: "Murder", improved_distract: "Improved Distract", quietus: "Quietus", cutthroat: "Cutthroat", thousand_cuts: "Thousand Cuts" },
+      names: { improved_eviscerate: "Improved Eviscerate", improved_sinister_strike: "Improved Sinister Strike" }
     }
   ];
 
@@ -3545,6 +3567,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
   var byCombo = (ctx, list) => list[Math.max(1, Math.min(5, ctx.combo)) - 1];
   var EVISCERATE = [[224, 332], [394, 502], [564, 672], [734, 842], [904, 1012]];
   var RUPTURE = [[159, 4, 0.04], [222, 5, 0.1], [295, 6, 0.18], [377, 7, 0.21], [469, 8, 0.24]];
+  var DEATH_MARK = { rate: 0.04, duration: 6 };
   var finisherSecs = (ctx) => 9 + 3 * (Math.max(1, ctx.combo) - 1);
   var abilities2 = [
     /* ---------- builders ---------- */
@@ -3588,8 +3611,9 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
         const w = g.cls.weapons(g);
         return w.off && w.off.type === "dagger" ? null : "Requires Daggers";
       },
-      effects: [{ type: "weaponDamage", hand: "both", weaponPct: 0.75, flat: 50, onHit: [builder(2)] }],
-      text: "Instantly attacks with both weapons for 75% weapon damage plus an additional 50 with each weapon. Damage increased by 20% against Poisoned targets. Awards 2 Combo Points."
+      notes: true,
+      effects: [{ type: "weaponDamage", hand: "both", weaponPct: 0.9, flat: 50, onHit: [builder(2)] }],
+      text: "Instantly attacks with both weapons for 90% weapon damage plus an additional 50 with each weapon. Damage increased by 20% against Poisoned targets. Awards 2 Combo Points.\n\nBlizzard raised the additional damage without giving the new number: the lab keeps 50."
     },
     {
       id: "hemorrhage",
@@ -3601,8 +3625,9 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       builder: true,
       weaponStrike: true,
       talent: "hemorrhage",
+      notes: true,
       effects: [{ type: "weaponDamage", hand: "main", dynamic: daggerPct(1.45, 1), onHit: [{ type: "applyAura", to: "target", aura: "hemorrhage" }, builder(1)] }],
-      text: "An instant strike that deals 100% weapon damage (145% if a Dagger is equipped) and causes the target to take 15% increased Rupture damage from the Rogue. Lasts 15 sec. Awards 1 Combo Point."
+      text: "An instant strike that deals 100% weapon damage (145% if a Dagger is equipped) and causes the target to take 15% increased Rupture and Garrote damage from the Rogue. Lasts 15 sec. Awards 1 Combo Point."
     },
     {
       id: "ghostly_strike",
@@ -3615,8 +3640,23 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       builder: true,
       weaponStrike: true,
       talent: "ghostly_strike",
+      notes: true,
       effects: [{ type: "weaponDamage", hand: "main", dynamic: daggerPct(1.8, 1.25), onHit: [{ type: "applyAura", to: "self", aura: "ghostly_strike" }, builder(1)] }],
-      text: "A strike that deals 125% (180% if a Dagger is equipped in your Main Hand) weapon damage and increases your chance to dodge by 15% for 7 sec. Awards 1 combo point."
+      text: "A strike that deals 125% (180% if a Dagger is equipped in your Main Hand) weapon damage and increases your chance to dodge by 15% for 7 sec. Your next Ambush or Garrote within 7 sec does not require Stealth. Awards 1 combo point."
+    },
+    {
+      id: "shank",
+      name: "Shank",
+      icon: "ability_rogue_dualweild",
+      tree: "combat",
+      ...melee,
+      cost: 5,
+      cooldown: 10,
+      weaponStrike: true,
+      notes: true,
+      usable: (g) => g.cls.weapons(g).off ? null : "Requires an off-hand weapon",
+      effects: [{ type: "weaponDamage", hand: "off", weaponPct: 0.5, noMiss: true, onHit: [{ type: "custom", run: (g, ctx) => g.cls.afterShank(g, ctx) }] }],
+      text: "Instantly strike with your off-hand weapon, dealing 50% weapon damage and generating 25 Energy. Shank cannot miss."
     },
     /* ---------- openers (from stealth) ---------- */
     {
@@ -3731,19 +3771,23 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       text: "Finishing move that stuns the target. Lasts longer per combo point:\n1 point: 2 seconds\n2 points: 3 seconds\n3 points: 4 seconds\n4 points: 5 seconds\n5 points: 6 seconds"
     },
     {
-      id: "venom",
-      name: "Venom",
-      icon: "inv_sword_31",
-      tree: "assassination",
-      ...melee,
+      id: "death_mark",
+      name: "Death Mark",
+      icon: "ability_rogue_slaughterfromtheshadows",
+      tree: "subtlety",
+      schools: ["physical"],
+      range: 20,
+      target: "enemy",
+      harmful: true,
       cost: 25,
+      cooldown: 10,
       finisher: true,
-      harmful: false,
-      range: void 0,
-      target: "self",
-      talent: "venom",
-      effects: [{ type: "applyAura", to: "self", aura: "venom", dynamic: (g, ctx) => ({ duration: finisherSecs(ctx) }) }],
-      text: "Finishing move that increases the damage of your Poisons by 30% and your chance to apply Poisons by 10%. Lasts longer per combo point:\n1 point: 9 sec\n2 points: 12 sec\n3 points: 15 sec\n4 points: 18 sec\n5 points: 21 sec"
+      talent: "death_mark",
+      notes: true,
+      effects: [{ type: "custom", run: (g, ctx) => g.cls.applyDeathMark(g, ctx) }],
+      text: `Finishing move that marks the target, storing a portion of the damage dealt by your attacks per Combo Point. Garrote and Rupture damage is stored at twice the rate. After 6 sec, the stored damage is dealt, up to a maximum increased by Attack Power and Critical Strike chance.
+
+Supposed numbers: the notes give none. The lab stores ${DEATH_MARK.rate * 100}% of your damage per Combo Point (Garrote and Rupture ${DEATH_MARK.rate * 200}%), with no maximum.`
     },
     /* ---------- cooldowns and stealth ---------- */
     {
@@ -3858,8 +3902,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
     // Poisons, on the poison bar: one per weapon (MH main hand, OH off hand). 3 sec to apply; the one put on last is the one
     // the next fight starts with (options mhPoison and ohPoison). Wound, Crippling and Mind-numbing do nothing to a dummy.
     ...[
-      ["instant", "Instant Poison VI", "ability_poisons", "Coats a weapon with poison: each strike has a 20% chance of poisoning the enemy for 76 to 100 Nature damage. Lasts 30 min."],
-      ["deadly", "Deadly Poison V", "ability_rogue_dualweild", "Coats a weapon with poison: each strike has a 30% chance of poisoning the enemy for 180 Nature damage over 12 sec, stacking up to 5 times. Lasts 30 min."]
+      ["instant", "Instant Poison VI", "ability_poisons", "Coats a weapon with poison: each strike has a 20% chance of poisoning the enemy for 76 to 100 Nature damage, plus 1% of your Attack Power. Lasts 30 min."],
+      ["deadly", "Deadly Poison V", "ability_rogue_dualweild", "Coats a weapon with poison: each strike has a 30% chance of poisoning the enemy for 180 Nature damage over 12 sec, plus 0.9% of your Attack Power, stacking up to 5 times. Lasts 30 min."]
     ].flatMap(([kind, name, icon2, text]) => [["main", "mhPoison", "MH", "main hand"], ["off", "ohPoison", "OH", "off hand"]].map(([hand, opt, tag, words]) => ({
       id: `${kind}_poison_${tag.toLowerCase()}`,
       name: `${name} (${words})`,
@@ -3870,6 +3914,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       castTime: 3,
       barTag: tag,
       setsOption: [opt, kind],
+      notes: "approx",
+      // the attack power share of the launch notes (rogue.js, auras.js)
       activeWhen: (g) => ((g.loadout.options || {})[opt] ?? g.cls.options[opt].default) === kind,
       effects: [{ type: "custom", run: (g) => {
         g.loadout.options = { ...g.loadout.options, [opt]: kind };
@@ -3894,6 +3940,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
   });
 
   // src/classes/rogue/auras.js
+  var deadlyTick = (g) => 23 + 9e-3 * attackPower(g, { caster: g.player }) / 4;
   var stun = (id, name, icon2) => ({ id, name, icon: icon2, kind: "debuff", flags: { stunned: true }, desc: () => "Stunned." });
   var auras2 = {
     /* ---------- buffs ---------- */
@@ -3905,7 +3952,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       duration: Infinity,
       flags: { stealth: true },
       onApply: (g) => g.stopAttack(),
-      mods: () => [mult("runSpeed", (ctx, g) => 0.7 + 0.03 * g.rank("camouflage"))],
+      mods: () => [mult("runSpeed", (ctx, g) => 0.7 + 0.05 * g.rank("camouflage"))],
       desc: () => "Stealthed. Movement speed reduced. Attacking breaks it."
     },
     slice_and_dice: {
@@ -3947,28 +3994,18 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       name: "Venom",
       icon: "inv_sword_31",
       kind: "buff",
-      mods: () => [mult("damageMult", 1.3, (ctx) => ctx.tags && ctx.tags.includes("poison")), add("poisonChance", 0.1)],
-      desc: () => "Poison damage increased by 30% and chance to apply Poisons increased by 10%."
+      duration: 6,
+      mods: () => [mult("damageMult", 1.3, (ctx) => ctx.tags && ctx.tags.includes("poison")), add("poisonChance", 0.2)],
+      desc: () => "Poison damage increased by 30% and chance to apply Poisons increased by 20%."
     },
-    ghostly_strike: { id: "ghostly_strike", name: "Ghostly Strike", icon: "spell_shadow_curse", kind: "buff", duration: 7, desc: () => "Dodge chance increased by 15%." },
-    cutthroat: {
-      id: "cutthroat",
-      name: "Cutthroat",
-      icon: "classicon_rogue",
+    ghostly_strike: {
+      id: "ghostly_strike",
+      name: "Ghostly Strike",
+      icon: "spell_shadow_curse",
       kind: "buff",
-      duration: 10,
-      mods: () => [set("ignoreStealthRequirement", true, (ctx) => isAbility(ctx, "ambush"))],
-      desc: () => "Your next Ambush does not require Stealth."
-    },
-    thousand_cuts: {
-      id: "thousand_cuts",
-      name: "Thousand Cuts",
-      icon: "ability_rogue_rupture",
-      kind: "buff",
-      duration: 10,
-      maxStacks: 5,
-      mods: (a) => [add("cost", -3 * a.stacks, (ctx) => isAbility(ctx, "hemorrhage", "backstab"))],
-      desc: (a) => `Your next Hemorrhage or Backstab costs ${3 * a.stacks} less Energy.`
+      duration: 7,
+      mods: () => [set("ignoreStealthRequirement", true, (ctx) => isAbility(ctx, "ambush", "garrote"))],
+      desc: () => "Dodge chance increased by 15%. Your next Ambush or Garrote does not require Stealth."
     },
     /* ---------- debuffs on the target ---------- */
     rupture: { id: "rupture", name: "Rupture", icon: "ability_rogue_rupture", kind: "debuff", schools: ["physical"], dot: { period: 2, ticks: 8, base: 469, apCoef: 0.24 } },
@@ -3985,8 +4022,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       icon: "spell_shadow_lifedrain",
       kind: "debuff",
       duration: 15,
-      sourceMods: () => [mult("damageMult", 1.15, (ctx) => isAbility(ctx, "rupture"))],
-      desc: () => "Takes 15% more Rupture damage from the Rogue."
+      sourceMods: () => [mult("damageMult", 1.15, (ctx) => isAbility(ctx, "rupture", "garrote"))],
+      desc: () => "Takes 15% more Rupture and Garrote damage from the Rogue."
     },
     expose_armor: {
       id: "expose_armor",
@@ -3996,6 +4033,17 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       duration: 30,
       sourceMods: (a) => [add("targetArmor", -(a.data.armor || 0))],
       desc: (a) => `Armor reduced by ${a.data.armor || 0}.`
+    },
+    death_mark: {
+      id: "death_mark",
+      name: "Death Mark",
+      icon: "ability_rogue_slaughterfromtheshadows",
+      kind: "debuff",
+      duration: 6,
+      onRemove: (g, a, reason) => {
+        if (reason === "expired") g.cls.releaseDeathMark(g, a);
+      },
+      desc: (a) => `Storing damage: ${Math.round(a.data.stored || 0)} so far. Dealt when the mark ends.`
     },
     cheap_shot: { ...stun("cheap_shot", "Cheap Shot", "ability_cheapshot"), duration: 4 },
     kidney_shot: stun("kidney_shot", "Kidney Shot", "ability_rogue_kidneyshot"),
@@ -4007,9 +4055,10 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       schools: ["nature"],
       maxStacks: 5,
       tags: ["poison"],
-      dot: { period: 3, ticks: 4, amount: (g, a) => 23 * a.stacks, binary: true, label: "Deadly Poison" },
-      // 92 over 12 sec per stack
-      desc: (a) => `${23 * a.stacks} Nature damage every 3 sec.`
+      // 92 over 12 sec per stack, plus 0.9% of the attack power per stack over the 12 sec (launch notes; APPROXIMATION of
+      // how the notes' share applies).
+      dot: { period: 3, ticks: 4, amount: (g, a) => deadlyTick(g) * a.stacks, binary: true, label: "Deadly Poison" },
+      desc: (a, g) => `${Math.round(deadlyTick(g) * a.stacks)} Nature damage every 3 sec.`
     }
   };
 
@@ -4025,85 +4074,91 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       id: "assassination",
       name: "Assassination",
       points: "39/11/1",
-      blurb: "Daggers and Mutilate, Venom and Cold Blood. Slice and Dice and Rupture up, Eviscerate with Seal Fate. Opportunity from Subtlety for Ambush.",
+      blurb: "Daggers and Mutilate, Cold Blood, and Shank for Venom. Slice and Dice and Rupture up, Eviscerate with Seal Fate. Opportunity from Subtlety for Ambush.",
       options: { mainHand: "dagger", offHand: "dagger", mhPoison: "instant", ohPoison: "deadly" },
       talents: {
         malice: 5,
         ruthlessness: 3,
-        improved_slice_and_dice: 3,
-        relentless_strikes: 1,
         improved_expose_armor: 2,
-        lethality: 5,
+        improved_slice_and_dice: 3,
+        vigor: 2,
+        blood_splatter: 1,
+        lethality: 2,
         vile_poisons: 5,
         cold_blood: 1,
         improved_poisons: 5,
-        vigor: 2,
-        mutilate: 1,
-        seal_fate: 5,
+        relentless_strikes: 5,
         venom: 1,
+        seal_fate: 3,
+        mutilate: 1,
         lightning_reflexes: 5,
         puncturing_wounds: 3,
         precision: 3,
         opportunity: 1
       },
-      bar: ["mutilate", "eviscerate", "slice_and_dice", "rupture", "venom", "sinister_strike", "thistle_tea", "expose_armor", "cold_blood", "ambush", "garrote", "stealth"]
+      bar: ["mutilate", "eviscerate", "slice_and_dice", "rupture", "shank", "sinister_strike", "thistle_tea", "expose_armor", "cold_blood", "ambush", "garrote", "stealth"]
     },
     {
       id: "combat",
       name: "Combat",
-      points: "18/33/0",
+      points: "16/35/0",
       blurb: "Swords, Sinister Strike and Hack and Slash, Blade Flurry and Adrenaline Rush. Slice and Dice up, Eviscerate and Rupture as finishers.",
       options: { mainHand: "sword", offHand: "sword", mhPoison: "instant", ohPoison: "instant" },
       talents: {
         malice: 5,
         ruthlessness: 3,
-        improved_slice_and_dice: 3,
         improved_expose_armor: 2,
-        lethality: 5,
-        improved_eviscerate: 3,
-        improved_sinister_strike: 2,
+        improved_slice_and_dice: 3,
+        blood_splatter: 1,
+        lethality: 2,
+        coup_de_grace: 3,
+        efficient_strikes: 2,
         deflection: 3,
         precision: 3,
-        endurance: 2,
         improved_sprint: 2,
+        endurance: 2,
         flawless_execution: 1,
-        dual_wield_specialization: 5,
+        aggression: 3,
+        weapon_expertise: 2,
+        dual_wield_specialization: 2,
         blade_flurry: 1,
         hack_and_slash: 5,
-        weapon_expertise: 2,
-        aggression: 3,
+        flash_of_steel: 5,
         adrenaline_rush: 1
       },
-      bar: ["sinister_strike", "eviscerate", "slice_and_dice", "rupture", "adrenaline_rush", "blade_flurry", "thistle_tea", "expose_armor", "vanish", "garrote", "stealth"]
+      bar: ["sinister_strike", "eviscerate", "slice_and_dice", "rupture", "adrenaline_rush", "blade_flurry", "thistle_tea", "expose_armor", "vanish", "garrote", "stealth", "shank"]
     },
     {
       id: "subtlety",
       name: "Subtlety",
-      points: "15/0/36",
-      blurb: "Daggers from the shadows: Ambush and Premeditation, Hemorrhage and Ghostly Strike, Cutthroat and Thousand Cuts. Preparation resets Vanish for another opener.",
+      points: "19/0/32",
+      blurb: "Daggers from the shadows: Ambush and Premeditation, Hemorrhage and Ghostly Strike, Shank with Boot Knife, and Death Mark. Preparation resets Vanish for another opener.",
       options: { mainHand: "dagger", offHand: "dagger", mhPoison: "instant", ohPoison: "instant" },
       talents: {
         malice: 5,
         ruthlessness: 3,
-        improved_slice_and_dice: 2,
-        lethality: 5,
-        camouflage: 5,
-        opportunity: 2,
+        improved_expose_armor: 2,
+        improved_slice_and_dice: 3,
+        vigor: 2,
+        blood_splatter: 1,
+        lethality: 2,
+        vile_poisons: 1,
         setup: 1,
-        elusiveness: 2,
+        opportunity: 5,
+        camouflage: 3,
+        dirty_deeds: 2,
         improved_ambush: 3,
         initiative: 3,
-        ghostly_strike: 1,
         premeditation: 1,
         serrated_blades: 3,
-        dirty_deeds: 2,
+        elusiveness: 2,
+        ghostly_strike: 1,
         preparation: 1,
         hemorrhage: 1,
-        quietus: 5,
-        cutthroat: 5,
-        thousand_cuts: 1
+        boot_knife: 5,
+        death_mark: 1
       },
-      bar: ["ghostly_strike", "hemorrhage", "rupture", "ambush", "garrote", "slice_and_dice", "eviscerate", "preparation", "stealth", "premeditation", "expose_armor", "vanish"]
+      bar: ["ghostly_strike", "hemorrhage", "shank", "rupture", "ambush", "slice_and_dice", "eviscerate", "death_mark", "preparation", "stealth", "premeditation", "vanish"]
     }
   ];
 
@@ -4172,6 +4227,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       return { main: makeWeapon(pick(o.mainHand, "sword"), "main", g.wdps || 40), off: makeWeapon(pick(o.offHand, "dagger"), "off", g.odps || 35) };
     },
     trees: trees2,
+    talentHistory: talentHistory2,
+    // earlier trees, so older build links still open (talent-history.js)
     // The poison bar: each poison for the main hand (MH) and the off hand (OH).
     stanceBar: { label: "Poisons", abilities: ["instant_poison_mh", "deadly_poison_mh", "instant_poison_oh", "deadly_poison_oh"] },
     abilities: [...abilities2, ...extra2.abilities],
@@ -4213,10 +4270,31 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
     applyExposeArmor(game, ctx) {
       applyAura(game, ctx.target, auras2.expose_armor, { source: game.player, data: { armor: 450 * ctx.combo } });
     },
+    // Shank: gives back Energy (Flash of Steel adds more) and, with Boot Knife, can add 2 combo points (launch notes).
+    afterShank(game, ctx) {
+      game.gainPower("energy", 25 + 3 * game.rank("flash_of_steel"));
+      const bk = game.rank("boot_knife");
+      if (bk && game.rng() < 0.2 * bk) addCombo(game, ctx.target, 2);
+      if (game.rank("venom")) applyAura(game, game.player, auras2.venom, { source: game.player });
+    },
+    // Death Mark: stores a share of the Rogue's damage on the target per combo point, dealt when the mark ends
+    // (DEATH_MARK in abilities.js: SUPPOSED numbers; Coup de Grace raises the damage and the storage rate).
+    applyDeathMark(game, ctx) {
+      const cdg = [0, 0.07, 0.13, 0.2][game.rank("coup_de_grace")];
+      applyAura(game, ctx.target, auras2.death_mark, { source: game.player, duration: DEATH_MARK.duration, data: { rate: DEATH_MARK.rate * Math.max(1, ctx.combo) * (1 + cdg), bonus: 1 + cdg, stored: 0, ability: ctx.ability } });
+    },
+    releaseDeathMark(game, a) {
+      const amount = Math.round((a.data.stored || 0) * (a.data.bonus || 1));
+      if (amount <= 0 || a.unit.dead) return;
+      const ctx = { castId: ++game.castSeq, caster: game.player, target: a.unit, schools: ["physical"], ability: a.data.ability };
+      game.reportDamage(ctx, { outcome: "hit", amount }, { name: "Death Mark" });
+    },
     // Baseline rules, no talent needed.
     mods(game) {
       return [
         add("critChance", 1, (ctx) => !!ctx.coldBlood),
+        // Poised (level 18): at full Energy and out of combat, the next ability costs 10 less (Composure: 5 more per rank).
+        add("cost", (ctx, g) => -(10 + 5 * g.rank("composure")), (ctx, g) => ctx.baseCost > 0 && !g.inCombat() && g.player.res.energy.power >= g.resource.max(g)),
         // Poisons are spells: melee hit from gear does not help them land.
         { key: "hitChance", fn: (v, ctx, g) => ctx.tags && ctx.tags.includes("poison") ? v - g.stats().hit : v },
         mult("damageMult", 1.2, (ctx, g) => isAbility(ctx, "mutilate") && !!findAura(ctx.target, "deadly_poison", g.player))
@@ -4234,7 +4312,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
         const chance = kind.chance + applyMods(game, "poisonChance", 0, c);
         if (game.rng() >= chance) return;
         const pctx = { castId: ++game.castSeq, caster: p(), target: c.target, schools: ["nature"], tags: ["poison"], ability: instantPoison };
-        if (kind === POISONS.instant) spellHit(game, pctx, { min: 76, max: 100, coef: 0, binary: true, name: "Instant Poison" });
+        const ap = 0.01 * attackPower(game, { caster: p() });
+        if (kind === POISONS.instant) spellHit(game, pctx, { min: 76 + ap, max: 100 + ap, coef: 0, binary: true, name: "Instant Poison" });
         else if (game.rng() >= missChance(game, pctx)) applyAura(game, c.target, auras2.deadly_poison, { source: p(), data: { ability: { id: "deadly_poison", name: "Deadly Poison", schools: ["nature"], tags: ["poison"] } } });
       });
       on("damage", (ev) => {
@@ -4250,6 +4329,19 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
           ctx.coldBlood = true;
           removeAura(game, a, "consumed");
         }
+      });
+      on("cast:success", ({ ability }) => {
+        if (ability.id !== "ambush" && ability.id !== "garrote") return;
+        const a = findAura(p(), "ghostly_strike");
+        if (a && !p().auras.some((x) => x.def.flags && x.def.flags.stealth)) removeAura(game, a, "consumed");
+      });
+      on("damage", (ev) => {
+        const c = ev.ctx;
+        if (!isPlayer(game, ev) || !(ev.res.amount > 0) || !c.target) return;
+        const m = findAura(c.target, "death_mark", p());
+        if (!m) return;
+        const id = c.ability && c.ability.id;
+        m.data.stored = (m.data.stored || 0) + ev.res.amount * m.data.rate * (id === "garrote" || id === "rupture" ? 2 : 1);
       });
       on("cast:success", ({ ability }) => {
         if (ability.id === "vanish") game.stopAttack();
@@ -4269,7 +4361,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       relentless_strikes: {
         listen(game, r, on) {
           on("cast:success", ({ ability, ctx }) => {
-            if (ability.finisher && game.rng() < 0.2 * (ctx.combo || 0)) game.resource.gain(game, game.player, 25);
+            if (ability.finisher && game.rng() < 0.04 * r * (ctx.combo || 0)) game.resource.gain(game, game.player, 25);
           });
         }
       },
@@ -4281,7 +4373,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
           });
         }
       },
-      lethality: { mods: (r) => [mult("critBonusMult", 1 + 0.04 * r, (ctx) => isAbility(ctx, "sinister_strike", "gouge", "backstab", "mutilate", "ghostly_strike", "hemorrhage"))] },
+      blood_splatter: { mods: () => [add("auraDuration", 6, (ctx) => ctx.auraId === "rupture"), add("auraDuration", 9, (ctx) => ctx.auraId === "garrote")] },
+      lethality: { mods: (r) => [mult("critBonusMult", 1 + 0.1 * r, (ctx) => isAbility(ctx, "sinister_strike", "gouge", "backstab", "mutilate", "ghostly_strike", "hemorrhage"))] },
       vile_poisons: { mods: (r) => [mult("damageMult", 1 + 0.04 * r, (ctx) => !!ctx.tags && ctx.tags.includes("poison"))] },
       cold_blood: { teaches: "cold_blood" },
       improved_poisons: { mods: (r) => [add("poisonChance", 0.02 * r)] },
@@ -4293,16 +4386,18 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
           on("damage", (ev) => {
             const ab = ev.ctx.ability;
             if (ev.periodic || ev.ctx.cleave || !ab || !ab.builder || ev.res.outcome !== "crit" || !isPlayer(game, ev)) return;
-            if (game.rng() < 0.2 * r) addCombo(game, ev.ctx.target, 1);
+            if (game.rng() < [0.33, 0.66, 1][r - 1]) addCombo(game, ev.ctx.target, 1);
           });
         }
       },
-      venom: { teaches: "venom" },
+      venom: {},
+      // after Shank (afterShank)
       /* ---------- Combat ---------- */
       lightning_reflexes: { mods: (r) => [add("dodgeChance", 0.01 * r)] },
       deflection: { mods: (r) => [add("parryChance", 0.02 * r)] },
-      improved_eviscerate: { mods: (r) => [mult("damageMult", 1 + [0.07, 0.13, 0.2][r - 1], (ctx) => isAbility(ctx, "eviscerate"))] },
-      improved_sinister_strike: { mods: (r) => [add("cost", -[3, 5][r - 1], (ctx) => isAbility(ctx, "sinister_strike"))] },
+      coup_de_grace: { mods: (r) => [mult("damageMult", 1 + [0.07, 0.13, 0.2][r - 1], (ctx) => isAbility(ctx, "eviscerate"))] },
+      // Death Mark's part: applyDeathMark
+      efficient_strikes: { mods: (r) => [add("cost", -[3, 5][r - 1], (ctx) => isAbility(ctx, "sinister_strike", "hemorrhage"))] },
       puncturing_wounds: {
         mods: (r) => [
           add("critChance", 0.1 * r, (ctx) => isAbility(ctx, "backstab")),
@@ -4315,8 +4410,14 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
         }
       },
       precision: { mods: (r) => [add("hitChance", 0.01 * r, (ctx) => !!ctx.melee)] },
-      flawless_execution: { mods: () => [add("cost", -10, (ctx) => isAbility(ctx, "eviscerate"))] },
-      dual_wield_specialization: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => !!ctx.melee && ctx.hand === "off")] },
+      flawless_execution: { mods: () => [add("cost", -15, (ctx) => isAbility(ctx, "eviscerate"))] },
+      dual_wield_specialization: { mods: (r) => [mult("damageMult", 1 + 0.25 * r, (ctx) => !!ctx.melee && ctx.hand === "off")] },
+      composure: {},
+      // in Poised (mods)
+      flash_of_steel: { mods: (r) => [add("cooldown", -0.4 * r, (ctx) => isAbility(ctx, "shank"))] },
+      // its Energy: afterShank
+      boot_knife: {},
+      // afterShank
       blade_flurry: { teaches: "blade_flurry" },
       hack_and_slash: {
         mods: (r) => [
@@ -4333,12 +4434,12 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
         }
       },
       weapon_expertise: { mods: (r) => [add("avoidanceReduction", 0.01 * r)] },
-      aggression: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx) => isAbility(ctx, "sinister_strike", "backstab", "eviscerate"))] },
+      aggression: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "sinister_strike", "eviscerate"))] },
       adrenaline_rush: { teaches: "adrenaline_rush" },
       /* ---------- Subtlety ---------- */
-      camouflage: { mods: (r) => [add("cooldown", -[2, 3, 4, 5, 6][r - 1], (ctx) => isAbility(ctx, "stealth"))] },
+      camouflage: { mods: (r) => [add("cooldown", -2 * r, (ctx) => isAbility(ctx, "stealth"))] },
       // the speed part is in the Stealth aura
-      opportunity: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "backstab", "garrote", "ambush", "mutilate"))] },
+      opportunity: { mods: (r) => [mult("damageMult", 1 + 0.04 * r, (ctx) => isAbility(ctx, "backstab", "garrote", "ambush", "mutilate"))] },
       elusiveness: { mods: (r) => [add("cooldown", -45 * r, (ctx) => isAbility(ctx, "vanish"))] },
       improved_ambush: { mods: (r) => [add("critChance", 0.15 * r, (ctx) => isAbility(ctx, "ambush"))] },
       initiative: {
@@ -4364,38 +4465,12 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       },
       preparation: { teaches: "preparation" },
       hemorrhage: { teaches: "hemorrhage" },
-      quietus: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx) => isAbility(ctx, "sinister_strike", "ghostly_strike", "hemorrhage") && !!ctx.target && ctx.target.hp < ctx.target.maxHp * 0.35)] },
-      cutthroat: {
-        listen(game, r, on) {
-          on("spell:resolved", ({ ability, ctx }) => {
-            if (ability.id === "backstab" && landedRes(ctx.result) && game.rng() < 0.03 * r) applyAura(game, game.player, auras2.cutthroat, { source: game.player });
-          });
-          on("cast:success", ({ ability }) => {
-            if (ability.id === "ambush") {
-              const a = findAura(game.player, "cutthroat");
-              if (a) removeAura(game, a, "consumed");
-            }
-          });
-        }
-      },
-      thousand_cuts: {
-        listen(game, r, on) {
-          on("damage", (ev) => {
-            if (ev.periodic && ev.ctx.aura && ev.ctx.aura.id === "rupture" && isPlayer(game, ev)) applyAura(game, game.player, auras2.thousand_cuts, { source: game.player });
-          });
-          on("cast:success", ({ ability }) => {
-            if (ability.id === "hemorrhage" || ability.id === "backstab") {
-              const a = findAura(game.player, "thousand_cuts");
-              if (a) removeAura(game, a, "consumed");
-            }
-          });
-        }
-      }
+      death_mark: { teaches: "death_mark" }
     }
   };
 
   // src/classes/warrior/talent-data.js
-  var SOURCE3 = { site: "foreverchanges.pro/talents/warrior", build: "1.60.1.70532", extracted: "2026-10-23" };
+  var SOURCE3 = { site: "foreverchanges.pro/talents/warrior", build: "1.60.1.70753", extracted: "2026-11-03" };
   var per2 = (values, fn) => values.map(fn);
   var weaponmaster = (n) => `Gives your melee weapon attacks a benefit depending on the weapon.
 Axe/Polearm: Increases your critical strike chance by ${n}%.
@@ -4411,17 +4486,17 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         { id: "deflection", name: "Deflection", icon: "ability_parry", tier: 0, col: 1, max: 5, ranks: per2([1, 2, 3, 4, 5], (n) => `Increases your Parry chance by ${n}%.`) },
         { id: "improved_rend", name: "Improved Rend", icon: "ability_gouge", tier: 0, col: 2, max: 3, ranks: per2([12, 23, 35], (n) => `Increases the Bleed damage done by your Rend ability by ${n}%.`) },
         { id: "improved_charge", name: "Improved Charge", icon: "ability_warrior_charge", tier: 1, col: 0, max: 2, ranks: per2([3, 6], (n) => `Increases the Rage generated by your Charge ability by ${n}.`) },
-        { id: "improved_tactical_mastery", name: "Improved Tactical Mastery", icon: "spell_nature_enchantarmor", tier: 1, col: 1, max: 5, ranks: per2([3, 6, 9, 12, 15], (n) => `Tactical Mastery lets you retain up to an additional ${n} Rage when you change stances.`) },
+        { id: "improved_tactical_mastery", name: "Improved Tactical Mastery", icon: "spell_nature_enchantarmor", tier: 1, col: 1, max: 3, notes: true, ranks: ["Tactical Mastery lets you retain up to an additional 5 Rage when you change stances.", "Tactical Mastery lets you retain up to an additional 10 Rage when you change stances.", "Tactical Mastery lets you retain up to an additional 15 Rage when you change stances."] },
         { id: "improved_overpower", name: "Improved Overpower", icon: "inv_sword_05", tier: 1, col: 3, max: 2, ranks: per2([25, 50], (n) => `Increases the critical strike chance of your Overpower ability by ${n}%.`) },
         { id: "anger_management", name: "Anger Management", icon: "spell_holy_blessingofstamina", tier: 2, col: 1, max: 1, req: "improved_tactical_mastery", ranks: ["Generates 1 Rage every 3 sec while in combat, and reduces Rage loss while out of combat by 30%."] },
         { id: "deep_wounds", name: "Deep Wounds", icon: "ability_backstab", tier: 2, col: 2, max: 3, req: "improved_rend", ranks: per2([20, 40, 60], (n) => `Your critical strikes cause your opponent to Bleed, dealing ${n}% of your melee weapon's average damage over 12 sec.`) },
         { id: "spearing_strike", name: "Spearing Strike", icon: "inv_spear_01", tier: 3, col: 0, max: 1, active: true, ranks: ["Teaches Spearing Strike: a brutal attack that deals 40% weapon damage. Deals an additional 80% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted. 15 Rage, 20 sec cooldown."] },
-        { id: "two_handed_weapon_specialization", name: "Two-Handed Weapon Specialization", icon: "inv_axe_09", tier: 3, col: 1, max: 3, ranks: per2([1, 2, 3], (n) => `Increases the damage you deal with two-handed melee weapons by ${n}%.`) },
+        { id: "two_handed_weapon_specialization", name: "Two-Handed Weapon Specialization", icon: "inv_axe_09", tier: 3, col: 1, max: 3, notes: true, ranks: ["Increases the damage you deal with two-handed melee weapons by 2%.", "Increases the damage you deal with two-handed melee weapons by 4%.", "Increases the damage you deal with two-handed melee weapons by 6%."] },
         { id: "impale", name: "Impale", icon: "ability_searingarrow", tier: 3, col: 2, max: 2, req: "deep_wounds", ranks: per2([10, 20], (n) => `Increases the critical strike damage bonus of your abilities by ${n}%.`) },
-        { id: "bloodthrill", name: "Bloodthrill", icon: "inv_sword_01", tier: 4, col: 0, max: 5, ranks: per2([4, 8, 12, 16, 20], (n) => `Grants your Main Hand melee attacks against enemies afflicted by your Rend a ${n}% chance to allow an activation of Overpower.`) },
+        { id: "bloodthrill", name: "Bloodthrill", icon: "inv_sword_01", tier: 4, col: 0, max: 2, notes: true, ranks: ["Grants your Main Hand melee attacks against enemies afflicted by your Rend a 10% chance to allow an activation of Overpower.", "Grants your Main Hand melee attacks against enemies afflicted by your Rend a 20% chance to allow an activation of Overpower."] },
         { id: "sweeping_strikes", name: "Sweeping Strikes", icon: "ability_rogue_slicedice", tier: 4, col: 1, max: 1, active: true, ranks: ["Teaches Sweeping Strikes: your next 5 melee attacks strike an additional nearby opponent. 30 Rage, 30 sec cooldown."] },
         { id: "weaponmaster", name: "Weaponmaster", icon: "garrison_weaponupgrade", tier: 4, col: 2, max: 5, ranks: per2([1, 2, 3, 4, 5], weaponmaster) },
-        { id: "improved_slam", name: "Improved Slam", icon: "ability_warrior_decisivestrike", tier: 5, col: 0, max: 2, ranks: per2(["0.25", "0.50"], (n) => `Reduces the global cooldown and cast time of your Slam ability by ${n} sec. In addition, Slam no longer interrupts or delays your melee swing and Slam's cooldown is reduced by 3.0 sec.`) },
+        { id: "improved_slam", name: "Improved Slam", icon: "ability_warrior_decisivestrike", tier: 5, col: 0, max: 2, notes: true, ranks: ["Reduces the global cooldown and cast time of your Slam ability by 0.25 sec. In addition, Slam no longer interrupts or delays your melee swing and Slam's cooldown is reduced by 2.5 sec.", "Reduces the global cooldown and cast time of your Slam ability by 0.50 sec. In addition, Slam no longer interrupts or delays your melee swing and Slam's cooldown is reduced by 5.0 sec."] },
         { id: "improved_hamstring", name: "Improved Hamstring", icon: "ability_shockwave", tier: 5, col: 2, max: 3, ranks: per2([5, 10, 15], (n) => `Gives your Hamstring ability a ${n}% chance to immobilize the target for 5 sec.`) },
         { id: "mortal_strike", name: "Mortal Strike", icon: "ability_warrior_savageblow", tier: 6, col: 1, max: 1, req: "sweeping_strikes", active: true, ranks: ["Teaches Mortal Strike: a vicious strike that deals weapon damage plus an amount and wounds the target, reducing the effectiveness of any healing by 50% for 10 sec. 30 Rage, 6 sec cooldown."] }
       ]
@@ -4431,23 +4506,25 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       name: "Fury",
       icon: "ability_warrior_innerrage",
       talents: [
-        { id: "booming_voice", name: "Booming Voice", icon: "spell_nature_purge", tier: 0, col: 1, max: 5, ranks: per2([[10, 5], [20, 10], [30, 15], [40, 20], [50, 25]], ([a, b]) => `Increases the area of effect of your Shouts by ${a}% and reduces their Rage cost by ${b}%.`) },
+        { id: "booming_voice", name: "Booming Voice", icon: "spell_nature_purge", tier: 0, col: 1, max: 5, notes: true, ranks: ["Increases the area of effect of your Shouts by 10% and reduces their Rage cost by 5%. Also reduces the Rage cost of your Piercing Howl by 5%.", "Increases the area of effect of your Shouts by 20% and reduces their Rage cost by 10%. Also reduces the Rage cost of your Piercing Howl by 10%.", "Increases the area of effect of your Shouts by 30% and reduces their Rage cost by 15%. Also reduces the Rage cost of your Piercing Howl by 15%.", "Increases the area of effect of your Shouts by 40% and reduces their Rage cost by 20%. Also reduces the Rage cost of your Piercing Howl by 20%.", "Increases the area of effect of your Shouts by 50% and reduces their Rage cost by 25%. Also reduces the Rage cost of your Piercing Howl by 25%."] },
         { id: "cruelty", name: "Cruelty", icon: "ability_rogue_eviscerate", tier: 0, col: 2, max: 5, ranks: per2([1, 2, 3, 4, 5], (n) => `Improves your chance to get a critical strike with melee attacks by ${n}%.`) },
         { id: "lingering_rage", name: "Lingering Rage", icon: "ability_warrior_secondwind", tier: 1, col: 1, max: 5, ranks: per2([2, 4, 6, 8, 10], (n) => `Increases the time before your Rage begins to decay after leaving combat by ${n} sec.`) },
         { id: "unbridled_wrath", name: "Unbridled Wrath", icon: "spell_nature_stoneclawtotem", tier: 1, col: 2, max: 5, ranks: per2([12, 24, 36, 48, 60], (n) => `Gives you a ${n}% chance to generate 1 additional Rage when you deal melee damage with a weapon.`) },
         { id: "furious_precision", name: "Furious Precision", icon: "ability_warrior_incite", tier: 2, col: 0, max: 3, ranks: per2([4, 7, 10], (n) => `Increases your chance to hit with off-hand attacks by ${n}%.`) },
         { id: "piercing_howl", name: "Piercing Howl", icon: "spell_shadow_deathscream", tier: 2, col: 1, max: 1, active: true, ranks: ["Causes all enemies within 10 yds to be Dazed, reducing movement speed by 50% for 6 sec. 10 Rage."] },
-        { id: "blood_craze", name: "Blood Craze", icon: "spell_shadow_summonimp", tier: 2, col: 2, max: 3, ranks: per2([1, 2, 3], (n) => `Regenerates ${n}% of your total Health over 6 sec after being the victim of a critical strike or suffering more than 20% of your maximum Health from a single attack.`) },
+        { id: "blood_craze", name: "Blood Craze", icon: "spell_shadow_summonimp", tier: 2, col: 2, max: 3, notes: true, ranks: per2([1, 2, 3], (n) => `Regenerates ${n}% of your total Health over 6 sec after being the victim of a critical strike or suffering more than 20% of your maximum Health from a single attack.`) },
+        { id: "enrage", name: "Enrage", icon: "spell_shadow_unholyfrenzy", tier: 2, col: 3, max: 5, notes: true, ranks: per2([2, 4, 6, 8, 10], (n) => `Gives you a 30% chance to deal ${n}% increased Physical damage for 12 sec after being the victim of any damaging attack.`) },
         { id: "dual_wield_specialization", name: "Dual Wield Specialization", icon: "ability_dualwield", tier: 3, col: 0, max: 5, ranks: per2([[5, 10], [10, 20], [15, 30], [20, 40], [25, 50]], ([a, b]) => `Increases the damage done by your off-hand weapon by ${a}% and the Rage generated by your off-hand attacks by ${b}%.`) },
         { id: "raging_blows", name: "Raging Blows", icon: "ability_whirlwind", tier: 3, col: 1, max: 1, ranks: ["Reduces the Rage cost of your Cleave and Whirlwind abilities by 3."] },
-        { id: "enrage", name: "Enrage", icon: "spell_shadow_unholyfrenzy", tier: 3, col: 2, max: 5, ranks: per2([2, 4, 6, 8, 10], (n) => `Gives you a 30% chance to deal ${n}% increased Physical damage for 12 sec after being the victim of any damaging attack.`) },
+        { id: "reckless_swings", name: "Reckless Swings", icon: "ability_warrior_endlessrage", tier: 3, col: 2, max: 1, notes: true, active: true, ranks: ["Your next 4 melee attacks generate 5 additional Rage. Lasts 8 sec."] },
         { id: "improved_execute", name: "Improved Execute", icon: "inv_sword_48", tier: 3, col: 3, max: 2, ranks: per2([3, 5], (n) => `Reduces the Rage cost of your Execute ability by ${n}.`) },
         { id: "improved_berserker_rage", name: "Improved Berserker Rage", icon: "spell_nature_ancestralguardian", tier: 4, col: 0, max: 2, ranks: per2([[5, 50], [10, 100]], ([a, b]) => `Your Berserker Rage ability will instantly generate ${a} Rage and has a ${b}% chance to remove all movement impairing effects when activated.`) },
         { id: "death_wish", name: "Death Wish", icon: "spell_shadow_deathpact", tier: 4, col: 1, max: 1, active: true, ranks: ["Teaches Death Wish: when activated, increases your Physical damage done by 20% and makes you immune to Fear effects, but increases all damage you take by 5%. Lasts 30 sec. 10 Rage, 3 min cooldown."] },
+        { id: "gore_drinker", name: "Gore Drinker", icon: "racial_troll_berserk", tier: 4, col: 2, max: 2, req: "blood_craze", notes: true, ranks: per2(["0.5", "1.0"], (n) => `Your Enrage, Berserker Rage, Bloodrage, Death Wish, and Bloodthirst abilities cause your next 3 melee attacks to restore ${n}% of your maximum Health.`) },
         { id: "improved_intercept", name: "Improved Intercept", icon: "ability_rogue_sprint", tier: 4, col: 3, max: 2, ranks: per2([5, 10], (n) => `Reduces the cooldown of your Intercept ability by ${n} sec.`) },
-        { id: "flurry", name: "Flurry", icon: "ability_ghoulfrenzy", tier: 5, col: 1, max: 5, req: "death_wish", ranks: per2([5, 10, 15, 20, 25], (n) => `Increases your melee attack speed by ${n}% for your next 3 swings after dealing a melee critical strike.`) },
-        { id: "gore_drinker", name: "Gore Drinker", icon: "racial_troll_berserk", tier: 5, col: 2, max: 2, req: "enrage", ranks: per2(["0.5", "1.0"], (n) => `Your Enrage, Berserker Rage, Bloodrage, Death Wish, and Bloodthirst abilities cause your next 3 melee attacks to restore ${n}% of your maximum Health.`) },
-        { id: "bloodthirst", name: "Bloodthirst", icon: "spell_nature_bloodlust", tier: 6, col: 1, max: 1, active: true, ranks: ["Teaches Bloodthirst: instantly attack the target causing damage equal to 45% of your Attack Power plus an amount and increasing your movement speed by 10% for 10 sec. 30 Rage, 6 sec cooldown."] }
+        { id: "flurry", name: "Flurry", icon: "ability_ghoulfrenzy", tier: 5, col: 1, max: 3, notes: true, ranks: ["Increases your melee attack speed by 10% for your next 3 swings after dealing a melee critical strike.", "Increases your melee attack speed by 20% for your next 3 swings after dealing a melee critical strike.", "Increases your melee attack speed by 30% for your next 3 swings after dealing a melee critical strike."] },
+        { id: "improved_whirlwind", name: "Improved Whirlwind", icon: "ability_whirlwind", tier: 5, col: 2, max: 2, notes: true, ranks: ["Reduces the cooldown of your Whirlwind ability by 1 sec and increases the damage it deals to the closest enemy by 15%.", "Reduces the cooldown of your Whirlwind ability by 2 sec and increases the damage it deals to the closest enemy by 30%."] },
+        { id: "bloodthirst", name: "Bloodthirst", icon: "spell_nature_bloodlust", tier: 6, col: 1, max: 1, req: "death_wish", notes: true, active: true, ranks: ["Teaches Bloodthirst: instantly attack the target causing damage equal to 45% of your Attack Power plus an amount and increasing your movement speed by 10% for 10 sec. 30 Rage, 6 sec cooldown."] }
       ]
     },
     {
@@ -4464,7 +4541,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         { id: "last_stand", name: "Last Stand", icon: "spell_holy_ashestoashes", tier: 2, col: 0, max: 1, active: true, ranks: ["When activated, this ability temporarily grants you 30% of your maximum health for 20 sec. After the effect expires, the health is lost. 3 min cooldown."] },
         { id: "master_of_defense", name: "Master of Defense", icon: "ability_warrior_shieldguard", tier: 2, col: 1, max: 2, req: "shield_specialization", ranks: per2([50, 100], (n) => `Grants you a ${n}% chance to generate 5 Rage when you Dodge or Parry while a shield is equipped.`) },
         { id: "improved_disarm", name: "Improved Disarm", icon: "ability_warrior_disarm", tier: 2, col: 2, max: 3, ranks: per2([7, 13, 20], (n) => `Reduces the cooldown of your Disarm ability by ${n} secs.`) },
-        { id: "defiance", name: "Defiance", icon: "ability_warrior_innerrage", tier: 2, col: 3, max: 3, ranks: per2([5, 10, 15], (n) => `Increases all threat generated in Defensive stance by an additional ${n}% while a shield is equipped.`) },
+        { id: "defiance", name: "Defiance", icon: "ability_warrior_innerrage", tier: 2, col: 3, max: 3, notes: true, ranks: ["Increases all threat generated in Defensive stance by an additional 7% while a shield is equipped.", "Increases all threat generated in Defensive stance by an additional 13% while a shield is equipped.", "Increases all threat generated in Defensive stance by an additional 20% while a shield is equipped."] },
         { id: "improved_sunder_armor", name: "Improved Sunder Armor", icon: "ability_warrior_sunder", tier: 3, col: 0, max: 3, ranks: per2([1, 2, 3], (n) => `Reduces the Rage cost of your Sunder Armor ability by ${n}.`) },
         { id: "vanguard", name: "Vanguard", icon: "ability_warrior_shieldcharge", tier: 3, col: 1, max: 1, ranks: ["Your Charge ability is now usable while in Defensive Stance."] },
         { id: "improved_shield_bash", name: "Improved Shield Bash", icon: "ability_warrior_shieldbash", tier: 3, col: 2, max: 2, ranks: per2([50, 100], (n) => `Gives your Shield Bash ability a ${n}% chance to Silence the target for 3 sec.`) },
@@ -4474,6 +4551,24 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         { id: "bastion", name: "Bastion", icon: "inv_shield_04", tier: 5, col: 2, max: 5, ranks: per2([2, 4, 6, 8, 10], (n) => `Increases all damage you deal by ${n}% while a shield is equipped.`) },
         { id: "shield_slam", name: "Shield Slam", icon: "inv_shield_05", tier: 6, col: 1, max: 1, req: "concussion_blow", active: true, ranks: ["Teaches Shield Slam: slam the target with your shield, causing 421 to 439 damage, increased by your Block Value, and has a 50% chance of dispelling 1 magic effect on the target. Causes a very high amount of threat. 20 Rage, 6 sec cooldown."] }
       ]
+    }
+  ];
+
+  // src/classes/warrior/talent-history.js
+  var talentHistory3 = [
+    {
+      // 1.60.1.70753 (November 3): Reckless Swings and Improved Whirlwind came in; Enrage and Gore Drinker moved; Improved
+      // Tactical Mastery, Bloodthrill and Flurry changed ranks (Blizzard's launch notes).
+      until: "1.60.1.70753",
+      date: "November 3",
+      order: [
+        ["improved_heroic_strike", "deflection", "improved_rend", "improved_charge", "improved_tactical_mastery", "improved_overpower", "anger_management", "deep_wounds", "spearing_strike", "two_handed_weapon_specialization", "impale", "bloodthrill", "sweeping_strikes", "weaponmaster", "improved_slam", "improved_hamstring", "mortal_strike"],
+        ["booming_voice", "cruelty", "lingering_rage", "unbridled_wrath", "furious_precision", "piercing_howl", "blood_craze", "dual_wield_specialization", "raging_blows", "enrage", "improved_execute", "improved_berserker_rage", "death_wish", "improved_intercept", "flurry", "gore_drinker", "bloodthirst"],
+        ["improved_bloodrage", "shield_specialization", "iron_will", "anticipation", "improved_revenge", "improved_thunder_clap", "last_stand", "master_of_defense", "improved_disarm", "defiance", "improved_sunder_armor", "vanguard", "improved_shield_bash", "improved_shield_wall", "concussion_blow", "focused_rage", "bastion", "shield_slam"]
+      ],
+      renamed: {},
+      removed: {},
+      names: {}
     }
   ];
 
@@ -4685,8 +4780,9 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       ...melee2,
       cost: 15,
       castTime: 1.5,
-      cooldown: 18,
+      cooldown: 15,
       weaponStrike: true,
+      notes: true,
       effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1, flat: 87 }],
       text: "Slams the opponent, causing weapon damage plus 87."
     },
@@ -4809,6 +4905,26 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       effects: [{ type: "applyAura", to: "self", aura: "death_wish" }],
       text: "When activated, increases your Physical damage done by 20% and makes you immune to Fear effects, but increases all damage you take by 5%. Lasts 30 sec."
     },
+    {
+      id: "reckless_swings",
+      name: "Reckless Swings",
+      icon: "ability_warrior_endlessrage",
+      tree: "arms",
+      schools: ["physical"],
+      target: "self",
+      cooldown: 15,
+      gcd: false,
+      talent: "reckless_swings",
+      notes: true,
+      effects: [
+        // Costs 25% of base health (1689 at level 60, as Bloodrage).
+        { type: "custom", run: (g) => {
+          g.player.hp = Math.max(1, g.player.hp - Math.round(0.25 * 1689));
+        } },
+        { type: "applyAura", to: "self", aura: "reckless_swings" }
+      ],
+      text: "Costs 25% of your base health. Your next 4 melee attacks generate 5 additional Rage. Lasts 8 sec."
+    },
     /* ---------- Protection ---------- */
     {
       id: "bloodrage",
@@ -4846,7 +4962,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       setsOption: ["stance", "defensive"],
       usable: (g) => g.form() === "defensive" ? "You are already in that stance" : null,
       effects: [{ type: "setForm", aura: "defensive_stance" }],
-      text: "A defensive combat stance. Decreases damage taken by 10% and damage caused by 10%. Increases all threat generated by 30%."
+      text: "A defensive combat stance. Decreases damage taken by 10% and damage caused by 10%. Increases all threat generated by 80%."
     },
     {
       id: "sunder_armor",
@@ -4940,6 +5056,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   // src/classes/warrior/auras.js
   var physical = (ctx) => !ctx.schools || ctx.schools.includes("physical");
   var stun2 = (id, name, icon2, duration) => ({ id, name, icon: icon2, kind: "debuff", duration, flags: { stunned: true }, desc: () => "Stunned." });
+  var defensiveThreat = (g) => 1.8 * (g.cls.weapons(g).shield ? 1 + [0, 0.07, 0.13, 0.2][g.rank("defiance")] : 1);
   var auras3 = {
     /* ---------- talents that answer being hit ---------- */
     blood_craze: { id: "blood_craze", name: "Blood Craze", icon: "spell_shadow_summonimp", kind: "buff", hot: true, period: 2, duration: 6, desc: (a) => `Healing ${Math.round(a.data.perTick || 0)} every 2 sec.` },
@@ -4963,8 +5080,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       icon: "ability_warrior_defensivestance",
       kind: "buff",
       flags: { form: "defensive" },
-      mods: (a, g) => [mult("damageMult", 0.9), mult("damageTaken", 0.9), mult("threatMult", 1.3 * (g.cls.weapons(g).shield ? 1 + 0.05 * g.rank("defiance") : 1))],
-      desc: (a, g) => `Damage taken and damage caused decreased by 10%. Threat increased by ${Math.round((1.3 * (g.cls.weapons(g).shield ? 1 + 0.05 * g.rank("defiance") : 1) - 1) * 100)}%.`
+      mods: (a, g) => [mult("damageMult", 0.9), mult("damageTaken", 0.9), mult("threatMult", defensiveThreat(g))],
+      desc: (a, g) => `Damage taken and damage caused decreased by 10%. Threat increased by ${Math.round((defensiveThreat(g) - 1) * 100)}%.`
     },
     /* ---------- buffs ---------- */
     battle_shout: {
@@ -5007,6 +5124,15 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       mods: () => [mult("damageMult", 1.2, physical), mult("damageTaken", 1.05)],
       desc: () => "Physical damage increased by 20%. Damage taken increased by 5%."
     },
+    reckless_swings: {
+      id: "reckless_swings",
+      name: "Reckless Swings",
+      icon: "ability_warrior_endlessrage",
+      kind: "buff",
+      duration: 8,
+      charges: 4,
+      desc: (a) => `Your next ${a.charges} melee attacks generate 5 additional Rage.`
+    },
     flurry: {
       id: "flurry",
       name: "Flurry",
@@ -5014,8 +5140,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       kind: "buff",
       duration: 15,
       charges: 3,
-      mods: (a, g) => [mult("attackSpeed", 1 + 0.05 * g.rank("flurry"))],
-      desc: (a, g) => `Attack speed increased by ${5 * g.rank("flurry")}% for ${a.charges} more swings.`
+      mods: (a, g) => [mult("attackSpeed", 1 + 0.1 * g.rank("flurry"))],
+      desc: (a, g) => `Attack speed increased by ${10 * g.rank("flurry")}% for ${a.charges} more swings.`
     },
     /* ---------- debuffs on the target ---------- */
     rend: { id: "rend", name: "Rend", icon: "ability_gouge", kind: "debuff", schools: ["physical"], dot: { period: 3, ticks: 7, base: 147 } },
@@ -5062,15 +5188,17 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       options: { mainHand: "two_hand_sword", offHand: "none" },
       talents: {
         improved_heroic_strike: 3,
+        deflection: 3,
         improved_rend: 3,
-        improved_tactical_mastery: 5,
+        improved_charge: 2,
+        improved_tactical_mastery: 3,
         improved_overpower: 2,
         anger_management: 1,
         deep_wounds: 3,
         spearing_strike: 1,
         two_handed_weapon_specialization: 3,
         impale: 2,
-        bloodthrill: 5,
+        bloodthrill: 2,
         sweeping_strikes: 1,
         weaponmaster: 5,
         improved_slam: 2,
@@ -5090,25 +5218,27 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       blurb: "Two weapons in Berserker Stance. Bloodthirst and Whirlwind on cooldown, Heroic Strike to spend rage, Flurry from crits and Death Wish for burst.",
       options: { mainHand: "sword", offHand: "sword", stance: "berserker" },
       talents: {
-        deflection: 2,
+        deflection: 4,
         improved_rend: 3,
-        improved_tactical_mastery: 5,
+        improved_tactical_mastery: 3,
         anger_management: 1,
         deep_wounds: 3,
         cruelty: 5,
         lingering_rage: 2,
         unbridled_wrath: 5,
         furious_precision: 3,
+        enrage: 5,
         dual_wield_specialization: 5,
         raging_blows: 1,
-        enrage: 5,
+        reckless_swings: 1,
         improved_execute: 2,
         improved_berserker_rage: 2,
         death_wish: 1,
-        flurry: 5,
+        flurry: 3,
+        improved_whirlwind: 1,
         bloodthirst: 1
       },
-      bar: ["bloodthirst", "whirlwind", "heroic_strike", "rend", "execute", "slam", "hamstring", "berserker_rage", "bloodrage", "death_wish", "recklessness"]
+      bar: ["bloodthirst", "whirlwind", "heroic_strike", "rend", "execute", "slam", "hamstring", "berserker_rage", "bloodrage", "death_wish", "recklessness", "reckless_swings"]
     },
     {
       id: "protection",
@@ -5150,6 +5280,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   var landedRes2 = (res) => res && (res.outcome === "hit" || res.outcome === "crit" || res.outcome === "glance");
   var weaponOf2 = (game, ctx) => (warrior.weapons(game) || {})[ctx.hand || "main"];
   var family = (game, ctx) => (weaponOf2(game, ctx) || {}).family;
+  var NO_THREAT_HEAL = { blood_craze: { id: "blood_craze", name: "Blood Craze", threatMult: 0 }, gore_drinker: { id: "gore_drinker", name: "Gore Drinker", threatMult: 0 } };
   var directMelee = (game, ev) => !ev.periodic && ev.ctx.melee && !ev.ctx.cleave && isPlayer2(game, ev);
   var offensive = (ctx) => !!ctx.ability && !!ctx.ability.harmful && (ctx.baseCost || 0) > 0;
   var withWeapon = (ctx) => !!ctx.white || !!(ctx.ability && ctx.ability.weaponStrike);
@@ -5191,6 +5322,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
     // Stance bar beside the action bar.
     stanceBar: { label: "Stances", abilities: ["battle_stance", "defensive_stance", "berserker_stance"] },
     trees: trees3,
+    talentHistory: talentHistory3,
+    // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities3, ...extra3.abilities],
     // the rest of the spellbook: spellbook.js
     auras: { ...auras3, ...extra3.auras },
@@ -5243,7 +5376,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       const p = () => game.player;
       on("cast:success", ({ ability }) => {
         if (!ability.stance) return;
-        p().power = Math.min(p().power, TACTICAL_MASTERY + 3 * game.rank("improved_tactical_mastery"));
+        p().power = Math.min(p().power, TACTICAL_MASTERY + 5 * game.rank("improved_tactical_mastery"));
       });
       on("cast:success", ({ ability }) => {
         if (ability.id !== "slam" || game.rank("improved_slam") > 0) return;
@@ -5308,13 +5441,13 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         }
       },
       spearing_strike: { teaches: "spearing_strike" },
-      two_handed_weapon_specialization: { mods: (r) => [mult("damageMult", 1 + 0.01 * r, (ctx, g) => !!ctx.melee && !!(warrior.weapons(g).main || {}).twoHand)] },
+      two_handed_weapon_specialization: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx, g) => !!ctx.melee && !!(warrior.weapons(g).main || {}).twoHand)] },
       impale: { mods: (r) => [mult("critBonusMult", 1 + 0.1 * r, (ctx) => !!ctx.melee && !ctx.white && !!ctx.ability)] },
       bloodthrill: {
         listen(game, r, on) {
           on("damage", (ev) => {
             if (!directMelee(game, ev) || ev.ctx.hand === "off" || !landedRes2(ev.res)) return;
-            if (findAura(ev.ctx.target, "rend", game.player) && game.rng() < 0.04 * r) applyAura(game, game.player, auras3.overpower_ready, { source: game.player });
+            if (findAura(ev.ctx.target, "rend", game.player) && game.rng() < 0.1 * r) applyAura(game, game.player, auras3.overpower_ready, { source: game.player });
           });
         }
       },
@@ -5336,7 +5469,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         mods: (r) => [
           add("castTime", -0.25 * r, (ctx) => isAbility(ctx, "slam")),
           add("gcd", -0.25 * r, (ctx) => isAbility(ctx, "slam")),
-          add("cooldown", -3, (ctx) => isAbility(ctx, "slam")),
+          add("cooldown", -2.5 * r, (ctx) => isAbility(ctx, "slam")),
           set("swingWhileCasting", true, (ctx) => isAbility(ctx, "slam"))
         ]
       },
@@ -5345,7 +5478,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       // After a crit against you or a hit for more than 20% of your health: 1/2/3% of your health over 6 sec.
       blood_craze: {
         listen(game, r, on) {
-          const proc = () => applyAura(game, game.player, auras3.blood_craze, { source: game.player, data: { perTick: game.stats().maxHp * 0.01 * r / 3, ticks: 3 } });
+          const proc = () => applyAura(game, game.player, auras3.blood_craze, { source: game.player, data: { perTick: game.stats().maxHp * 0.01 * r / 3, ticks: 3, ability: NO_THREAT_HEAL.blood_craze } });
           on("hitTaken", ({ res }) => {
             if (res.outcome === "crit" && res.amount > 0 && !game.player.dead) proc();
           });
@@ -5375,12 +5508,12 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
             const a = findAura(game.player, "gore_drinker");
             if (!a || ev.ctx.goreDrunk) return;
             ev.ctx.goreDrunk = true;
-            healPlayer(game, game.stats().maxHp * 5e-3 * r, { name: "Gore Drinker", icon: "ability_warrior_bloodfrenzy", self: true });
+            healPlayer(game, game.stats().maxHp * 5e-3 * r, { name: "Gore Drinker", icon: "ability_warrior_bloodfrenzy", self: true, ctx: { caster: game.player, ability: NO_THREAT_HEAL.gore_drinker } });
             useCharge(game, a);
           });
         }
       },
-      booming_voice: { mods: (r) => [mult("cost", 1 - 0.05 * r, (ctx) => isAbility(ctx, "battle_shout"))] },
+      booming_voice: { mods: (r) => [mult("cost", 1 - 0.05 * r, (ctx) => isAbility(ctx, "battle_shout", "piercing_howl"))] },
       cruelty: { mods: (r) => [add("critChance", 0.01 * r, (ctx) => !!ctx.melee)] },
       lingering_rage: { mods: (r) => [add("rageDecayDelay", 2 * r)] },
       unbridled_wrath: {
@@ -5403,6 +5536,25 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       improved_berserker_rage: readByAbility,
       // Berserker Rage's rage, in abilities.js
       death_wish: { teaches: "death_wish" },
+      reckless_swings: {
+        teaches: "reckless_swings",
+        listen(game, r, on) {
+          on("damage", (ev) => {
+            if (!directMelee(game, ev) || !landedRes2(ev.res)) return;
+            const a = findAura(game.player, "reckless_swings");
+            if (a) {
+              game.gainPower("rage", 5);
+              useCharge(game, a);
+            }
+          });
+        }
+      },
+      improved_whirlwind: {
+        mods: (r) => [
+          add("cooldown", -r, (ctx) => isAbility(ctx, "whirlwind")),
+          mult("damageMult", 1 + 0.15 * r, (ctx) => isAbility(ctx, "whirlwind") && !!ctx.closest)
+        ]
+      },
       improved_intercept: { mods: (r) => [add("cooldown", -5 * r, (ctx) => isAbility(ctx, "intercept"))] },
       flurry: {
         listen(game, r, on) {
@@ -5454,7 +5606,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   };
 
   // src/classes/paladin/talent-data.js
-  var SOURCE4 = { site: "foreverchanges.pro/talents/paladin", build: "1.60.1.70707", extracted: "2026-10-31" };
+  var SOURCE4 = { site: "foreverchanges.pro/talents/paladin", build: "1.60.1.70753", extracted: "2026-11-03" };
   var trees4 = [
     {
       id: "holy",
@@ -5520,10 +5672,10 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         { id: "pursuit_of_justice", name: "Pursuit of Justice", icon: "spell_holy_persuitofjustice", tier: 2, col: 3, max: 2, ranks: ["Increases movement speed and mounted movement speed by 8%. This does not stack with other movement speed increasing effects.", "Increases movement speed and mounted movement speed by 15%. This does not stack with other movement speed increasing effects."] },
         { id: "eye_for_an_eye", name: "Eye for an Eye", icon: "spell_holy_eyeforaneye", tier: 3, col: 0, max: 2, ranks: ["All critical strikes against you cause 5% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health.", "All critical strikes against you cause 10% of the damage taken to the attacker as well. The damage caused by Eye for an Eye will not exceed 50% of the Paladin's total health."] },
         { id: "sacred_arbiter", name: "Sacred Arbiter", icon: "inv_sword_08", tier: 3, col: 1, max: 1, ranks: ["Increases the damage of your Holy Strike ability by 20% and causes it to refresh all Judgement effects on the target."] },
-        { id: "two_handed_weapon_specialization", name: "Two-Handed Weapon Specialization", icon: "inv_hammer_04", tier: 3, col: 3, max: 3, ranks: ["Increases the physical damage you deal by 2%, and reduces all threat you generate by 7% while a two-handed melee weapon is equipped.", "Increases the physical damage you deal by 4%, and reduces all threat you generate by 14% while a two-handed melee weapon is equipped.", "Increases the physical damage you deal by 6%, and reduces all threat you generate by 20% while a two-handed melee weapon is equipped."] },
+        { id: "two_handed_weapon_specialization", name: "Two-Handed Weapon Specialization", icon: "inv_hammer_04", tier: 3, col: 3, max: 3, notes: true, ranks: ["Increases the Holy and physical damage you deal by 2%, and reduces all threat you generate by 7% while a two-handed melee weapon is equipped.", "Increases the Holy and physical damage you deal by 4%, and reduces all threat you generate by 14% while a two-handed melee weapon is equipped.", "Increases the Holy and physical damage you deal by 6%, and reduces all threat you generate by 20% while a two-handed melee weapon is equipped."] },
         { id: "turn_evil", name: "Turn Evil", icon: "spell_holy_turnundead", tier: 4, col: 0, max: 2, ranks: ["Reduces the cast time of your Turn Undead spell by 0.5 sec, its cooldown by 5 sec, and allows it to affect Demons.", "Reduces the cast time of your Turn Undead spell by 1.0 sec, its cooldown by 10 sec, and allows it to affect Demons."] },
         { id: "repentance", name: "Repentance", icon: "spell_holy_prayerofhealing", tier: 4, col: 1, max: 1, active: true, ranks: ["Puts the enemy target in a state of meditation, incapacitating them for up to 6 sec. Any damage caused will awaken the target. Only works against Humanoids."] },
-        { id: "vengeance", name: "Vengeance", icon: "ability_racial_avatar", tier: 4, col: 2, max: 3, req: "seal_of_command", ranks: ["Increases your Physical and Holy damage dealt by 1% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times.", "Increases your Physical and Holy damage dealt by 2% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times.", "Increases your Physical and Holy damage dealt by 3% for 30 sec after landing a non-periodic critical strike. Stacks up to 3 times."] },
+        { id: "vengeance", name: "Vengeance", icon: "ability_racial_avatar", tier: 4, col: 2, max: 3, req: "seal_of_command", notes: true, ranks: ["Increases your Physical and Holy damage dealt by 1% for 30 sec after landing a non-periodic critical strike. Stacks up to 5 times.", "Increases your Physical and Holy damage dealt by 2% for 30 sec after landing a non-periodic critical strike. Stacks up to 5 times.", "Increases your Physical and Holy damage dealt by 3% for 30 sec after landing a non-periodic critical strike. Stacks up to 5 times."] },
         { id: "champion_of_the_light", name: "Champion of the Light", icon: "ability_paladin_enlightenedjudgements", tier: 5, col: 2, max: 5, ranks: ["Increases your spell damage by up to 12% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.2 sec.", "Increases your spell damage by up to 24% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.4 sec.", "Increases your spell damage by up to 36% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.6 sec.", "Increases your spell damage by up to 48% of your Intellect, and reduces the cast time of your Hammer of Wrath by 0.8 sec.", "Increases your spell damage by up to 60% of your Intellect, and reduces the cast time of your Hammer of Wrath by 1.0 sec."] },
         { id: "unsealed_wrath", name: "Unsealed Wrath", icon: "spell_holy_blessedresillience", tier: 6, col: 1, max: 1, req: "repentance", ranks: ["Your melee attacks store a copy of your active Seal for 15 sec, stacking up to 3 times. Landing an attack with a different Seal consumes all stacks, giving the stored Seal its normal chance to activate once per stack."] }
       ]
@@ -5531,7 +5683,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   ];
 
   // src/classes/paladin/talent-history.js
-  var talentHistory2 = [
+  var talentHistory4 = [
     {
       // 1.60.1.70707 (October 30): the three trees remade. Voice of Truth became Oath of Light, Improved Seal of Fury
       // became Shieldsworn and Twist of Light became Unsealed Wrath (same places in the client's trees); Instrument of
@@ -5583,7 +5735,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   var ONE_HANDED = ["sword", "mace", "axe"];
   var basePct = (pct) => (g) => Math.round(g.stats().baseMana * pct);
   var undeadOrDemon = (t) => !!t && ["undead", "demon"].includes(t.creatureType);
-  var NO_TYPE = "Not in the lab yet: needs an Undead or Demon enemy";
+  var NO_TYPE = "Only works on Undead and Demons (Enemy type, under Advanced)";
   var seal = (id, name, icon2, tree, cost, text, extra10 = {}) => ({
     id,
     name,
@@ -6063,7 +6215,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       icon: "ability_racial_avatar",
       kind: "buff",
       duration: 30,
-      maxStacks: 3,
+      maxStacks: 5,
+      // 5 stacks: launch notes (was 3)
       mods: (a, g) => [mult("damageMult", 1 + 0.01 * g.rank("vengeance") * a.stacks, holyOrPhysical)],
       desc: (a, g) => `Physical and Holy damage increased by ${g.rank("vengeance") * a.stacks}%.`
     },
@@ -6308,7 +6461,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     stanceBar: { label: "Auras", abilities: ["devotion_aura", "retribution_aura", "concentration_aura"] },
     // the resistance auras are not simulated
     trees: trees4,
-    talentHistory: talentHistory2,
+    talentHistory: talentHistory4,
     // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities4, ...extra4.abilities],
     // the rest of the spellbook: spellbook.js
@@ -6586,10 +6739,10 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
           });
         }
       },
-      // With a two-hander: more physical damage, less threat.
+      // With a two-hander: more Holy and physical damage (Holy since the launch notes), less threat.
       two_handed_weapon_specialization: {
         mods: (r) => [
-          mult("damageMult", 1 + 0.02 * r, (ctx, g) => hasSchool(ctx, "physical") && !!mainWeapon(g) && mainWeapon(g).twoHand),
+          mult("damageMult", 1 + 0.02 * r, (ctx, g) => (hasSchool(ctx, "physical") || hasSchool(ctx, "holy")) && !!mainWeapon(g) && mainWeapon(g).twoHand),
           mult("threatMult", 1 - [0.07, 0.13, 0.2][r - 1], (ctx, g) => !!mainWeapon(g) && mainWeapon(g).twoHand)
         ]
       },
@@ -6612,7 +6765,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   };
 
   // src/classes/hunter/talent-data.js
-  var SOURCE5 = { site: "foreverchanges.pro/talents/hunter", build: "1.60.1.70532", extracted: "2026-10-23" };
+  var SOURCE5 = { site: "foreverchanges.pro/talents/hunter", build: "1.60.1.70753", extracted: "2026-11-03" };
   var trees5 = [
     {
       id: "beast_mastery",
@@ -6623,8 +6776,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         { id: "endurance_training", name: "Endurance Training", icon: "spell_nature_reincarnation", tier: 0, col: 2, max: 5, ranks: ["Increases the Health and Armor of your pets by 3%.", "Increases the Health and Armor of your pets by 6%.", "Increases the Health and Armor of your pets by 9%.", "Increases the Health and Armor of your pets by 12%.", "Increases the Health and Armor of your pets by 15%."] },
         { id: "focused_fire", name: "Focused Fire", icon: "inv_weapon_crossbow_10", tier: 1, col: 0, max: 2, ranks: ["Increases all damage you and your pet deal by 1% while your pet is active.", "Increases all damage you and your pet deal by 2% while your pet is active."] },
         { id: "improved_aspect_of_the_monkey", name: "Improved Aspect of the Monkey", icon: "ability_hunter_aspectofthemonkey", tier: 1, col: 1, max: 3, ranks: ["Increases the Dodge bonus of your Aspect of the Monkey by 2%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability.", "Increases the Dodge bonus of your Aspect of the Monkey by 4%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability.", "Increases the Dodge bonus of your Aspect of the Monkey by 6%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability."] },
-        { id: "pathfinding", name: "Pathfinding", icon: "ability_mount_jungletiger", tier: 1, col: 2, max: 2, ranks: ["Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 3%.", "Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 6%."] },
-        { id: "improved_revive_pet", name: "Improved Revive Pet", icon: "ability_hunter_beastsoothe", tier: 1, col: 3, max: 2, ranks: ["Revive Pet's casting time is reduced by 3 sec, mana cost is reduced by 20%, and increases the health your pet returns with by an additional 15%.", "Revive Pet's casting time is reduced by 6 sec, mana cost is reduced by 40%, and increases the health your pet returns with by an additional 30%."] },
+        { id: "improved_revive_pet", name: "Improved Revive Pet", icon: "ability_hunter_beastsoothe", tier: 1, col: 2, max: 2, ranks: ["Revive Pet's casting time is reduced by 3 sec, mana cost is reduced by 20%, and increases the health your pet returns with by an additional 15%.", "Revive Pet's casting time is reduced by 6 sec, mana cost is reduced by 40%, and increases the health your pet returns with by an additional 30%."] },
+        { id: "pathfinding", name: "Pathfinding", icon: "ability_mount_jungletiger", tier: 2, col: 0, max: 2, ranks: ["Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 3%.", "Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 6%."] },
         { id: "bestial_swiftness", name: "Bestial Swiftness", icon: "ability_druid_dash", tier: 2, col: 1, max: 1, ranks: ["Increases the movement speed of your pets by 30%."] },
         { id: "unleashed_fury", name: "Unleashed Fury", icon: "ability_bullrush", tier: 2, col: 2, max: 5, ranks: ["Increases the damage done by your pets and hawks by 3%.", "Increases the damage done by your pets and hawks by 6%.", "Increases the damage done by your pets and hawks by 9%.", "Increases the damage done by your pets and hawks by 12%.", "Increases the damage done by your pets and hawks by 15%."] },
         { id: "improved_mend_pet", name: "Improved Mend Pet", icon: "ability_hunter_mendpet", tier: 3, col: 0, max: 2, ranks: ["Gives your Mend Pet spell a 15% chance of cleansing 1 Curse, Disease, Magic, or Poison effect from your pet each time it heals and reduces the Mana cost by 10%.", "Gives your Mend Pet spell a 50% chance of cleansing 1 Curse, Disease, Magic, or Poison effect from your pet each time it heals and reduces the Mana cost by 20%."] },
@@ -6651,13 +6804,13 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         { id: "rapid_killing", name: "Rapid Killing", icon: "ability_hunter_rapidkilling", tier: 2, col: 0, max: 2, ranks: ["Reduces the cooldown on your Rapid Fire ability by 1 min. In addition, when you kill a non-trivial enemy or it dies while afflicted by your Serpent Sting, you gain Rapid Killing, increasing the damage of your next Shot ability within 20 sec by 10%.", "Reduces the cooldown on your Rapid Fire ability by 2 min. In addition, when you kill a non-trivial enemy or it dies while afflicted by your Serpent Sting, you gain Rapid Killing, increasing the damage of your next Shot ability within 20 sec by 20%."] },
         { id: "improved_arcane_shot", name: "Improved Arcane Shot", icon: "ability_impalingbolt", tier: 2, col: 1, max: 5, ranks: ["Reduces the cooldown of your Arcane Shot by 0.3 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.", "Reduces the cooldown of your Arcane Shot by 0.6 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.", "Reduces the cooldown of your Arcane Shot by 0.9 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.", "Reduces the cooldown of your Arcane Shot by 1.2 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot.", "Reduces the cooldown of your Arcane Shot by 1.5 sec. Does not affect the cooldown of abilities which share a cooldown with Arcane Shot."] },
         { id: "lone_wolf", name: "Lone Wolf", icon: "ability_mount_whitedirewolf", tier: 2, col: 3, max: 1, ranks: ["You deal 20% increased damage with all attacks while you do not have an active pet."] },
-        { id: "trueshot_aura", name: "Trueshot Aura", icon: "ability_trueshot", tier: 3, col: 1, max: 1, active: true, ranks: ["Increases the Ranged Attack Power of party or raid members within 45 yds by 30."] },
+        { id: "trueshot_aura", name: "Trueshot Aura", icon: "ability_trueshot", tier: 3, col: 1, max: 1, active: true, ranks: ["Increases the Ranged Attack Power of party or raid members within 45 yds by 20."] },
         { id: "mortal_shots", name: "Mortal Shots", icon: "ability_piercedamage", tier: 3, col: 2, max: 5, req: "careful_aim", ranks: ["Increases the critical strike damage bonus on all ranged abilities by 6%.", "Increases the critical strike damage bonus on all ranged abilities by 12%.", "Increases the critical strike damage bonus on all ranged abilities by 18%.", "Increases the critical strike damage bonus on all ranged abilities by 24%.", "Increases the critical strike damage bonus on all ranged abilities by 30%."] },
         { id: "rapid_recuperation", name: "Rapid Recuperation", icon: "ability_hunter_rapidregeneration", tier: 4, col: 0, max: 2, req: "rapid_killing", ranks: ["Afflicting a target with Serpent Sting allows 25% of your Mana Regeneration to continue while casting for 15 sec, increased to 50% when Rapid Killing is consumed.", "Afflicting a target with Serpent Sting allows 50% of your Mana Regeneration to continue while casting for 15 sec, increased to 100% when Rapid Killing is consumed."] },
-        { id: "barrage", name: "Barrage", icon: "ability_upgrademoonglaive", tier: 4, col: 2, max: 3, ranks: ["Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 3%.", "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 7%.", "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 10%."] },
+        { id: "barrage", name: "Barrage", icon: "ability_upgrademoonglaive", tier: 4, col: 2, max: 3, ranks: ["Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 5%.", "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 10%.", "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 15%."] },
         { id: "scatter_shot", name: "Scatter Shot", icon: "ability_golemstormbolt", tier: 4, col: 3, max: 1, active: true, ranks: ["A short-range shot that deals 50% weapon damage and disorients the target for 4 sec. Any damage caused will remove the effect. Turns off your attack when used."] },
         { id: "ranged_weapon_specialization", name: "Ranged Weapon Specialization", icon: "inv_weapon_rifle_06", tier: 5, col: 2, max: 5, ranks: ["Increases the damage you deal with ranged weapons by 1%.", "Increases the damage you deal with ranged weapons by 2%.", "Increases the damage you deal with ranged weapons by 3%.", "Increases the damage you deal with ranged weapons by 4%.", "Increases the damage you deal with ranged weapons by 5%."] },
-        { id: "sniper_shot", name: "Sniper Shot", icon: "hunter_pvp_snipershot", tier: 6, col: 1, max: 1, req: "trueshot_aura", active: true, ranks: ["A long-range shot that deals ranged damage plus 160 and increases the range of your next 3 Shots by 10 yards for 10 sec."] }
+        { id: "sniper_shot", name: "Sniper Shot", icon: "hunter_pvp_snipershot", tier: 6, col: 1, max: 1, req: "trueshot_aura", active: true, ranks: ["A long-range shot that deals ranged damage plus 320 and increases the range of your next 3 Shots by 10 yards for 10 sec."] }
       ]
     },
     {
@@ -6681,9 +6834,26 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         { id: "expose_prey", name: "Expose Prey", icon: "ability_hunter_swiftstrike", tier: 4, col: 1, max: 2, ranks: ["Grants your melee and ranged attacks against enemies afflicted by Hunter's Mark a 5% chance to allow an activation of Mongoose Bite. Lasts 10 sec.", "Grants your melee and ranged attacks against enemies afflicted by Hunter's Mark a 10% chance to allow an activation of Mongoose Bite. Lasts 10 sec."] },
         { id: "survivalists_discipline", name: "Survivalist's Discipline", icon: "ability_hunter_mastertactitian", tier: 4, col: 2, max: 2, ranks: ["Reduces the cooldown of your Trap and Deterrence abilities by 20%.", "Reduces the cooldown of your Trap and Deterrence abilities by 40%."] },
         { id: "strider_kick", name: "Strider Kick", icon: "ability_hunter_pet_tallstrider", tier: 4, col: 3, max: 1, active: true, ranks: ["A powerful kick that deals 100% melee weapon damage and increases movement speed by 30% for 3 sec."] },
-        { id: "lightning_reflexes", name: "Lightning Reflexes", icon: "spell_nature_invisibilty", tier: 5, col: 2, max: 5, ranks: ["Increases your Agility by 2%.", "Increases your Agility by 4%.", "Increases your Agility by 6%.", "Increases your Agility by 8%.", "Increases your Agility by 10%."] },
+        { id: "lightning_reflexes", name: "Lightning Reflexes", icon: "spell_nature_invisibilty", tier: 5, col: 2, max: 5, ranks: ["Increases your Agility by 3%.", "Increases your Agility by 6%.", "Increases your Agility by 9%.", "Increases your Agility by 12%.", "Increases your Agility by 15%."] },
         { id: "lacerating_strikes", name: "Lacerating Strikes", icon: "ability_gouge", tier: 6, col: 1, max: 1, req: "expose_prey", ranks: ["Your Mongoose Bite also causes the target to Bleed for damage equal to 40% of the damage done by Mongoose Bite over 21 sec"] }
       ]
+    }
+  ];
+
+  // src/classes/hunter/talent-history.js
+  var talentHistory5 = [
+    {
+      // 1.60.1.70753 (November 3): Improved Revive Pet and Pathfinding moved.
+      until: "1.60.1.70753",
+      date: "November 3",
+      order: [
+        ["deadly_aspects", "endurance_training", "focused_fire", "improved_aspect_of_the_monkey", "pathfinding", "improved_revive_pet", "bestial_swiftness", "unleashed_fury", "improved_mend_pet", "ferocity", "summon_hawk", "spirit_bond", "intimidation", "bestial_discipline", "frenzy", "bestial_wrath"],
+        ["hawk_eye", "improved_concussive_shot", "lethal_attacks", "improved_stings", "efficiency", "careful_aim", "rapid_killing", "improved_arcane_shot", "lone_wolf", "trueshot_aura", "mortal_shots", "rapid_recuperation", "barrage", "scatter_shot", "ranged_weapon_specialization", "sniper_shot"],
+        ["improved_tracking", "deflection", "entrapment", "savage_strikes", "survivalist", "improved_wing_clip", "clever_traps", "surefooted", "deterrence", "survival_tactics", "predators_edge", "counterattack", "resourcefulness", "expose_prey", "survivalists_discipline", "strider_kick", "lightning_reflexes", "lacerating_strikes"]
+      ],
+      renamed: {},
+      removed: {},
+      names: {}
     }
   ];
 
@@ -6809,8 +6979,10 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       speed: 45,
       sting: true,
       cost: 250,
-      effects: [{ type: "meleeDamage", hand: "ranged", noDamage: true, name: "Serpent Sting", onHit: [{ type: "applyAura", to: "target", aura: "serpent_sting" }] }],
-      text: "Stings the target, causing 555 Nature damage over 15 sec. Only one Sting per Hunter can be active on any one target."
+      notes: true,
+      // Launch notes: each tick gains 5% of the ranged attack power (was 3%), set when the sting lands.
+      effects: [{ type: "meleeDamage", hand: "ranged", noDamage: true, name: "Serpent Sting", onHit: [{ type: "applyAura", to: "target", aura: "serpent_sting", dynamic: (g, ctx) => ({ dot: { base: 675 + 5 * 0.05 * rangedAttackPower(g, ctx) } }) }] }],
+      text: "Stings the target, causing 675 Nature damage over 15 sec, plus 5% of your Ranged Attack Power per tick. Only one Sting per Hunter can be active on any one target."
     },
     {
       id: "arcane_shot",
@@ -6823,8 +6995,10 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       cost: 190,
       cooldown: 6,
       cooldownGroup: "arcane_shot",
-      effects: [{ type: "meleeDamage", hand: "ranged", min: 217, max: 217 }],
-      text: "An instant shot that causes 217 Arcane damage."
+      notes: true,
+      effects: [{ type: "meleeDamage", hand: "ranged", min: 280, max: 280, apCoef: 0.15 }],
+      // 15% of the attack power: launch notes (was 10%)
+      text: "An instant shot that causes 280 Arcane damage, plus 15% of your Ranged Attack Power."
     },
     {
       id: "aimed_shot",
@@ -6838,8 +7012,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       castTime: 2,
       cooldown: 6,
       cooldownGroup: "aimed_multi",
-      effects: [{ type: "weaponDamage", hand: "ranged", normalized: true, flat: 166 }],
-      text: "An aimed shot that increases ranged damage by 166. Aimed Shot shares its cooldown with Multi-Shot."
+      effects: [{ type: "weaponDamage", hand: "ranged", normalized: true, flat: 350 }],
+      text: "An aimed shot that increases ranged damage by 350. Aimed Shot shares its cooldown with Multi-Shot."
     },
     {
       id: "multi_shot",
@@ -6877,7 +7051,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       cost: 525,
       talent: "trueshot_aura",
       effects: [{ type: "applyAura", to: "self", aura: "trueshot_aura" }],
-      text: "Increases the Ranged Attack Power of party or raid members within 45 yards by 50. Lasts 30 min."
+      text: "Increases the Ranged Attack Power of party or raid members within 45 yards by 100. Lasts 30 min."
     },
     {
       id: "volley",
@@ -6906,8 +7080,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       castTime: 4,
       cooldown: 15,
       talent: "sniper_shot",
-      effects: [{ type: "weaponDamage", hand: "ranged", normalized: true, flat: 295 }, { type: "applyAura", to: "self", aura: "sniper_range", charges: 3 }],
-      text: "A long-range shot that deals ranged damage plus 295 and increases the range of your next 3 Shots by 10 yards for 10 sec."
+      effects: [{ type: "weaponDamage", hand: "ranged", normalized: true, flat: 590 }, { type: "applyAura", to: "self", aura: "sniper_range", charges: 3 }],
+      text: "A long-range shot that deals ranged damage plus 590 and increases the range of your next 3 Shots by 10 yards for 10 sec."
     },
     {
       id: "scatter_shot",
@@ -6992,7 +7166,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       target: "self",
       cost: 245,
       cooldown: 30,
-      cooldownGroup: "fire_trap",
+      cooldownGroup: "trap",
       trap: true,
       effects: [{ type: "custom", run: (g) => g.cls.placeTrap(g, "immolation_trap") }],
       text: "Place a Fire trap that will burn the first enemy to approach for 690 Fire damage over 15 sec. Trap will exist for 1 min. Only one Fire trap can be active at a time."
@@ -7006,7 +7180,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       target: "self",
       cost: 520,
       cooldown: 30,
-      cooldownGroup: "fire_trap",
+      cooldownGroup: "trap",
       trap: true,
       effects: [{ type: "custom", run: (g) => g.cls.placeTrap(g, "explosive_trap") }],
       text: "Place a Fire trap that explodes when an enemy approaches, causing 208 to 264 Fire damage and 330 additional Fire damage over 20 sec to all within 10 yards. Trap will exist for 1 min. Only one Fire trap can be active at a time."
@@ -7014,7 +7188,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   ];
 
   // src/classes/hunter/spellbook.js
-  var trap = (kind) => ({ notSimulated: false, harmful: false, target: "self", range: void 0, trap: true, cooldownGroup: "frost_trap", schools: ["frost"], effects: [{ type: "custom", run: (g) => g.cls.placeTrap(g, kind) }] });
+  var trap = (kind) => ({ notSimulated: false, harmful: false, target: "self", range: void 0, trap: true, cooldownGroup: "trap", schools: ["frost"], effects: [{ type: "custom", run: (g) => g.cls.placeTrap(g, kind) }] });
   var aspect = (id, extra10 = {}) => ({ id, name: id, kind: "buff", exclusive: "aspect", duration: Infinity, ...extra10 });
   var speed = { notSimulated: false, mods: () => [mult("runSpeed", 1.3)], desc: () => "Movement speed increased by 30%." };
   var extra5 = spellbookAbilities(SPELLBOOK5, {
@@ -7041,7 +7215,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     aspect_of_the_beast: aspect2("aspect_of_the_beast", "Aspect of the Beast", "ability_mount_pinktiger", () => "Melee attack power increased by 110.", () => [add("attackPower", 110)]),
     /* ---------- buffs on the Hunter ---------- */
     rapid_fire: { id: "rapid_fire", name: "Rapid Fire", icon: "ability_hunter_runningshot", kind: "buff", duration: 15, mods: () => [mult("attackSpeed", 1.4, (ctx) => !ctx.pet)], desc: () => "Ranged and melee attack speed increased by 40%." },
-    trueshot_aura: { id: "trueshot_aura", name: "Trueshot Aura", icon: "ability_trueshot", kind: "buff", duration: 1800, mods: () => [add("rangedAttackPower", 50)], desc: () => "Ranged attack power increased by 50." },
+    trueshot_aura: { id: "trueshot_aura", name: "Trueshot Aura", icon: "ability_trueshot", kind: "buff", duration: 1800, mods: () => [add("rangedAttackPower", 100)], desc: () => "Ranged attack power increased by 100." },
     sniper_range: { id: "sniper_range", name: "Sniper Shot", icon: "hunter_pvp_snipershot", kind: "buff", duration: 10, charges: 3, mods: () => [add("range", 10, (ctx) => !!ctx.ability && !!ctx.ability.shot)], desc: (a) => `Range of your next ${a.charges} Shots increased by 10 yards.` },
     // Deadly Aspects procs.
     quick_shots: { id: "quick_shots", name: "Quick Shots", icon: "ability_warrior_innerrage", kind: "buff", duration: 12, mods: () => [mult("attackSpeed", 1.3, (ctx) => !!ctx.ranged && !ctx.pet)], desc: () => "Ranged attack speed increased by 30%." },
@@ -7064,7 +7238,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       sourceMods: () => [add("rangedAttackPower", 143)],
       desc: () => "Ranged attack power of attackers increased by 143."
     },
-    serpent_sting: { id: "serpent_sting", name: "Serpent Sting", icon: "ability_hunter_quickshot", kind: "debuff", schools: ["nature"], dot: { period: 3, ticks: 5, base: 555 } },
+    serpent_sting: { id: "serpent_sting", name: "Serpent Sting", icon: "ability_hunter_quickshot", kind: "debuff", schools: ["nature"], dot: { period: 3, ticks: 5, base: 675 } },
     lacerate: { id: "lacerate", name: "Lacerate", icon: "ability_gouge", kind: "debuff", schools: ["physical"], dot: { period: 3, ticks: 7, base: 406 } },
     lacerating_strikes: { id: "lacerating_strikes", name: "Lacerating Strikes", icon: "ability_gouge", kind: "debuff", schools: ["physical"], dot: { period: 3, ticks: 7, base: 0 } },
     freezing_trap: { id: "freezing_trap", name: "Freezing Trap", icon: "spell_frost_chainsofice", kind: "debuff", duration: 20, flags: { frozen: true, stunned: true, breaksOnDamage: true }, desc: () => "Frozen. Damage breaks the ice." },
@@ -7167,7 +7341,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   var OFF_HANDS3 = ["none", "axe", "sword", "dagger", "fist"];
   var RANGED = ["bow", "crossbow", "gun"];
   var AMMO_DPS = 17.5;
-  var TRACKABLE = ["undead", "demon"];
+  var TRACKABLE = ["beast", "demon", "dragonkin", "elemental", "giant", "humanoid", "undead"];
   var TRAP_RADIUS = 5;
   var PETS = {
     cat: { id: "cat", name: "Cat (pet)", icon: "ability_hunter_pet_cat", color: "#c9a46b", speed: 2, min: 60, max: 80, crit: 0.05, special: { id: "claw", name: "Claw (pet)", icon: "ability_druid_rake", every: 4.5, min: 54, max: 76 } }
@@ -7217,6 +7391,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     stanceBar: { label: "Aspects", abilities: ["aspect_of_the_hawk", "aspect_of_the_beast", "aspect_of_the_cheetah", "aspect_of_the_pack"] },
     // Monkey and Wild are not simulated
     trees: trees5,
+    talentHistory: talentHistory5,
+    // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities5, ...extra5.abilities],
     // the rest of the spellbook: spellbook.js
     auras: { ...auras5, ...extra5.auras },
@@ -7395,7 +7571,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
           });
         }
       },
-      barrage: { mods: (r) => [mult("damageMult", 1 + [0.03, 0.07, 0.1][r - 1], (ctx) => isAbility(ctx, "multi_shot", "aimed_shot", "volley"))] },
+      barrage: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "multi_shot", "aimed_shot", "volley"))] },
       scatter_shot: { teaches: "scatter_shot" },
       ranged_weapon_specialization: { mods: (r) => [mult("damageMult", 1 + 0.01 * r, (ctx) => !!ctx.ranged)] },
       sniper_shot: { teaches: "sniper_shot" },
@@ -7433,7 +7609,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       },
       survivalists_discipline: { mods: (r) => [mult("cooldown", 1 - 0.2 * r, (ctx) => !!ctx.ability && !!ctx.ability.trap)] },
       strider_kick: { teaches: "strider_kick" },
-      lightning_reflexes: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, agi: a.agi * (1 + 0.02 * r) }) }] },
+      lightning_reflexes: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, agi: a.agi * (1 + 0.03 * r) }) }] },
       lacerating_strikes: {
         listen(game, r, on) {
           on("damage", (ev) => {
@@ -7446,7 +7622,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   };
 
   // src/classes/warlock/talent-data.js
-  var SOURCE6 = { site: "foreverchanges.pro/talents/warlock", build: "1.60.1.70532", extracted: "2026-10-23" };
+  var SOURCE6 = { site: "foreverchanges.pro/talents/warlock", build: "1.60.1.70753", extracted: "2026-11-03" };
   var trees6 = [
     {
       id: "affliction",
@@ -7458,7 +7634,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         { id: "improved_corruption", name: "Improved Corruption", icon: "spell_shadow_abominationexplosion", tier: 0, col: 2, max: 5, ranks: ["Reduces the casting time of your Corruption spell by 0.4 sec and increases the damage it deals by 2%.", "Reduces the casting time of your Corruption spell by 0.8 sec and increases the damage it deals by 4%.", "Reduces the casting time of your Corruption spell by 1.2 sec and increases the damage it deals by 6%.", "Reduces the casting time of your Corruption spell by 1.6 sec and increases the damage it deals by 8%.", "Reduces the casting time of your Corruption spell by 2 sec and increases the damage it deals by 10%."] },
         { id: "grim_reach", name: "Grim Reach", icon: "spell_shadow_callofbone", tier: 1, col: 0, max: 2, ranks: ["Increases the range of your Affliction spells by 10%.", "Increases the range of your Affliction spells by 20%."] },
         { id: "soul_harvest", name: "Soul Harvest", icon: "inv_elemental_primal_shadow", tier: 1, col: 1, max: 2, ranks: ["Killing a non-trivial target afflicted by your Drain Soul increases your Mana regeneration by 50% for 10 sec and allows 50% of normal Mana regeneration to continue while casting.", "Killing a non-trivial target afflicted by your Drain Soul increases your Mana regeneration by 100% for 10 sec and allows 100% of normal Mana regeneration to continue while casting."] },
-        { id: "improved_drains", name: "Improved Drains", icon: "spell_shadow_haunting", tier: 1, col: 2, max: 3, ranks: ["Increases health drained or damage done by your Drain Life, Drain Soul, and Wrack spells by 7%.", "Increases health drained or damage done by your Drain Life, Drain Soul, and Wrack spells by 13%.", "Increases health drained or damage done by your Drain Life, Drain Soul, and Wrack spells by 20%."] },
+        { id: "improved_drains", name: "Improved Drains", icon: "spell_shadow_haunting", tier: 1, col: 2, max: 3, ranks: ["Increases Health drained, damage done, or Mana drained by your Drain Life, Drain Soul, and Drain Mana spells by 7%.", "Increases Health drained, damage done, or Mana drained by your Drain Life, Drain Soul, and Drain Mana spells by 13%.", "Increases Health drained, damage done, or Mana drained by your Drain Life, Drain Soul, and Drain Mana spells by 20%."] },
         { id: "improved_bane_of_agony", name: "Improved Bane of Agony", icon: "spell_shadow_curseofsargeras", tier: 2, col: 0, max: 2, ranks: ["Increases the damage done by your Bane of Agony by 5%.", "Increases the damage done by your Bane of Agony by 10%."] },
         { id: "fel_concentration", name: "Fel Concentration", icon: "spell_shadow_fingerofdeath", tier: 2, col: 1, max: 3, ranks: ["Gives your Drain Life, Drain Mana, Drain Soul, and Wrack spells a 23% chance to not lose casting time when you take damage.", "Gives your Drain Life, Drain Mana, Drain Soul, and Wrack spells a 47% chance to not lose casting time when you take damage.", "Gives your Drain Life, Drain Mana, Drain Soul, and Wrack spells a 70% chance to not lose casting time when you take damage."] },
         { id: "amplify_curse", name: "Amplify Curse", icon: "spell_shadow_contagion", tier: 2, col: 2, max: 1, active: true, ranks: ["Increases the effect of your next Curse of Weakness or Bane of Agony by 50%, or your next Curse of Exhaustion by 20%. Lasts 30 sec."] },
@@ -7517,7 +7693,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         { id: "pyroclasm", name: "Pyroclasm", icon: "spell_fire_volcano", tier: 4, col: 0, max: 2, req: "intensity", ranks: ["Gives your Soul Fire spell a 13% chance to Stun the target for 3 sec, and your Rain of Fire and Hellfire spells a 13% chance over their duration to Stun targets they damage for 3 sec.", "Gives your Soul Fire spell a 26% chance to Stun the target for 3 sec, and your Rain of Fire and Hellfire spells a 26% chance over their duration to Stun targets they damage for 3 sec."] },
         { id: "bane_of_havoc", name: "Bane of Havoc", icon: "ability_warlock_baneofhavoc", tier: 4, col: 1, max: 1, active: true, ranks: ["Afflicts the target for 5 min, causing 15% of all damage done by the Warlock to other targets to also be dealt to the cursed target. Bane of Havoc is limited to 1 target, and only one Bane per Warlock can be active on any one target."] },
         { id: "fire_and_brimstone", name: "Fire and Brimstone", icon: "spell_fire_meteorstorm", tier: 4, col: 2, max: 3, req: "conflagrate", ranks: ["Increases the critical strike chance of your Conflagrate spell by 8%.", "Increases the critical strike chance of your Conflagrate spell by 17%.", "Increases the critical strike chance of your Conflagrate spell by 25%."] },
-        { id: "shadow_and_flame", name: "Shadow and Flame", icon: "spell_fire_playingwithfire", tier: 5, col: 2, max: 5, ranks: ["Hitting an enemy with Conflagrate increases all Shadow damage you deal by 2% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 2% for 20 sec. In addition, Conflagrate has a 20% chance not to consume Immolate, and Shadowburn has a 20% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 4% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 4% for 20 sec. In addition, Conflagrate has a 40% chance not to consume Immolate, and Shadowburn has a 40% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 6% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 6% for 20 sec. In addition, Conflagrate has a 60% chance not to consume Immolate, and Shadowburn has a 60% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 8% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 8% for 20 sec. In addition, Conflagrate has a 80% chance not to consume Immolate, and Shadowburn has a 80% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 10% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 10% for 20 sec. In addition, Conflagrate has a 100% chance not to consume Immolate, and Shadowburn has a 100% chance to instantly refund a Soul Shard."] },
+        { id: "shadow_and_flame", name: "Shadow and Flame", icon: "spell_fire_playingwithfire", tier: 5, col: 2, max: 5, notes: true, ranks: ["Hitting an enemy with Conflagrate increases all Shadow damage you deal by 4% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 4% for 20 sec. In addition, Conflagrate has a 20% chance not to consume Immolate, and Shadowburn has a 20% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 8% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 8% for 20 sec. In addition, Conflagrate has a 40% chance not to consume Immolate, and Shadowburn has a 40% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 12% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 12% for 20 sec. In addition, Conflagrate has a 60% chance not to consume Immolate, and Shadowburn has a 60% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 16% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 16% for 20 sec. In addition, Conflagrate has a 80% chance not to consume Immolate, and Shadowburn has a 80% chance to instantly refund a Soul Shard.", "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 20% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 20% for 20 sec. In addition, Conflagrate has a 100% chance not to consume Immolate, and Shadowburn has a 100% chance to instantly refund a Soul Shard."] },
         { id: "incinerate", name: "Incinerate", icon: "spell_fire_burnout", tier: 6, col: 1, max: 1, req: "bane_of_havoc", active: true, ranks: ["Deals 100 to 114 Fire damage to your target and an additional 25% damage if the target is afflicted by Immolate."] }
       ]
     }
@@ -7674,9 +7850,11 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       cost: 200,
       talent: "wrack",
       drain: true,
+      notes: true,
       effects: [{ type: "applyAura", to: "target", aura: "wrack" }],
-      channel: { duration: 6, ticks: 6, beam: true, tick: [{ type: "damage", min: 36, max: 36, coef: 0.143, binary: true, name: "Wrack" }] },
-      text: "Tears the target apart from within, inflicting 36 Shadow damage every 1 sec and increasing the damage they take from your other Shadow damage over time effects by 10% for 6 sec."
+      // Launch notes: 86 per second at level 60 (was 36) and twice the spell damage, 0.286 per second.
+      channel: { duration: 6, ticks: 6, beam: true, tick: [{ type: "damage", min: 86, max: 86, coef: 0.286, binary: true, name: "Wrack" }] },
+      text: "Tears the target apart from within, inflicting 86 Shadow damage every 1 sec and increasing the damage they take from your other Shadow damage over time effects by 10% for 6 sec."
     },
     {
       id: "death_coil",
@@ -7848,7 +8026,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         harmful: true,
         target: "self",
         schools: ["fire"],
-        channel: { duration: 15, ticks: 15, tick: [{ type: "aoeDamage", center: "self", radius: 10, min: 210, max: 210, coef: 0.095, name: "Hellfire" }] }
+        // Each second it also burns the Warlock for 210 Fire damage (tooltip): it can kill you, as in the game.
+        channel: { duration: 15, ticks: 15, tick: [{ type: "aoeDamage", center: "self", radius: 10, min: 210, max: 210, coef: 0.095, name: "Hellfire" }, { type: "custom", run: (g) => damagePlayer(g, 210, { name: "Hellfire", schools: ["fire"] }) }] }
       },
       inferno: {
         notSimulated: false,
@@ -7918,7 +8097,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     sacrifice_succubus: { id: "sacrifice_succubus", name: "Burning Wish", icon: "spell_shadow_psychicscream", kind: "buff", exclusive: "sacrifice", duration: 7200, mods: () => [mult("damageMult", 1.15, (ctx) => !ctx.pet && hasSchool(ctx, "fire"))], desc: () => "Fire damage increased by 15%." },
     sacrifice_incubus: { id: "sacrifice_incubus", name: "Burning Wish", icon: "spell_shadow_psychicscream", kind: "buff", exclusive: "sacrifice", duration: 7200, mods: () => [mult("damageMult", 1.15, (ctx) => !ctx.pet && hasSchool(ctx, "fire"))], desc: () => "Fire damage increased by 15%." },
     sacrifice_voidwalker: { id: "sacrifice_voidwalker", name: "Fel Stamina", icon: "spell_shadow_psychicscream", kind: "buff", exclusive: "sacrifice", duration: 7200, period: 4, onTick: (g) => g.resource.gain(g, g.player, 0.02 * g.stats().maxMana), desc: () => "Restores 2% of your total Mana every 4 sec." },
-    sacrifice_felhunter: { id: "sacrifice_felhunter", name: "Fel Energy", icon: "spell_shadow_psychicscream", kind: "buff", exclusive: "sacrifice", duration: 7200, desc: () => "Restores 3% of your total Health every 4 sec." },
+    sacrifice_felhunter: { id: "sacrifice_felhunter", name: "Fel Energy", icon: "spell_shadow_psychicscream", kind: "buff", exclusive: "sacrifice", duration: 7200, period: 4, onTick: (g) => regenHealth(g, g.player, 0.03 * g.stats().maxHp, "Fel Energy"), desc: () => "Restores 3% of your total Health every 4 sec." },
     shadow_trance: { id: "shadow_trance", name: "Shadow Trance", icon: "spell_shadow_twilight", kind: "buff", duration: 10, mods: () => [set("castTime", 0, (ctx) => isAbility(ctx, "shadow_bolt"))], desc: () => "Your next Shadow Bolt is instant." },
     amplify_curse: { id: "amplify_curse", name: "Amplify Curse", icon: "spell_shadow_contagion", kind: "buff", duration: 30, desc: () => "Your next Bane of Agony deals 50% more damage." },
     fel_domination: {
@@ -7939,8 +8118,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       mods: (a, g) => [mult("castTime", 1 - 0.2 * g.rank("decimation"), (ctx) => isAbility(ctx, "soul_fire")), set("reagentCost", 0, (ctx) => isAbility(ctx, "soul_fire"))],
       desc: (a, g) => `Soul Fire casts ${20 * g.rank("decimation")}% faster and needs no Soul Shard.`
     },
-    shadow_and_flame_shadow: { id: "shadow_and_flame_shadow", name: "Shadow and Flame", icon: "spell_fire_playingwithfire", kind: "buff", duration: 20, mods: (a, g) => [mult("damageMult", 1 + 0.02 * g.rank("shadow_and_flame"), (ctx) => !ctx.pet && hasSchool(ctx, "shadow"))], desc: (a, g) => `Shadow damage increased by ${2 * g.rank("shadow_and_flame")}%.` },
-    shadow_and_flame_fire: { id: "shadow_and_flame_fire", name: "Shadow and Flame", icon: "spell_fire_playingwithfire", kind: "buff", duration: 20, mods: (a, g) => [mult("damageMult", 1 + 0.02 * g.rank("shadow_and_flame"), (ctx) => !ctx.pet && hasSchool(ctx, "fire"))], desc: (a, g) => `Fire damage increased by ${2 * g.rank("shadow_and_flame")}%.` }
+    shadow_and_flame_shadow: { id: "shadow_and_flame_shadow", name: "Shadow and Flame", icon: "spell_fire_playingwithfire", kind: "buff", duration: 20, mods: (a, g) => [mult("damageMult", 1 + 0.04 * g.rank("shadow_and_flame"), (ctx) => !ctx.pet && hasSchool(ctx, "shadow"))], desc: (a, g) => `Shadow damage increased by ${4 * g.rank("shadow_and_flame")}%.` },
+    shadow_and_flame_fire: { id: "shadow_and_flame_fire", name: "Shadow and Flame", icon: "spell_fire_playingwithfire", kind: "buff", duration: 20, mods: (a, g) => [mult("damageMult", 1 + 0.04 * g.rank("shadow_and_flame"), (ctx) => !ctx.pet && hasSchool(ctx, "fire"))], desc: (a, g) => `Fire damage increased by ${4 * g.rank("shadow_and_flame")}%.` }
   };
 
   // src/classes/warlock/presets.js
@@ -8192,7 +8371,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
           mult("damageMult", 1 + 0.02 * r, (ctx) => isAbility(ctx, "corruption"))
         ]
       },
-      improved_drains: { mods: (r) => [mult("damageMult", 1 + [0.07, 0.13, 0.2][r - 1], (ctx) => isAbility(ctx, ...DRAINS))] },
+      // Drain Life and Drain Soul (Wrack left its tooltip in 1.60.1.70753; Drain Mana is not in the fights).
+      improved_drains: { mods: (r) => [mult("damageMult", 1 + [0.07, 0.13, 0.2][r - 1], (ctx) => isAbility(ctx, "drain_life", "drain_soul"))] },
       improved_bane_of_agony: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "bane_of_agony"))] },
       amplify_curse: {
         mods: () => [mult("damageMult", 1.5, (ctx) => !!ctx.aura && !!ctx.aura.data.amplified)],
@@ -8333,7 +8513,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   };
 
   // src/classes/priest/talent-data.js
-  var SOURCE7 = { site: "foreverchanges.pro/talents/priest", build: "1.60.1.70532", extracted: "2026-10-23" };
+  var SOURCE7 = { site: "foreverchanges.pro/talents/priest", build: "1.60.1.70753", extracted: "2026-11-03" };
   var per3 = (values, fn) => values.map(fn);
   var trees7 = [
     {
@@ -8356,7 +8536,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         { id: "improved_mana_burn", name: "Improved Mana Burn", icon: "spell_shadow_manaburn", tier: 3, col: 1, max: 2, ranks: per3([["0.5"], ["1.0"]], (v) => `Reduces the casting time of your Mana Burn spell by ${v[0]} sec.`) },
         { id: "soul_warding", name: "Soul Warding", icon: "spell_holy_pureofheart", tier: 3, col: 2, max: 1, req: "improved_power_word_shield", ranks: ["Reduces the cooldown on your Power Word: Shield spell by 4 sec and reduces its mana cost by 15%."] },
         { id: "penance", name: "Penance", icon: "spell_holy_penance", tier: 4, col: 1, max: 1, active: true, ranks: ["Launches a volley of holy light at the target, causing 45 Holy damage to an enemy, or 134 healing to an ally, instantly and every 1 sec for 2 sec."] },
-        { id: "renewed_hope", name: "Renewed Hope", icon: "spell_holy_holyprotection", tier: 4, col: 2, max: 5, req: "soul_warding", ranks: per3([[2, 1], [4, 2], [6, 3], [8, 4], [10, 5]], (v) => `Your heals from Flash Heal, Binding Heal, Lesser Heal, Heal, Greater Heal, and Penance gain ${v[0]}% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by ${v[1]} sec.`) },
+        { id: "renewed_hope", name: "Renewed Hope", icon: "spell_holy_holyprotection", tier: 4, col: 2, max: 5, req: "soul_warding", ranks: ["Your heals from Flash Heal, Lesser Heal, Heal, Greater Heal, and Penance gain 2% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by 1 sec.", "Your heals from Flash Heal, Lesser Heal, Heal, Greater Heal, and Penance gain 4% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by 2 sec.", "Your heals from Flash Heal, Lesser Heal, Heal, Greater Heal, and Penance gain 6% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by 3 sec.", "Your heals from Flash Heal, Lesser Heal, Heal, Greater Heal, and Penance gain 8% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by 4 sec.", "Your heals from Flash Heal, Lesser Heal, Heal, Greater Heal, and Penance gain 10% increased critical strike chance when cast on targets with Weakened Soul, and reduce the remaining duration of Weakened Soul on their target by 5 sec."] },
         { id: "divine_aegis", name: "Divine Aegis", icon: "spell_holy_devineaegis", tier: 5, col: 2, max: 3, ranks: per3([[5], [10], [15]], (v) => `Your non-periodic critical heals create a protective shield on the target, absorbing ${v[0]}% of the amount healed. Shields up to 1200 damage and lasts 12 sec.`) },
         { id: "power_infusion", name: "Power Infusion", icon: "spell_holy_powerinfusion", tier: 6, col: 1, max: 1, req: "penance", active: true, ranks: ["Infuses the target with power, increasing their spell damage and healing done by 20% for 15 sec."] }
       ]
@@ -8377,7 +8557,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         { id: "holy_reach", name: "Holy Reach", icon: "spell_holy_purify", tier: 3, col: 0, max: 2, ranks: per3([[10], [20]], (v) => `Increases the range of your Smite and Holy Fire spells and the radius of your Prayer of Healing and Holy Nova spells by ${v[0]}%.`) },
         { id: "improved_healing", name: "Improved Healing", icon: "spell_holy_heal02", tier: 3, col: 1, max: 3, ranks: per3([[5], [10], [15]], (v) => `Reduces the Mana cost of your Lesser Heal, Heal, Greater Heal, Penance, and Prayer of Mending spells by ${v[0]}%.`) },
         { id: "searing_light", name: "Searing Light", icon: "spell_holy_searinglightpriest", tier: 3, col: 2, max: 2, req: "divine_fury", ranks: per3([[2, 5], [5, 10]], (v) => `Increases your Holy damage done by ${v[0]}%, and gives a ${v[1]}% chance each time your Holy Fire spell deals periodic damage for your next Holy Nova to cost no Mana.`) },
-        { id: "binding_heal", name: "Binding Heal", icon: "spell_holy_blindingheal", tier: 3, col: 3, max: 1, active: true, ranks: ["Heals a friendly target and the caster for 236 to 284. Low threat."] },
+        { id: "holy_binding", name: "Holy Binding", icon: "spell_holy_blindingheal", tier: 3, col: 3, max: 1, active: true, ranks: ["Each time you heal a target other than yourself with Flash Heal, you are healed for 50% as much. This healing generates no threat."] },
         { id: "litany_of_light", name: "Litany of Light", icon: "inv_scroll_07", tier: 4, col: 0, max: 2, ranks: per3([[5], [10]], (v) => `When you cast a healing spell, gain Mana equal to ${v[0]}% of the base cost of the spell if your previous heal was a different spell.`) },
         { id: "spirit_of_redemption", name: "Spirit of Redemption", icon: "inv_enchant_essenceeternallarge", tier: 4, col: 1, max: 1, ranks: ["Upon death, the priest becomes the Spirit of Redemption for 15 sec. The Spirit of Redemption cannot move, attack, be attacked or targeted by any spells or effects. While in this form the priest can cast any healing spell free of cost. When the effect ends, the priest dies."] },
         { id: "spiritual_guidance", name: "Spiritual Guidance", icon: "spell_holy_spiritualguidence", tier: 4, col: 2, max: 5, ranks: per3([[5, 1], [10, 3], [15, 5], [20, 6], [25, 8]], (v) => `Increases your spell healing by up to ${v[0]}% of your total Spirit and your spell damage by up to ${v[1]}% of your total Spirit.`) },
@@ -8413,6 +8593,23 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     }
   ];
 
+  // src/classes/priest/talent-history.js
+  var talentHistory6 = [
+    {
+      // 1.60.1.70753 (November 3): Binding Heal became Holy Binding, in the same place of the tree.
+      until: "1.60.1.70753",
+      date: "November 3",
+      order: [
+        ["power_in_light", "wand_specialization", "twin_disciplines", "silent_resolve", "holy_precision", "mental_strength", "martyrdom", "mental_agility", "inner_focus", "improved_power_word_shield", "meditation", "improved_inner_fire", "improved_mana_burn", "soul_warding", "penance", "renewed_hope", "divine_aegis", "power_infusion"],
+        ["twilight_focus", "improved_renew", "holy_specialization", "spell_warding", "divine_fury", "holy_nova", "blessed_recovery", "inspiration", "holy_reach", "improved_healing", "searing_light", "binding_heal", "litany_of_light", "spirit_of_redemption", "spiritual_guidance", "spiritual_healing", "prayer_of_mending"],
+        ["shadow_focus", "blackout", "spirit_tap", "improved_mind_blast", "improved_shadow_word_pain", "shadow_reach", "improved_psychic_scream", "mind_flay", "improved_mind_flay", "dark_inspiration", "vampiric_embrace", "shadow_weaving", "silence", "devouring_contagion", "early_demise", "darkness", "shadowform"]
+      ],
+      renamed: { binding_heal: "holy_binding" },
+      removed: {},
+      names: { binding_heal: "Binding Heal" }
+    }
+  ];
+
   // src/classes/priest/spellbook-data.js
   var SPELLBOOK7 = [
     ["Power Word: Fortitude", "spell_holy_wordfortitude", "discipline", 1695, 30, 0, 0, 0, "Power infuses the target, increasing their Stamina by 70 for 1 hr."],
@@ -8437,7 +8634,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     ["Chastise", "spell_holy_chastise", "holy", 225, 20, 0, 120, 0, "Chastise the target, causing 272 to 306 Holy damage and Immobilizing them for up to 2 sec. Only works against Humanoids. This spell causes very low threat."],
     ["Fear Ward", "spell_holy_excorcism", "holy", 100, 30, 0, 180, 0, "Wards the friendly target against Fear. The next Fear effect used against the target will fail, using up the ward. Lasts 3 min."],
     ["Flash Heal", "spell_holy_flashheal", "holy", 380, 40, 1.5, 0, 0, "Heals a friendly target for 774 to 910."],
-    ["Binding Heal", "spell_holy_blindingheal", "holy", 380, 40, 1.5, 0, 1, "Heal yourself and a friendly target for 774 to 910. This causes low threat."],
     ["Prayer of Healing", "spell_holy_prayerofhealing02", "holy", 1070, 40, 3, 0, 0, "A powerful prayer that heals the target and their party for 631 to 667. Party members must be within 40 yards of target."],
     ["Abolish Disease", "spell_nature_nullifydisease", "holy", "b15", 30, 0, 0, 0, "Attempts to cure 1 disease effect on the target, and 1 more disease effect every 5 seconds for 20 sec."],
     ["Greater Heal", "spell_holy_greaterheal", "holy", 710, 40, 3, 0, 0, "A slow casting spell that heals a single target for 1853 to 2067."],
@@ -8706,7 +8902,6 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       heal: heal2({ effects: [{ type: "heal", min: 634, max: 713, coef: 0.857 }] }),
       greater_heal: heal2({ effects: [{ type: "heal", min: 1853, max: 2067, coef: 0.857 }] }),
       flash_heal: heal2({ effects: [{ type: "heal", min: 774, max: 910, coef: 0.429 }] }),
-      binding_heal: heal2({ effects: [{ type: "heal", min: 774, max: 910, coef: 0.429 }, { type: "heal", to: "self", min: 774, max: 910, coef: 0.429 }] }),
       renew: heal2({ effects: [{ type: "hot", aura: "renew", base: 166, coef: 0.2 }] }),
       // Shield: 928 + 10% of spell power, more with Improved Power Word: Shield; Weakened Soul for 15 sec.
       power_word_shield: heal2({
@@ -8736,7 +8931,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         race: "dwarf",
         notSimulated: false,
         schools: ["holy"],
-        usable: (g) => (g.player.target || {}).creatureType === "humanoid" ? null : "Not in the lab yet: needs a Humanoid enemy",
+        usable: (g) => (g.player.target || {}).creatureType === "humanoid" ? null : "Only works on Humanoids (Enemy type, under Advanced)",
         effects: [{ type: "damage", min: 272, max: 306, coef: 0.429 }]
       }
     },
@@ -8901,14 +9096,14 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         holy_nova: 1,
         inspiration: 3,
         improved_healing: 3,
-        binding_heal: 1,
+        holy_binding: 1,
         litany_of_light: 2,
         spirit_of_redemption: 1,
         spiritual_guidance: 5,
         spiritual_healing: 3,
         prayer_of_mending: 1
       },
-      bar: ["heal", "greater_heal", "flash_heal", "renew", "prayer_of_mending", "prayer_of_healing", "power_word_shield", "holy_nova", "inner_focus", "desperate_prayer", "binding_heal", "major_mana_potion"]
+      bar: ["heal", "greater_heal", "flash_heal", "renew", "prayer_of_mending", "prayer_of_healing", "power_word_shield", "holy_nova", "inner_focus", "desperate_prayer", "dispel_magic", "major_mana_potion"]
     },
     {
       id: "shadow_magic",
@@ -8943,7 +9138,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var isPlayer6 = (game, ev) => ev.ctx.caster === game.player;
   var isHeal = (ab) => !!ab && (ab.tags || []).includes("heal");
   var instant = (ctx) => !!ctx.ability && !ctx.ability.castTime && !ctx.ability.channel && (ctx.ability.harmful || isHeal(ctx.ability));
-  var DIRECT_HEALS = ["flash_heal", "binding_heal", "lesser_heal", "heal", "greater_heal", "penance"];
+  var DIRECT_HEALS = ["flash_heal", "lesser_heal", "heal", "greater_heal", "penance"];
   var priest = {
     id: "priest",
     name: "Priest",
@@ -8972,6 +9167,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     },
     stanceBar: { label: "Race", abilities: ["race_human", "race_dwarf", "race_night_elf", "race_gnome", "race_troll", "race_undead"] },
     trees: trees7,
+    talentHistory: talentHistory6,
+    // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities7, ...extra7.abilities],
     // the rest of the spellbook: spellbook.js
     auras: { ...auras7, ...extra7.auras },
@@ -9014,6 +9211,17 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       return true;
     },
     listen(game, on) {
+      on("damage", (ev) => {
+        const c = ev.ctx, p2 = game.player, n = ev.res.amount;
+        if (c.caster !== p2 || !(n > 0) || !hasSchool(c, "shadow")) return;
+        const id = c.ability && c.ability.id;
+        if (id === "devouring_plague") healUnit(game, p2, n, { name: "Devouring Plague", icon: "spell_shadow_devouringplague", source: "player" });
+        if (c.target && findAura(c.target, "vampiric_embrace", p2)) {
+          const party = partyOf(game, p2);
+          for (const u of party.includes(p2) ? party : [p2]) if (!u.dead) healUnit(game, u, 0.2 * n, { name: "Vampiric Embrace", icon: "spell_shadow_unsummonbuilding", source: "player" });
+        }
+        if (id === "shadow_word_death" && !c.periodic && c.target && !c.target.dead) damagePlayer(game, 0.3 * game.stats().maxHp, { name: "Shadow Word: Death", schools: ["shadow"] });
+      });
       on("hitTaken", ({ res }) => {
         const a = findAura(game.player, "inner_fire");
         if (!a || ["miss", "dodge", "parry", "immune"].includes(res.outcome)) return;
@@ -9137,7 +9345,16 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       holy_reach: { mods: (r) => [mult("range", 1 + 0.1 * r, (ctx) => isAbility(ctx, "smite", "holy_fire")), mult("radius", 1 + 0.1 * r, (ctx) => isAbility(ctx, "prayer_of_healing", "holy_nova"))] },
       improved_renew: { mods: (r) => [mult("healMult", 1 + 0.05 * r, (ctx) => isAbility(ctx, "renew"))] },
       improved_healing: { mods: (r) => [mult("cost", 1 - 0.05 * r, (ctx) => isAbility(ctx, "lesser_heal", "heal", "greater_heal", "penance", "prayer_of_mending"))] },
-      binding_heal: { teaches: "binding_heal" },
+      // Holy Binding (1.60.1.70753, in Binding Heal's place): a Flash Heal on someone else heals you for 50% as much, with no threat.
+      holy_binding: {
+        listen(game, r, on) {
+          const ability = { id: "holy_binding", name: "Holy Binding", icon: "spell_holy_blindingheal", threatMult: 0 };
+          on("heal", (ev) => {
+            if (ev.source !== "player" || ev.periodic || ev.unit === game.player || !ev.ctx || !isAbility(ev.ctx, "flash_heal") || !(ev.amount > 0)) return;
+            healUnit(game, game.player, 0.5 * ev.amount, { name: "Holy Binding", icon: ability.icon, ctx: { caster: game.player, ability } });
+          });
+        }
+      },
       prayer_of_mending: { teaches: "prayer_of_mending" },
       // Mana back (5% of the base cost per rank) when a heal follows a different one.
       litany_of_light: {
@@ -9203,7 +9420,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/classes/druid/talent-data.js
-  var SOURCE8 = { site: "foreverchanges.pro/talents/druid", build: "1.60.1.70707", extracted: "2026-10-31" };
+  var SOURCE8 = { site: "foreverchanges.pro/talents/druid", build: "1.60.1.70753", extracted: "2026-11-03" };
   var trees8 = [
     {
       id: "balance",
@@ -9249,7 +9466,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         { id: "blood_frenzy", name: "Blood Frenzy", icon: "ability_ghoulfrenzy", tier: 3, col: 3, max: 2, req: "sharpened_claws", ranks: ["Gives you a 50% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a 50% chance to add an additional Combo Point.", "Gives you a 100% chance to gain an additional 5 Rage any time you get a critical strike while in Bear Form or Dire Bear Form. In addition, your non-periodic critical strikes from Cat Form abilities that generate Combo Points have a 100% chance to add an additional Combo Point."] },
         { id: "leader_of_the_pack", name: "Leader of the Pack", icon: "spell_nature_unyeildingstamina", tier: 4, col: 1, max: 1, ranks: ["While in Cat Form, Bear Form, or Dire Bear Form, the Leader of the Pack increases the Critical Strike chance of all party or raid members within 45 yards by 3%."] },
         { id: "natural_instinct", name: "Natural Instinct", icon: "ability_druid_predatoryinstincts", tier: 4, col: 3, max: 2, ranks: ["Increases the critical strike damage bonus of your melee abilities by 10% and increases your spell healing by 12% of your Intellect.", "Increases the critical strike damage bonus of your melee abilities by 20% and increases your spell healing by 25% of your Intellect."] },
-        { id: "rend_and_tear", name: "Rend and Tear", icon: "ability_druid_primalagression", tier: 5, col: 0, max: 5, req: "predatory_strikes", ranks: ["Increases damage done by your melee abilities on Bleeding targets by 2%.", "Increases damage done by your melee abilities on Bleeding targets by 4%.", "Increases damage done by your melee abilities on Bleeding targets by 6%.", "Increases damage done by your melee abilities on Bleeding targets by 8%.", "Increases damage done by your melee abilities on Bleeding targets by 10%."] },
+        { id: "rend_and_tear", name: "Rend and Tear", icon: "ability_druid_primalagression", tier: 5, col: 0, max: 5, req: "predatory_strikes", notes: true, ranks: ["Increases damage done by your melee abilities on Bleeding targets by 3%.", "Increases damage done by your melee abilities on Bleeding targets by 6%.", "Increases damage done by your melee abilities on Bleeding targets by 9%.", "Increases damage done by your melee abilities on Bleeding targets by 12%.", "Increases damage done by your melee abilities on Bleeding targets by 15%."] },
         { id: "natural_reaction", name: "Natural Reaction", icon: "ability_bullrush", tier: 5, col: 3, max: 5, ranks: ["Increases your dodge chance by 1%, and gives you a 20% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 2%, and gives you a 40% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 3%, and gives you a 60% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 4%, and gives you a 80% chance to gain 5 Rage each time you dodge.", "Increases your dodge chance by 5%, and gives you a 100% chance to gain 5 Rage each time you dodge."] },
         { id: "primal_bite", name: "Primal Bite", icon: "ability_racial_cannibalize", tier: 6, col: 1, max: 1, req: "leader_of_the_pack", active: true, ranks: ["Bite the target, dealing 100% normal damage plus 42 and generating a high amount of threat."] },
         { id: "shifting_power", name: "Shifting Power", icon: "spell_druid_displacement", tier: 6, col: 2, max: 1, req: "predatory_discipline", active: true, ranks: ["Instantly convert 55% of base Mana into 40 Energy. Shifting Power's cost is reduced by effects that reduce the cost of Shapeshifting."] }
@@ -9281,7 +9498,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   ];
 
   // src/classes/druid/talent-history.js
-  var talentHistory3 = [
+  var talentHistory7 = [
     {
       // 1.60.1.70707 (October 30): Feral and Restoration reorganized. In the same places of the client's trees, Primal
       // Bite became Lacerate, Berserk became Primal Bite (now the last talent of Feral), Shifting Power became Predatory
@@ -9388,8 +9605,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       ...spell4(arcane),
       cost: 340,
       castTime: 3.5,
-      effects: [{ type: "damage", min: 350, max: 412, coef: 1 }],
-      text: "Causes 350 to 412 Arcane damage to the target."
+      notes: "approx",
+      // Launch notes: base damage about 40% higher (APPROXIMATION of the client's 350 to 412).
+      effects: [{ type: "damage", min: 490, max: 577, coef: 1 }],
+      text: "Causes 490 to 577 Arcane damage to the target."
     },
     {
       id: "insect_swarm",
@@ -9497,8 +9716,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cost: 45,
       builder: true,
       weaponStrike: true,
-      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1.1, flat: 115, onHit: [builder2(1)] }],
-      text: "Claw the enemy for 110% normal damage plus 115. Awards 1 combo points."
+      notes: true,
+      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1.4, flat: 115, onHit: [builder2(1)] }],
+      text: "Claw the enemy for 140% normal damage plus 115. Awards 1 combo points."
     },
     {
       id: "shred",
@@ -9509,9 +9729,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cost: 60,
       builder: true,
       weaponStrike: true,
+      notes: true,
       requires: { form: ["cat"], behind: true },
-      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1.55, flat: 80, onHit: [builder2(1)] }],
-      text: "Shred the target, causing 155% damage plus 80 to the target. Must be behind the target. Awards 1 combo points."
+      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 2, flat: 80, onHit: [builder2(1)] }],
+      text: "Shred the target, causing 200% damage plus 80 to the target. Must be behind the target. Awards 1 combo points."
     },
     {
       id: "rake",
@@ -9521,8 +9742,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       ...cat,
       cost: 40,
       builder: true,
-      effects: [{ type: "meleeDamage", min: 61, max: 61, name: "Rake", onHit: [{ type: "applyAura", to: "target", aura: "rake" }, builder2(1)] }],
-      text: "Rake the target for 61 damage and an additional 102 damage over 9 sec. Awards 1 combo points."
+      notes: "approx",
+      // Launch notes: base damage and attack power bonus about 25% higher (APPROXIMATION).
+      effects: [{ type: "meleeDamage", min: 76, max: 76, name: "Rake", onHit: [{ type: "applyAura", to: "target", aura: "rake" }, builder2(1)] }],
+      text: "Rake the target for 76 damage and an additional 128 damage over 9 sec. Awards 1 combo points."
     },
     {
       id: "rip",
@@ -9532,9 +9755,11 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       ...cat,
       cost: 30,
       finisher: true,
-      // 6 ticks of (15 + 25.5 per combo point); attack power: 6% per combo point up to 24% (ESTIMATE).
-      effects: [{ type: "meleeDamage", noDamage: true, name: "Rip", onHit: [{ type: "applyAura", to: "target", aura: "rip", dynamic: (g, ctx) => ({ dot: { ticks: 6, base: (15 + 25.5 * cp(ctx)) * 6, apCoef: 0.06 * Math.min(4, cp(ctx)) } }) }] }],
-      text: "Finishing move that causes damage over time. Damage increases per combo point and by your Attack Power:\n1 point: 243 damage over 12 sec\n2 points: 396 damage over 12 sec\n3 points: 549 damage over 12 sec\n4 points: 702 damage over 12 sec\n5 points: 855 damage over 12 sec"
+      notes: "approx",
+      // 6 ticks of (15 + 25.5 per combo point); attack power: 6% per combo point up to 24% (ESTIMATE). Launch notes: both
+      // about 25% higher (APPROXIMATION).
+      effects: [{ type: "meleeDamage", noDamage: true, name: "Rip", onHit: [{ type: "applyAura", to: "target", aura: "rip", dynamic: (g, ctx) => ({ dot: { ticks: 6, base: 1.25 * (15 + 25.5 * cp(ctx)) * 6, apCoef: 1.25 * 0.06 * Math.min(4, cp(ctx)) } }) }] }],
+      text: "Finishing move that causes damage over time. Damage increases per combo point and by your Attack Power:\n1 point: 304 damage over 12 sec\n2 points: 495 damage over 12 sec\n3 points: 686 damage over 12 sec\n4 points: 878 damage over 12 sec\n5 points: 1069 damage over 12 sec"
     },
     {
       id: "ferocious_bite",
@@ -9544,6 +9769,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       ...cat,
       cost: 35,
       finisher: true,
+      notes: "approx",
+      // Launch notes: base damage and attack power bonus about 25% higher (APPROXIMATION).
       // Every point of Energy left after the cost adds 2.7 damage and is used up (kept with Predatory Discipline).
       // Attack power: 3% per combo point (ESTIMATE).
       effects: [
@@ -9554,10 +9781,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         } },
         { type: "meleeDamage", name: "Ferocious Bite", dynamic: (g, ctx) => {
           const x = 2.7 * (g.player.biteEnergy || 0);
-          return { min: 52 + 147 * cp(ctx) + x, max: 112 + 147 * cp(ctx) + x, apCoef: 0.03 * cp(ctx) };
+          return { min: 1.25 * (52 + 147 * cp(ctx)) + x, max: 1.25 * (112 + 147 * cp(ctx)) + x, apCoef: 1.25 * 0.03 * cp(ctx) };
         } }
       ],
-      text: "Finishing move that causes damage per combo point and converts each extra point of energy into 2.7 additional damage. Damage is increased by your Attack Power.\n1 point: 199-259 damage\n2 points: 346-406 damage\n3 points: 493-553 damage\n4 points: 640-700 damage\n5 points: 787-847 damage"
+      text: "Finishing move that causes damage per combo point and converts each extra point of energy into 2.7 additional damage. Damage is increased by your Attack Power.\n1 point: 249-324 damage\n2 points: 433-508 damage\n3 points: 616-691 damage\n4 points: 800-875 damage\n5 points: 984-1059 damage"
     },
     {
       id: "ravage",
@@ -9569,9 +9796,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       builder: true,
       weaponStrike: true,
       opener: true,
+      notes: true,
       requires: { form: ["cat"], stealth: true, behind: true },
-      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 3.5, flat: 343, onHit: [builder2(1)] }],
-      text: "Ravage the target, causing 350% damage plus 343 to the target. Must be prowling and behind the target. Awards 1 combo points."
+      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 4.35, flat: 343, onHit: [builder2(1)] }],
+      text: "Ravage the target, causing 435% damage plus 343 to the target. Must be prowling and behind the target. Awards 1 combo points."
     },
     {
       id: "pounce",
@@ -9582,9 +9810,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cost: 50,
       builder: true,
       opener: true,
+      notes: "approx",
       requires: { form: ["cat"], stealth: true, behind: true },
       effects: [{ type: "meleeDamage", noDamage: true, name: "Pounce", onHit: [{ type: "applyAura", to: "target", aura: "pounce_stun" }, { type: "applyAura", to: "target", aura: "pounce" }, builder2(1)] }],
-      text: "Pounce, stunning the target for 2 sec and causing 150 damage over 18 sec. Must be prowling and behind the target. Awards 1 combo points."
+      text: "Pounce, stunning the target for 2 sec and causing 188 damage over 18 sec. Must be prowling and behind the target. Awards 1 combo points."
     },
     {
       id: "shifting_power",
@@ -9869,11 +10098,12 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       icon: "ability_racial_bearform",
       kind: "buff",
       flags: { form: "bear", resource: "rage" },
-      // Classic: armor from items x 4.6 (+360%), 30% more threat.
-      mods: () => [add("attackPower", 180), mult("itemArmor", 4.6), add("maxHp", 1240), mult("threatMult", 1.3)],
+      // Classic: armor from items x 4.6 (+360%). Threat: 115% more (launch notes, for Blessing of Salvation being gone;
+      // APPROXIMATION, the client does not say it).
+      mods: () => [add("attackPower", 180), mult("itemArmor", 4.6), add("maxHp", 1240), mult("threatMult", 2.15)],
       onApply: (g) => enterBear(g),
       onRemove: (g) => leaveBear(g),
-      desc: () => "Attack power increased by 180, armor from items by 360% and health by 1240. Threat increased by 30%. Uses Rage."
+      desc: () => "Attack power increased by 180, armor from items by 360% and health by 1240. Threat increased by 115%. Uses Rage."
     },
     moonkin_form: {
       id: "moonkin_form",
@@ -9969,9 +10199,11 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       sourceMods: () => [add("targetArmor", -505, (ctx) => !raidHas(ctx, "faerie_fire"))],
       desc: () => "Armor reduced by 505."
     },
-    rake: bleed("rake", "Rake", "ability_druid_disembowel", { period: 3, ticks: 3, base: 102 }),
-    rip: bleed("rip", "Rip", "ability_ghoulfrenzy", { period: 2, ticks: 6, base: 855 }),
-    pounce: bleed("pounce", "Pounce Bleed", "ability_druid_supriseattack", { period: 3, ticks: 6, base: 150 }),
+    rake: bleed("rake", "Rake", "ability_druid_disembowel", { period: 3, ticks: 3, base: 128 }),
+    // 102 x 1.25 (launch notes, APPROXIMATION)
+    rip: bleed("rip", "Rip", "ability_ghoulfrenzy", { period: 2, ticks: 6, base: 1069 }),
+    pounce: bleed("pounce", "Pounce Bleed", "ability_druid_supriseattack", { period: 3, ticks: 6, base: 188 }),
+    // 150 x 1.25 (launch notes, APPROXIMATION)
     lacerate: bleed("lacerate", "Lacerate", "ability_druid_lacerate", { period: 3, ticks: 5, base: 75, amount: (g, a) => (a.data.perTick || 0) * a.stacks }, { maxStacks: 5 }),
     pounce_stun: { id: "pounce_stun", name: "Pounce", icon: "ability_druid_supriseattack", kind: "debuff", flags: { stunned: true }, duration: 2, desc: () => "Stunned." }
   };
@@ -10179,7 +10411,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     // Form bar beside the action bar (press a form again to return to caster form).
     stanceBar: { label: "Forms", abilities: ["dire_bear_form", "cat_form", "moonkin_form"] },
     trees: trees8,
-    talentHistory: talentHistory3,
+    talentHistory: talentHistory7,
     // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities8, ...extra8.abilities],
     // the rest of the spellbook: spellbook.js
@@ -10248,7 +10480,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       return [
         add("critChance", (ctx, g) => ctx.melee ? meleeCrit(g.stats()) : spellCrit(g.stats())),
         // Cat Form abilities have a 1 sec global cooldown (Classic).
-        mult("gcd", (ctx, g) => g.form() === "cat" && ctx.ability && !ctx.ability.shapeshift ? 1 / 1.5 : 1)
+        mult("gcd", (ctx, g) => g.form() === "cat" && ctx.ability && !ctx.ability.shapeshift ? 1 / 1.5 : 1),
+        // Poised (level 32): at full Energy in Cat Form and out of combat, the next ability costs 10 less Energy.
+        add("cost", -10, (ctx, g) => ctx.baseCost > 0 && g.form() === "cat" && !ctx.ability.shapeshift && !g.inCombat() && g.player.res.energy.power >= g.resource.max(g))
       ];
     },
     listen(game, on) {
@@ -10360,7 +10594,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       },
       leader_of_the_pack: { mods: () => [add("critChance", 0.03, (ctx, g) => feral(g))] },
       natural_instinct: { mods: (r) => [mult("critBonusMult", 1 + 0.1 * r, meleeAbility)] },
-      rend_and_tear: { mods: (r) => [mult("damageMult", 1 + 0.02 * r, (ctx) => meleeAbility(ctx) && bleeding(ctx))] },
+      rend_and_tear: { mods: (r) => [mult("damageMult", 1 + 0.03 * r, (ctx) => meleeAbility(ctx) && bleeding(ctx))] },
       /* ---------- Restoration ---------- */
       subtlety: { mods: (r) => [mult("threatMult", 1 - 0.1 * r, (ctx) => hasSchool(ctx, "nature") || hasSchool(ctx, "arcane"))] },
       natures_focus: { mods: (r) => [focus(0.14 * r, (ctx) => hasSchool(ctx, "arcane") || hasSchool(ctx, "nature"))] },
@@ -10394,7 +10628,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/classes/shaman/talent-data.js
-  var SOURCE9 = { site: "foreverchanges.pro/talents/shaman", build: "1.60.1.70532", extracted: "2026-10-23" };
+  var SOURCE9 = { site: "foreverchanges.pro/talents/shaman", build: "1.60.1.70753", extracted: "2026-11-03" };
   var per4 = (values, fn) => values.map(fn);
   var trees9 = [
     {
@@ -10402,22 +10636,22 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Elemental Combat",
       icon: "spell_nature_lightning",
       talents: [
-        { id: "convection", name: "Convection", icon: "spell_nature_wispsplode", tier: 0, col: 1, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Reduces the mana cost of your Shock, Lightning Bolt, Lava Burst, and Chain Lightning spells by ${v[0]}%.`) },
+        { id: "convection", name: "Convection", icon: "spell_nature_wispsplode", tier: 0, col: 1, max: 5, notes: true, ranks: ["Reduces the mana cost of your Shock, Lightning Bolt, and Chain Lightning spells by 2%.", "Reduces the mana cost of your Shock, Lightning Bolt, and Chain Lightning spells by 4%.", "Reduces the mana cost of your Shock, Lightning Bolt, and Chain Lightning spells by 6%.", "Reduces the mana cost of your Shock, Lightning Bolt, and Chain Lightning spells by 8%.", "Reduces the mana cost of your Shock, Lightning Bolt, and Chain Lightning spells by 10%."] },
         { id: "concussion", name: "Concussion", icon: "spell_nature_earthshock", tier: 0, col: 2, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Increases the damage done by your Lightning Bolt, Chain Lightning, and Earth Shock spells by ${v[0]}%.`) },
         { id: "elemental_devastation", name: "Elemental Devastation", icon: "spell_fire_elementaldevastation", tier: 1, col: 0, max: 3, ranks: per4([[3], [6], [9]], (v) => `Your Critical Strikes with direct damage spells increase your chance to get a Critical Strike with melee attacks by ${v[0]}% for 10 sec.`) },
         { id: "reverberation", name: "Reverberation", icon: "spell_frost_frostward", tier: 1, col: 1, max: 5, ranks: per4([["0.2"], ["0.4"], ["0.6"], ["0.8"], ["1.0"]], (v) => `Reduces the cooldown of your Shock spells by ${v[0]} sec.`) },
-        { id: "elemental_alacrity", name: "Elemental Alacrity", icon: "spell_lightning_lightningbolt01", tier: 1, col: 2, max: 3, ranks: per4([["0.17"], ["0.33"], ["0.50"]], (v) => `Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by ${v[0]} sec.`) },
-        { id: "call_of_flame", name: "Call of Flame", icon: "spell_fire_immolation", tier: 1, col: 3, max: 3, ranks: per4([[5, 3], [10, 6], [15, 9]], (v) => `Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by ${v[0]}%, as well as increases the duration of your Flame Shock spell by ${v[1]} sec.`) },
+        { id: "elemental_alacrity", name: "Elemental Alacrity", icon: "spell_lightning_lightningbolt01", tier: 1, col: 2, max: 3, notes: true, ranks: ["Reduces the cast time of your Lightning Bolt and Chain Lightning spells by 0.17 sec.", "Reduces the cast time of your Lightning Bolt and Chain Lightning spells by 0.33 sec.", "Reduces the cast time of your Lightning Bolt and Chain Lightning spells by 0.50 sec."] },
+        { id: "call_of_flame", name: "Call of Flame", icon: "spell_fire_immolation", tier: 1, col: 3, max: 3, notes: true, ranks: ["Increases the damage done by your Fire Totems and by your Flame Shock and Fire Nova spells by 5%, as well as increases the duration of your Flame Shock spell by 3 sec.", "Increases the damage done by your Fire Totems and by your Flame Shock and Fire Nova spells by 10%, as well as increases the duration of your Flame Shock spell by 6 sec.", "Increases the damage done by your Fire Totems and by your Flame Shock and Fire Nova spells by 15%, as well as increases the duration of your Flame Shock spell by 9 sec."] },
         { id: "elemental_focus", name: "Elemental Focus", icon: "spell_shadow_manaburn", tier: 2, col: 0, max: 1, ranks: ["Gives you a 10% chance to enter a Clearcasting state after casting any Fire, Frost, or Nature damage spell. The Clearcasting state reduces the mana cost of your next damage spell by 100%."] },
         { id: "elemental_warding", name: "Elemental Warding", icon: "spell_nature_spiritarmor", tier: 2, col: 1, max: 3, ranks: per4([[3], [7], [10]], (v) => `Reduces damage taken from Fire, Frost, and Nature effects by ${v[0]}%.`) },
         { id: "trial_by_fire", name: "Trial by Fire", icon: "spell_fire_sealoffire", tier: 3, col: 0, max: 2, ranks: per4([[10, 2], [20, 4]], (v) => `Increases the damage done by your Fire Nova spell by ${v[0]}% and reduces its cooldown by ${v[1]} sec, and increases the duration of your Magma Totem by ${v[0]} sec.`) },
-        { id: "eye_of_the_storm", name: "Eye of the Storm", icon: "spell_nature_eyeofthestorm", tier: 3, col: 1, max: 3, ranks: per4([[23], [47], [70]], (v) => `Gives your Lightning Bolt, Chain Lightning, and Lava Burst spells a ${v[0]}% chance to not lose casting time when you take damage.`) },
+        { id: "eye_of_the_storm", name: "Eye of the Storm", icon: "spell_nature_eyeofthestorm", tier: 3, col: 1, max: 3, notes: true, ranks: ["Gives your Lightning Bolt and Chain Lightning spells a 23% chance to not lose casting time when you take damage.", "Gives your Lightning Bolt and Chain Lightning spells a 47% chance to not lose casting time when you take damage.", "Gives your Lightning Bolt and Chain Lightning spells a 70% chance to not lose casting time when you take damage."] },
         { id: "earthbound", name: "Earthbound", icon: "spell_nature_stranglevines", tier: 3, col: 3, max: 1, ranks: ["Your Earthbind Totem Immobilizes nearby targets for 5 sec when cast."] },
-        { id: "elemental_reach", name: "Elemental Reach", icon: "spell_nature_stormreach", tier: 4, col: 0, max: 2, ranks: per4([[3, 10], [6, 20]], (v) => `Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by ${v[0]} yards and reduces the cooldown of Totemic Projection by ${v[1]} sec.`) },
-        { id: "lava_burst", name: "Lava Burst", icon: "spell_shaman_lavaburst", tier: 4, col: 1, max: 1, ranks: ["You hurl molten lava at the target, dealing 114 to 145 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage."] },
-        { id: "lightning_overload", name: "Lightning Overload", icon: "spell_nature_lightningoverload", tier: 4, col: 2, max: 3, req: "elemental_alacrity", ranks: per4([[3], [7], [10]], (v) => `Gives your Lightning Bolt and Chain Lightning spells a ${v[0]}% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.`) },
+        { id: "elemental_reach", name: "Elemental Reach", icon: "spell_nature_stormreach", tier: 4, col: 0, max: 2, notes: true, ranks: ["Increases the range of your Lightning Bolt, Chain Lightning, and Fire Nova spells by 3 yards.", "Increases the range of your Lightning Bolt, Chain Lightning, and Fire Nova spells by 6 yards."] },
+        { id: "call_of_thunder", name: "Call of Thunder", icon: "spell_nature_callstorm", tier: 4, col: 1, max: 1, notes: true, ranks: ["Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by an additional 5%."] },
+        { id: "lightning_overload", name: "Lightning Overload", icon: "spell_nature_lightningoverload", tier: 4, col: 2, max: 3, req: "elemental_alacrity", notes: true, ranks: ["Gives your Lightning Bolt and Chain Lightning spells a 10% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.", "Gives your Lightning Bolt and Chain Lightning spells a 20% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.", "Gives your Lightning Bolt and Chain Lightning spells a 30% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat."] },
         { id: "elemental_fury", name: "Elemental Fury", icon: "spell_fire_volcano", tier: 5, col: 2, max: 5, req: "lightning_overload", ranks: per4([[20], [40], [60], [80], [100]], (v) => `Increases the critical strike damage bonus of your Searing and Magma Totems and your Fire, Frost, and Nature spells by ${v[0]}%.`) },
-        { id: "elemental_mastery", name: "Elemental Mastery", icon: "spell_nature_wispheal", tier: 6, col: 1, max: 1, req: "lava_burst", ranks: ["Gain mastery over Fire and Lightning, reducing the cast time of Lightning Bolt and Lava Burst by 0.5 sec, and removing the cooldown from Chain Lightning. Lasts 15 sec."] }
+        { id: "lightning_mastery", name: "Lightning Mastery", icon: "spell_nature_wispheal", tier: 6, col: 1, max: 1, req: "call_of_thunder", notes: true, active: true, ranks: ["Gain mastery over Lightning, reducing the cast time of Lightning Bolt by 0.5 sec, and removing the cooldown from Chain Lightning. Lasts 15 sec."] }
       ]
     },
     {
@@ -10429,19 +10663,19 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         { id: "thundering_strikes", name: "Thundering Strikes", icon: "ability_thunderbolt", tier: 0, col: 1, max: 5, ranks: per4([[1], [2], [3], [4], [5]], (v) => `Improves your chance to get a critical strike with all spells and attacks by ${v[0]}%.`) },
         { id: "ancestral_knowledge", name: "Ancestral Knowledge", icon: "spell_shadow_grimward", tier: 0, col: 2, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases your Intellect by ${v[0]}%.`) },
         { id: "guardian_totems", name: "Guardian Totems", icon: "spell_nature_stoneskintotem", tier: 1, col: 0, max: 2, ranks: per4([[10, 1], [20, 2]], (v) => `Increases the amount of damage reduced by your Stoneskin Totem and Windwall Totem by ${v[0]}% and reduces the cooldown of your Grounding Totem by ${v[1]} sec.`) },
-        { id: "mental_dexterity", name: "Mental Dexterity", icon: "spell_nature_mentalquickness", tier: 1, col: 1, max: 3, ranks: per4([[33], [67], [100]], (v) => `Increases your Attack Power by an amount equal to ${v[0]}% of your Intellect.`) },
-        { id: "improved_ghost_wolf", name: "Improved Ghost Wolf", icon: "spell_nature_spiritwolf", tier: 1, col: 2, max: 2, ranks: per4([["1.0"], ["3.0"]], (v) => `Reduces the cast time of your Ghost Wolf spell by ${v[0]} sec, and Ghost Wolf may be used indoors.`) },
+        { id: "mental_dexterity", name: "Mental Dexterity", icon: "spell_nature_mentalquickness", tier: 1, col: 1, max: 3, notes: true, ranks: ["Increases your Attack Power by an amount equal to 50% of your Intellect.", "Increases your Attack Power by an amount equal to 100% of your Intellect.", "Increases your Attack Power by an amount equal to 150% of your Intellect."] },
         { id: "improved_lightning_shield", name: "Improved Lightning Shield", icon: "spell_nature_lightningshield", tier: 1, col: 3, max: 3, ranks: per4([[5], [10], [15]], (v) => `Increases the damage done by your Lightning Shield orbs by ${v[0]}%.`) },
         { id: "elemental_weapons", name: "Elemental Weapons", icon: "spell_fire_flametounge", tier: 2, col: 0, max: 3, ranks: per4([[7, 13, 5], [13, 27, 10], [20, 40, 15]], (v) => `Increases the melee attack power bonus of your Rockbiter Weapon by ${v[0]}%, your Windfury Weapon effect by ${v[1]}% and increases the damage caused by your Flametongue Weapon and Frostbrand Weapon by ${v[2]}%.`) },
         { id: "shamanistic_focus", name: "Shamanistic Focus", icon: "spell_nature_elementalabsorption", tier: 2, col: 2, max: 1, ranks: ["Reduces the mana cost of your Shock and Lightning Shield spells by 45%."] },
         { id: "anticipation", name: "Anticipation", icon: "spell_nature_mirrorimage", tier: 2, col: 3, max: 3, ranks: per4([[2], [4], [6]], (v) => `Increases your chance to dodge by an additional ${v[0]}%.`) },
         { id: "toughness", name: "Toughness", icon: "spell_holy_devotion", tier: 3, col: 0, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases your Stamina by ${v[0]}%.`) },
-        { id: "flurry", name: "Flurry", icon: "ability_ghoulfrenzy", tier: 3, col: 1, max: 5, req: "mental_dexterity", ranks: per4([[5], [10], [15], [20], [25]], (v) => `Increases your attack speed by ${v[0]}% for your next 3 swings after dealing a melee critical strike.`) },
-        { id: "stormstrike", name: "Stormstrike", icon: "ability_shaman_stormstrike", tier: 3, col: 2, max: 1, ranks: ["Instantly strike for normal weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."] },
+        { id: "flurry", name: "Flurry", icon: "ability_ghoulfrenzy", tier: 3, col: 1, max: 5, req: "mental_dexterity", notes: true, ranks: ["Increases your attack speed by 6% for your next 3 swings after dealing a melee critical strike.", "Increases your attack speed by 12% for your next 3 swings after dealing a melee critical strike.", "Increases your attack speed by 18% for your next 3 swings after dealing a melee critical strike.", "Increases your attack speed by 24% for your next 3 swings after dealing a melee critical strike.", "Increases your attack speed by 30% for your next 3 swings after dealing a melee critical strike."] },
+        { id: "stormstrike", name: "Stormstrike", icon: "ability_shaman_stormstrike", tier: 3, col: 2, max: 1, notes: true, ranks: ["Instantly strike for 150% normalized weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."] },
+        { id: "improved_ghost_wolf", name: "Improved Ghost Wolf", icon: "spell_nature_spiritwolf", tier: 3, col: 3, max: 2, notes: true, ranks: per4([["1.0"], ["3.0"]], (v) => `Reduces the cast time of your Ghost Wolf spell by ${v[0]} sec, and Ghost Wolf may be used indoors.`) },
         { id: "spirit_weapons", name: "Spirit Weapons", icon: "ability_parry", tier: 4, col: 0, max: 1, ranks: ["Gives a chance to parry enemy melee attacks, reduces all threat generated by your attacks by 30% while Rockbiter Weapon is not active, and increases all threat generated by 30% while Rockbiter Weapon is active."] },
         { id: "mental_quickness", name: "Mental Quickness", icon: "spell_nature_sleep", tier: 4, col: 1, max: 2, ranks: per4([[15], [30]], (v) => `Increases your spell damage and healing by up to ${v[0]}% of your Intellect.`) },
         { id: "improved_stormstrike", name: "Improved Stormstrike", icon: "spell_shaman_improvedstormstrike", tier: 4, col: 2, max: 2, req: "stormstrike", ranks: per4([[50], [100]], (v) => `When you Stormstrike, you have a ${v[0]}% chance to gain 50% mana regeneration while casting spells for 15 sec, and Stormstrike's cooldown has a ${v[0]}% chance to reset each time you Dodge or Parry.`) },
-        { id: "maelstrom_weapon", name: "Maelstrom Weapon", icon: "spell_shaman_maelstromweapon", tier: 5, col: 2, max: 5, ranks: per4([[4], [8], [12], [16], [20]], (v) => `When you deal damage with a melee attack, you have a chance to reduce the cast time and Mana cost of your next Lightning Bolt spell by ${v[0]}%. Stacks up to 5 times. Lasts 30 sec.`) },
+        { id: "maelstrom_weapon", name: "Maelstrom Weapon", icon: "spell_shaman_maelstromweapon", tier: 5, col: 2, max: 5, notes: "approx", ranks: per4([[4], [8], [12], [16], [20]], (v) => `When you deal damage with a melee attack, you have a chance to reduce the cast time and Mana cost of your next Lightning Bolt spell by ${v[0]}%. Stacks up to 5 times. Lasts 30 sec.`) },
         { id: "rage_of_the_farseer", name: "Rage of the Farseer", icon: "spell_nature_bloodlust", tier: 6, col: 1, max: 1, req: "mental_quickness", ranks: ["Increases your attack speed by 30% for 25 sec."] }
       ]
     },
@@ -10465,8 +10699,26 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         { id: "healing_way", name: "Healing Way", icon: "spell_nature_healingway", tier: 4, col: 1, max: 3, ranks: per4([[8], [17], [25]], (v) => `Increases the amount healed by your Healing Wave spell by ${v[0]}%.`) },
         { id: "natures_swiftness", name: "Nature's Swiftness", icon: "spell_nature_ravenform", tier: 4, col: 2, max: 1, ranks: ["When activated, your next Nature spell with a casting time less than 10 sec. becomes an instant cast spell."] },
         { id: "purification", name: "Purification", icon: "spell_frost_wizardmark", tier: 5, col: 2, max: 5, ranks: per4([[2], [4], [6], [8], [10]], (v) => `Increases the effectiveness of your healing spells by ${v[0]}%.`) },
-        { id: "riptide", name: "Riptide", icon: "spell_nature_riptide", tier: 6, col: 1, max: 1, req: "healing_way", ranks: ["Heals a friendly target for 486 to 534, an additional 445 over 15 sec, and increases the effectiveness of your Chain Heal casts directly on that target by 25%."] }
+        { id: "riptide", name: "Riptide", icon: "spell_nature_riptide", tier: 6, col: 1, max: 1, req: "healing_way", notes: true, ranks: ["Heals a friendly target for 445 over 15 sec, and increases the effectiveness of your Chain Heal casts directly on that target by 25%."] }
       ]
+    }
+  ];
+
+  // src/classes/shaman/talent-history.js
+  var talentHistory8 = [
+    {
+      // 1.60.1.70753 (November 3): Elemental Mastery became Lightning Mastery, Lava Burst left and Call of Thunder took its
+      // place, and Improved Ghost Wolf moved (Blizzard's launch notes).
+      until: "1.60.1.70753",
+      date: "November 3",
+      order: [
+        ["convection", "concussion", "elemental_devastation", "reverberation", "elemental_alacrity", "call_of_flame", "elemental_focus", "elemental_warding", "trial_by_fire", "eye_of_the_storm", "earthbound", "elemental_reach", "lava_burst", "lightning_overload", "elemental_fury", "elemental_mastery"],
+        ["earths_grasp", "thundering_strikes", "ancestral_knowledge", "guardian_totems", "mental_dexterity", "improved_ghost_wolf", "improved_lightning_shield", "elemental_weapons", "shamanistic_focus", "anticipation", "toughness", "flurry", "stormstrike", "spirit_weapons", "mental_quickness", "improved_stormstrike", "maelstrom_weapon", "rage_of_the_farseer"],
+        ["improved_healing_wave", "tidal_focus", "mindfulness", "natural_grace", "totemic_focus", "improved_reincarnation", "ancestral_healing", "healing_focus", "water_shield", "tidal_mastery", "restorative_totems", "mana_tide_totem", "healing_way", "natures_swiftness", "purification", "riptide"]
+      ],
+      renamed: { elemental_mastery: "lightning_mastery" },
+      removed: { lava_burst: "Lava Burst" },
+      names: { elemental_mastery: "Elemental Mastery" }
     }
   ];
 
@@ -10481,7 +10733,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     ["Totemic Recall", "spell_shaman_totemrecall", "elemental_combat", 0, 0, 0, 0, 0, "Returns your totems to the earth, giving you 25% of the mana required to cast each totem destroyed by Totemic Recall."],
     ["Stoneskin Totem", "spell_nature_stoneskintotem", "enhancement", 210, 0, 0, 0, 0, "Summons a Stoneskin Totem with 5 health at the feet of the caster. The totem protects party members within 30 yards, reducing Physical damage taken by 30. Lasts 5 min."],
     ["Lightning Shield", "spell_nature_lightningshield", "enhancement", 370, 0, 0, 0, 0, "The caster is surrounded by 3 balls of lightning. When a spell, melee or ranged attack hits the caster, the attacker will be struck for 178 Nature damage. This expends one lightning ball. Only one ball will fire every few seconds. Lasts 10 min."],
-    ["Totemic Projection", "ability_shaman_totemrelocation", "enhancement", "b25", 30, 0, 60, 0, "Relocates your active totems to the specified location."],
+    ["Totemic Call", "ability_shaman_totemrelocation", "enhancement", "b25", 30, 0, 30, 0, "Relocates your active totems to your location."],
     ["Frost Resistance Totem", "spell_frostresistancetotem_01", "enhancement", 180, 0, 0, 0, 0, "Summons a Frost Resistance Totem with 5 health at the feet of the caster for 5 min. The totem increases party and raid members' frost resistance by 60, if within 30 yards."],
     ["Fire Resistance Totem", "spell_fireresistancetotem_01", "enhancement", 180, 0, 0, 0, 0, "Summons a Fire Resistance Totem with 5 health at the feet of the caster for 5 min that increases the fire resistance of party or raid members within 30 yards by 60."],
     ["Grounding Totem", "spell_nature_groundingtotem", "enhancement", "b6", 0, 0, 15, 0, "Summons a Grounding Totem with 5 health at the feet of the caster that will redirect one harmful spell cast on a nearby party member to itself every 10 seconds. Will not redirect area of effect spells. Lasts 45 sec."],
@@ -10496,7 +10748,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     ["Poison Cleansing Totem", "spell_nature_poisoncleansingtotem", "restoration", "b10", 0, 0, 0, 0, "Summons a Poison Cleansing Totem with 5 health at the feet of the caster that attempts to remove 1 poison effect from party members within 30 yards every 5 seconds. Lasts 5 min."],
     ["Disease Cleansing Totem", "spell_nature_diseasecleansingtotem", "restoration", "b10", 0, 0, 0, 0, "Summons a Disease Cleansing Totem with 5 health at the feet of the caster that attempts to remove 1 disease effect from party members within 30 yards every 5 seconds. Lasts 5 min."],
     ["Chain Heal", "spell_nature_healingwavegreater", "restoration", 405, 40, 2.5, 0, 0, "Heals the friendly target for 474 to 539, then jumps to heal additional nearby targets. If cast on a party member, the heal will only jump to other party members. Each jump is 50% as effective as the previous target. Heals 3 total targets."],
-    ["Riptide", "spell_nature_riptide", "restoration", 385, 40, 0, 6, 1, "Heals a friendly target for 799 to 883, an additional 805 over 15 sec, and increases the effectiveness of your Chain Heal casts directly on that target by 25%."]
+    ["Riptide", "spell_nature_riptide", "restoration", 385, 40, 0, 12, 1, "Heals a friendly target for 805 over 15 sec, and increases the effectiveness of your Chain Heal casts directly on that target by 25%."]
   ];
 
   // src/classes/shaman/abilities.js
@@ -10543,8 +10795,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cost: 220,
       castTime: 2.5,
       speed: 40,
-      effects: [{ type: "damage", min: 190, max: 211, coef: 0.714 }],
-      text: "Casts a bolt of lightning at the target for 190 to 211 Nature damage."
+      notes: "approx",
+      // Launch notes: about 80% more at rank 10 than the client's 190 to 211 (APPROXIMATION).
+      effects: [{ type: "damage", min: 342, max: 380, coef: 0.714 }],
+      text: "Casts a bolt of lightning at the target for 342 to 380 Nature damage."
     },
     {
       id: "chain_lightning",
@@ -10553,24 +10807,11 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       tree: "elemental_combat",
       ...spell5(nature2),
       cost: 315,
-      castTime: 2,
+      castTime: 2.5,
       cooldown: 6,
+      notes: true,
       effects: [{ type: "chain", targets: 3, radius: 10, falloff: 0.7, min: 119, max: 133, coef: 0.571 }],
       text: "Hurls a lightning bolt at the enemy, dealing 119 to 133 Nature damage and then jumping to additional nearby enemies. Each jump reduces the damage by 30%. Affects 3 total targets."
-    },
-    {
-      id: "lava_burst",
-      name: "Lava Burst",
-      icon: "spell_shaman_lavaburst",
-      tree: "elemental_combat",
-      ...spell5(fire2),
-      cost: 265,
-      castTime: 2.5,
-      cooldown: 10,
-      talent: "lava_burst",
-      speed: 30,
-      effects: [{ type: "damage", min: 192, max: 248, coef: 0.714 }],
-      text: "You hurl molten lava at the target, dealing 192 to 248 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage."
     },
     {
       id: "earth_shock",
@@ -10579,8 +10820,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       tree: "elemental_combat",
       ...spell5(nature2, shock),
       cost: 450,
-      effects: [{ type: "damage", min: 293, max: 309, coef: 0.386 }],
-      text: "Instantly shocks the target with concussive force, causing 293 to 309 Nature damage. It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec. Causes a high amount of threat."
+      notes: true,
+      effects: [{ type: "damage", min: 517, max: 545, coef: 0.386 }],
+      text: "Instantly shocks the target with concussive force, causing 517 to 545 Nature damage. It also interrupts spellcasting and prevents any spell in that school from being cast for 2 sec. Causes a high amount of threat."
     },
     {
       id: "flame_shock",
@@ -10589,12 +10831,13 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       tree: "elemental_combat",
       ...spell5(fire2, shock),
       cost: 410,
-      // Call of Flame adds 3 sec (one more tick of 44) per rank.
-      effects: [{ type: "damage", min: 166, max: 166, coef: 0.214, onHit: [{ type: "applyAura", to: "target", aura: "flame_shock", dynamic: (g) => {
+      notes: true,
+      // Call of Flame adds 3 sec (one more tick of 80) per rank.
+      effects: [{ type: "damage", min: 292, max: 292, coef: 0.214, onHit: [{ type: "applyAura", to: "target", aura: "flame_shock", dynamic: (g) => {
         const n = 4 + g.rank("call_of_flame");
-        return { dot: { ticks: n, base: 44 * n, coef: 0.1 * n } };
+        return { dot: { ticks: n, base: 80 * n, coef: 0.1 * n } };
       } }] }],
-      text: "Instantly sears the target with fire, causing 166 Fire damage immediately and 176 Fire damage over 12 sec."
+      text: "Instantly sears the target with fire, causing 292 Fire damage immediately and 320 Fire damage over 12 sec."
     },
     {
       id: "frost_shock",
@@ -10603,8 +10846,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       tree: "elemental_combat",
       ...spell5(frost, shock),
       cost: 430,
-      effects: [{ type: "damage", min: 279, max: 295, coef: 0.386 }],
-      text: "Instantly shocks the target with frost, causing 279 to 295 Frost damage and slowing movement speed by 50%. Lasts 8 sec."
+      notes: true,
+      effects: [{ type: "damage", min: 492, max: 520, coef: 0.386 }],
+      text: "Instantly shocks the target with frost, causing 492 to 520 Frost damage and slowing movement speed by 50%. Lasts 8 sec."
     },
     {
       id: "fire_nova",
@@ -10637,17 +10881,18 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       "Summons a Magma Totem with 5 health at the feet of the caster for 20 sec that causes 73 Fire damage to creatures within 8 yards every 2 seconds."
     ),
     {
-      id: "elemental_mastery",
-      name: "Elemental Mastery",
+      id: "lightning_mastery",
+      name: "Lightning Mastery",
       icon: "spell_nature_wispheal",
       tree: "elemental_combat",
       schools: nature2,
       target: "self",
       cooldown: 180,
       gcd: false,
-      talent: "elemental_mastery",
-      effects: [{ type: "applyAura", to: "self", aura: "elemental_mastery" }],
-      text: "Gain mastery over Fire and Lightning, reducing the cast time of Lightning Bolt and Lava Burst by 0.5 sec, and removing the cooldown from Chain Lightning. Lasts 15 sec."
+      talent: "lightning_mastery",
+      notes: true,
+      effects: [{ type: "applyAura", to: "self", aura: "lightning_mastery" }],
+      text: "Gain mastery over Lightning, reducing the cast time of Lightning Bolt by 0.5 sec, and removing the cooldown from Chain Lightning. Lasts 15 sec."
     },
     /* ---------- Enhancement ---------- */
     {
@@ -10660,11 +10905,12 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       harmful: true,
       schools: ["physical"],
       cost: basePct6(0.08),
-      cooldown: 8,
+      cooldown: 6,
       weaponStrike: true,
       talent: "stormstrike",
-      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1, onHit: [{ type: "applyAura", to: "target", aura: "stormstrike" }] }],
-      text: "Instantly strike for normal weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."
+      notes: true,
+      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1.5, normalized: true, onHit: [{ type: "applyAura", to: "target", aura: "stormstrike" }] }],
+      text: "Instantly strike for 150% normalized weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."
     },
     {
       id: "rage_of_the_farseer",
@@ -10806,7 +11052,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       healing_wave: heal4({ effects: [{ type: "heal", min: 1508, max: 1722, coef: 0.857 }] }),
       lesser_healing_wave: heal4({ effects: [{ type: "heal", min: 775, max: 865, coef: 0.429 }] }),
       chain_heal: heal4({ effects: [{ type: "chainHeal", targets: 3, radius: 12.5, falloff: 0.5, min: 474, max: 539, coef: 0.714, bonus: (g, ctx) => findAura(ctx.target, "riptide", g.player) ? 1.25 : 1 }] }),
-      riptide: heal4({ effects: [{ type: "heal", min: 799, max: 883, coef: 0.214 }, { type: "hot", aura: "riptide", base: 161, coef: 0.1 }] }),
+      riptide: { ...heal4({ effects: [{ type: "hot", aura: "riptide", base: 161, coef: 0.1 }] }), notes: true },
+      // heal over time only (launch notes)
+      totemic_call: { notes: true },
       totemic_recall: {
         notSimulated: false,
         effects: [{ type: "custom", run: (g) => {
@@ -10886,14 +11134,14 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       mods: (a, g) => [add("critChance", 0.03 * g.rank("elemental_devastation"), (ctx) => !!ctx.melee)],
       desc: (a, g) => `Melee critical strike chance increased by ${3 * g.rank("elemental_devastation")}%.`
     },
-    elemental_mastery: {
-      id: "elemental_mastery",
-      name: "Elemental Mastery",
+    lightning_mastery: {
+      id: "lightning_mastery",
+      name: "Lightning Mastery",
       icon: "spell_nature_wispheal",
       kind: "buff",
       duration: 15,
-      mods: () => [add("castTime", -0.5, (ctx) => isAbility(ctx, "lightning_bolt", "lava_burst")), set("cooldown", 0, (ctx) => isAbility(ctx, "chain_lightning"))],
-      desc: () => "Lightning Bolt and Lava Burst cast 0.5 sec faster; Chain Lightning has no cooldown."
+      mods: () => [add("castTime", -0.5, (ctx) => isAbility(ctx, "lightning_bolt")), set("cooldown", 0, (ctx) => isAbility(ctx, "chain_lightning"))],
+      desc: () => "Lightning Bolt casts 0.5 sec faster; Chain Lightning has no cooldown."
     },
     flurry: {
       id: "flurry",
@@ -10902,8 +11150,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       kind: "buff",
       duration: 15,
       charges: 3,
-      mods: (a, g) => [mult("attackSpeed", 1 + 0.05 * g.rank("flurry"))],
-      desc: (a, g) => `Attack speed increased by ${5 * g.rank("flurry")}% for ${a.charges} more swings.`
+      mods: (a, g) => [mult("attackSpeed", 1 + 0.06 * g.rank("flurry"))],
+      desc: (a, g) => `Attack speed increased by ${6 * g.rank("flurry")}% for ${a.charges} more swings.`
     },
     maelstrom_weapon: {
       id: "maelstrom_weapon",
@@ -10931,7 +11179,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       desc: () => "Your next Nature spell is instant."
     },
     /* ---------- on the target ---------- */
-    flame_shock: { id: "flame_shock", name: "Flame Shock", icon: "spell_fire_flameshock", kind: "debuff", schools: ["fire"], dot: { period: 3, ticks: 4, base: 176, coef: 0.4 } },
+    flame_shock: { id: "flame_shock", name: "Flame Shock", icon: "spell_fire_flameshock", kind: "debuff", schools: ["fire"], dot: { period: 3, ticks: 4, base: 320, coef: 0.4 } },
     stormstrike: {
       id: "stormstrike",
       name: "Stormstrike",
@@ -10988,7 +11236,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Elemental",
       points: "31/9/11",
       gearRole: "caster",
-      blurb: "Searing Totem down, Flame Shock up, Lava Burst on cooldown (20% more on a Flame Shocked target), Lightning Bolt in between (2 sec casts with Elemental Alacrity), Earth Shock when Flame Shock has time left. Elemental Fury doubles the crit bonus, Lightning Overload adds free half bolts and Elemental Mastery speeds a burst. Water Shield gives mana back on crits.",
+      blurb: "Searing Totem down, Flame Shock up, Lightning Bolt as the main spell (2 sec casts with Elemental Alacrity, more crits with Call of Thunder), Earth Shock when Flame Shock has time left. Elemental Fury doubles the crit bonus, Lightning Overload adds free half bolts and Lightning Mastery speeds a burst. Water Shield gives mana back on crits.",
       options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon" },
       talents: {
         convection: 5,
@@ -10998,10 +11246,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         elemental_focus: 1,
         trial_by_fire: 2,
         eye_of_the_storm: 2,
-        lava_burst: 1,
+        call_of_thunder: 1,
         lightning_overload: 3,
         elemental_fury: 5,
-        elemental_mastery: 1,
+        lightning_mastery: 1,
         thundering_strikes: 5,
         ancestral_knowledge: 4,
         tidal_focus: 5,
@@ -11009,7 +11257,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         natural_grace: 2,
         water_shield: 1
       },
-      bar: ["lightning_bolt", "flame_shock", "lava_burst", "searing_totem", "chain_lightning", "elemental_mastery", "water_shield", "mana_spring_totem", "magma_totem", "fire_nova", "call_of_the_elements", "major_mana_potion"]
+      bar: ["lightning_bolt", "flame_shock", "earth_shock", "searing_totem", "chain_lightning", "lightning_mastery", "water_shield", "mana_spring_totem", "magma_totem", "fire_nova", "call_of_the_elements", "major_mana_potion"]
     },
     {
       id: "enhancement",
@@ -11092,7 +11340,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var EW = (g, list) => list[g.rank("elemental_weapons")];
   var ftDamage = (w, lo, hi) => lo + (hi - lo) * clamp((w.speed - 1.2) / 2.8, 0, 1);
   var FROSTBRAND_PPM = 9;
-  var MAELSTROM_PPM_PER_RANK = 2;
+  var MAELSTROM_PPM_PER_RANK = 4;
   var WATER_SHIELD_GAP = 3.5;
   var meleeCrit2 = (s) => 0.017 + s.agi / 20 / 100;
   var spellCrit2 = (s) => 0.022 + s.int / 59.5 / 100;
@@ -11140,6 +11388,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     // shown in Gear and options
     stanceBar: { label: "Weapon imbues", abilities: ["windfury_weapon", "rockbiter_weapon", "flametongue_weapon", "frostbrand_weapon"] },
     trees: trees9,
+    talentHistory: talentHistory8,
+    // earlier trees, so older build links still open (talent-history.js)
     abilities: [...abilities9, ...extra9.abilities],
     // the rest of the spellbook: spellbook.js
     auras: { ...auras9, ...extra9.auras },
@@ -11196,10 +11446,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     mods() {
       return [
         add("critChance", (ctx, g) => ctx.melee ? meleeCrit2(g.stats()) : spellCrit2(g.stats())),
-        add("attackPower", (ctx, g) => g.player.extraAttackAp || 0),
+        add("attackPower", (ctx, g) => g.player.extraAttackAp || 0)
         // Windfury attacks
-        // Lava Burst: 20% more on a target with your Flame Shock.
-        mult("damageMult", 1.2, (ctx, g) => isAbility(ctx, "lava_burst") && !!ctx.target && !!findAura(ctx.target, "flame_shock", g.player))
       ];
     },
     listen(game, on) {
@@ -11276,8 +11524,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     talents: {
       /* ---------- Elemental Combat ---------- */
       elemental_warding: { mods: (r) => [mult("damageTaken", 1 - [0, 0.03, 0.07, 0.1][r], (ctx) => !!ctx.incoming && ["fire", "frost", "nature"].some((s) => (ctx.schools || []).includes(s)))] },
-      eye_of_the_storm: { mods: (r) => [focus([0, 0.23, 0.47, 0.7][r], (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning", "lava_burst"))] },
-      convection: { mods: (r) => [mult("cost", 1 - 0.02 * r, (ctx) => isShock(ctx) || isAbility(ctx, "lightning_bolt", "lava_burst", "chain_lightning"))] },
+      eye_of_the_storm: { mods: (r) => [focus([0, 0.23, 0.47, 0.7][r], (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning"))] },
+      convection: { mods: (r) => [mult("cost", 1 - 0.02 * r, (ctx) => isShock(ctx) || isAbility(ctx, "lightning_bolt", "chain_lightning"))] },
       concussion: { mods: (r) => [mult("damageMult", 1 + 0.01 * r, (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning", "earth_shock"))] },
       elemental_devastation: {
         listen(game, r, on) {
@@ -11287,8 +11535,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         }
       },
       reverberation: { mods: (r) => [add("cooldown", -0.2 * r, isShock)] },
-      elemental_alacrity: { mods: (r) => [add("castTime", -[0.17, 0.33, 0.5][r - 1], (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning", "lava_burst"))] },
-      call_of_flame: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => fireTotem(ctx) || isAbility(ctx, "flame_shock", "fire_nova", "lava_burst"))] },
+      elemental_alacrity: { mods: (r) => [add("castTime", -[0.17, 0.33, 0.5][r - 1], (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning"))] },
+      call_of_flame: { mods: (r) => [mult("damageMult", 1 + 0.05 * r, (ctx) => fireTotem(ctx) || isAbility(ctx, "flame_shock", "fire_nova"))] },
       // Flame Shock's longer duration: abilities.js
       elemental_focus: {
         listen(game, r, on) {
@@ -11304,21 +11552,21 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
           add("totemDuration", 10 * r, (ctx) => ctx.totemId === "magma_totem")
         ]
       },
-      elemental_reach: { mods: (r) => [add("range", 3 * r, (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning", "fire_nova", "lava_burst"))] },
-      lava_burst: { teaches: "lava_burst" },
+      elemental_reach: { mods: (r) => [add("range", 3 * r, (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning", "fire_nova"))] },
+      call_of_thunder: { mods: () => [add("critChance", 0.05, (ctx) => isAbility(ctx, "lightning_bolt", "chain_lightning"))] },
       // A second bolt at half damage on the same target, free.
       lightning_overload: {
         listen(game, r, on) {
           on("spell:resolved", ({ ability, ctx }) => {
             if (!isAbility(ctx, "lightning_bolt", "chain_lightning") || ctx.overload || !ctx.target || ctx.target.dead) return;
-            if (game.rng() >= [0.03, 0.07, 0.1][r - 1]) return;
+            if (game.rng() >= [0.1, 0.2, 0.3][r - 1]) return;
             const ef = ability.effects[0];
             spellHit(game, { ...ctx, castId: ++game.castSeq, overload: true, chainJump: 0 }, { min: ef.min / 2, max: ef.max / 2, coef: ef.coef / 2, name: `${ability.name} (Overload)` });
           });
         }
       },
       elemental_fury: { mods: (r) => [mult("critBonusMult", 1 + 0.2 * r, elementalSpell)] },
-      elemental_mastery: { teaches: "elemental_mastery" },
+      lightning_mastery: { teaches: "lightning_mastery" },
       /* ---------- Enhancement ---------- */
       anticipation: { mods: (r) => [add("dodgeChance", 0.02 * r)] },
       toughness: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, sta: a.sta * (1 + 0.02 * r) }) }] },
@@ -11326,7 +11574,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       spirit_weapons: { mods: () => [set("canParry", true), mult("threatMult", 0.7, (ctx, g) => !findAura(g.player, "rockbiter_weapon")), mult("threatMult", 1.3, (ctx, g) => !!findAura(g.player, "rockbiter_weapon"))] },
       thundering_strikes: { mods: (r) => [add("critChance", 0.01 * r)] },
       ancestral_knowledge: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, int: a.int * (1 + 0.02 * r) }) }] },
-      mental_dexterity: { mods: (r) => [add("attackPower", (ctx, g) => g.stats().int * [0.33, 0.67, 1][r - 1])] },
+      mental_dexterity: { mods: (r) => [add("attackPower", (ctx, g) => g.stats().int * [0.5, 1, 1.5][r - 1])] },
       elemental_weapons: { mods: () => [] },
       // read by the imbues (auras.js and the procs above)
       shamanistic_focus: { mods: () => [mult("cost", 0.55, isShock)] },
@@ -11676,6 +11924,23 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/scenarios/index.js
+  var ENEMY_TYPES = ["beast", "demon", "dragonkin", "elemental", "giant", "humanoid", "mechanical", "undead"];
+  var enemyType = {
+    label: "Enemy type",
+    advanced: true,
+    default: "default",
+    values: ["default", ...ENEMY_TYPES],
+    names: { default: "Test default (Mechanical dummy, Dragonkin boss)", ...Object.fromEntries(ENEMY_TYPES.map((t) => [t, t[0].toUpperCase() + t.slice(1)])) }
+  };
+  for (const sc of [targetDummy, raidBoss, raidHealing]) {
+    sc.options = { ...sc.options, enemyType };
+    const setup = sc.setup;
+    sc.setup = (game, opts = {}) => {
+      const r = setup(game, opts);
+      if (ENEMY_TYPES.includes(opts.enemyType)) for (const e of r.enemies) e.creatureType = opts.enemyType;
+      return r;
+    };
+  }
   var SCENARIOS = { [targetDummy.id]: targetDummy, [raidBoss.id]: raidBoss, [raidHealing.id]: raidHealing };
   var DEFAULT_SCENARIO = targetDummy.id;
   var testsFor = (cls) => Object.values(SCENARIOS).filter((s) => (cls.roles || ["dps"]).includes(s.role));
@@ -11864,6 +12129,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     });
   }
   var SCHOOL_NAMES = { arcane: "Arcane", fire: "Fire", frost: "Frost", shadow: "Shadow", nature: "Nature", holy: "Holy", physical: "Physical" };
+  var NOTES_LINE = `<div class="tt-notes">From Blizzard's launch notes: the game client does not show it yet.</div>`;
+  var APPROX_LINE = `<div class="tt-notes">Approximation based on Blizzard's launch notes: the game client does not show it yet.</div>`;
+  var notesLine = (n) => n === "approx" ? APPROX_LINE : n ? NOTES_LINE : "";
   function abilityTip(game, ab) {
     const ctx = game.newCtx(ab);
     const cost = game.costOf(ab, ctx), cast = game.castTimeOf(ab, ctx), range = game.rangeOf(ab, ctx), cd = game.cooldownOf(ab, ctx);
@@ -11883,6 +12151,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     ${ab.tipNote ? `<div class="tt-sub">${esc(ab.tipNote(game))}</div>` : ""}
     ${threatLine(ab) ? `<div class="tt-sub">${threatLine(ab)}</div>` : ""}
     ${!known ? `<div class="tt-req">Requires the talent ${esc(talentName(game.cls, ab.talent))}</div>` : ""}
+    ${notesLine(ab.notes)}
     ${ab.notSimulated ? '<div class="tt-notsim">Not simulated in the lab</div>' : ""}`;
   }
   function threatLine(ab) {
@@ -11933,6 +12202,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     ${req}
     ${reason && rank < t.max ? `<div class="tt-req">${esc(reason)}</div>` : ""}
     ${broken ? '<div class="tt-req">Lost a requirement in the new talent trees: it does not count until you fix the tree, or remove it.</div>' : ""}
+    ${notesLine(t.notes)}
     ${simulated ? "" : '<div class="tt-notsim">Not simulated in the lab</div>'}
     <div class="tt-hint">${TOUCH ? "Tap to add or remove a point (the switch above the trees)." : "Left click to learn. Right click to unlearn."}</div>`;
   }
@@ -12491,15 +12761,29 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         })
       );
     }
+    const advOpts = h("div", { class: "opt-list" });
+    for (const [k, def] of Object.entries(app.scenario.options || {})) {
+      if (!def.advanced) continue;
+      const sel = h("select", { "aria-label": def.label });
+      const value = app.scenarioOptions[k] ?? def.default;
+      for (const v of def.values) sel.append(h("option", { value: v, selected: String(v) === String(value) }, def.names ? def.names[v] : String(v)));
+      sel.addEventListener("change", () => app.setScenarioOption(k, sel.value));
+      advOpts.append(h("label", { class: "opt" }, h("span", {}, def.label), sel));
+    }
     const cur = cls.gearPresets.find((p) => p.id === app.gearId);
     const adv = h(
       "details",
       { class: "advanced" },
-      h("summary", {}, "Advanced: change the gear"),
+      h("summary", {}, "Advanced: gear and enemy type"),
       h("h3", { class: "label" }, "Gear level"),
       presets,
       h("p", { class: "hint" }, "Presets are approximate stand-ins for each gear tier. Move any slider to make it your own."),
-      fields
+      fields,
+      ...advOpts.childNodes.length ? [
+        h("h3", { class: "label" }, "Enemy type"),
+        h("p", { class: "hint" }, "The creature type of the dummies and the boss. Some spells and talents only work on some types, like Exorcism on Undead and Demons."),
+        advOpts
+      ] : []
     );
     root.append(
       h("p", { class: "hint" }, `Gear: ${cur ? `${cur.name} level` : "custom"}. Everyone starts with Molten Core level gear, the first raid of the game.`),
@@ -12538,6 +12822,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     const opts = h("div", { class: "test-opts" });
     for (const [k, def] of Object.entries(sc.options || {})) {
       if (def.showIf && !def.showIf(cls)) continue;
+      if (def.advanced) continue;
       const val = app.scenarioOptions[k] ?? def.default;
       if (def.type === "toggle") {
         const cb = h("input", { type: "checkbox", checked: val !== false });
@@ -13921,8 +14206,9 @@ ${ctx.link}`;
     useScenario(id) {
       const sc = scenarioFor(this.cls, id);
       if (sc === this.scenario) return;
+      const keep = Object.fromEntries(Object.entries(this.scenarioOptions).filter(([k]) => ((this.scenario.options || {})[k] || {}).advanced));
       this.scenario = sc;
-      this.scenarioOptions = {};
+      this.scenarioOptions = { ...keep };
       this.fillScenarioOptions();
     }
     setScenario(id) {

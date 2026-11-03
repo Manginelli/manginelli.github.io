@@ -352,6 +352,7 @@ body.touch .slot.empty::after { content: "+"; position: absolute; inset: 0; disp
 .tt-hint { color: var(--game-green); margin-top: 6px; font-size: 12.5px; }
 .tt-req-line { color: var(--game-text); font-size: 13px; }
 .tt-notsim { color: #9d9d9d; margin-top: 6px; font-size: 12.5px; }
+.tt-notes { color: #c9a227; margin-top: 6px; font-size: 12.5px; }
 /* An ability named in a tooltip's text, with its icon (as on ForeverChanges). */
 .spell-ref { white-space: nowrap; }
 .spell-ref img { width: 13px; height: 13px; vertical-align: -2px; margin-right: 3px; border: 1px solid #000; }
