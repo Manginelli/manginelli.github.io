@@ -1087,8 +1087,9 @@
       if (!unit || unit.dead) return;
       const def = game.auraDef(ef.aura), c = { ...ctx, target: unit, heal: true, periodic: true };
       const perTick = ((ef.base || 0) + healingPower(game, c) * (ef.coef || 0)) * applyMods(game, "healMult", 1, c);
-      const ticks = Math.round((def.duration || 0) / def.period);
-      applyAura(game, unit, def, { source: ctx.caster, data: { perTick, ticks, ability: ctx.ability, castId: ctx.castId } });
+      const duration = applyMods(game, "auraDuration", def.duration || 0, { ...c, auraId: def.id, aura: def });
+      const ticks = Math.round(duration / def.period);
+      applyAura(game, unit, def, { source: ctx.caster, duration, data: { perTick, ticks, ability: ctx.ability, castId: ctx.castId } });
     },
     // An absorb shield: { aura (absorb: true), amount(game, ctx), to } on the friendly target, or the caster with to: 'self'.
     absorb(game, ef, ctx) {
@@ -1955,7 +1956,7 @@
       if (ab.finisher) ctx.combo = spendCombo(this);
       if (ab.reagent) p.reagents[ab.reagent.id] = Math.max(0, (p.reagents[ab.reagent.id] || 0) - this.reagentCost(ab, ctx));
       if (harmful && !ab.keepsStealth) this.breakStealth();
-      if (harmful && (ab.range === "melee" || ab.startsAttack)) p.autoAttack = true;
+      if (harmful && !ab.keepsStealth && (ab.range === "melee" || ab.startsAttack)) p.autoAttack = true;
       this.emit("cast:success", { ability: ab, ctx, cost });
       if (ab.channel) {
         runEffects(this, this.effectsOf(ab, ctx), ctx);
@@ -3876,6 +3877,9 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
     forms: {},
     overrides: {
       gouge: { notSimulated: false, schools: ["physical"], builder: true, effects: [{ type: "meleeDamage", min: 75, max: 75, name: "Gouge", onHit: [{ type: "applyAura", to: "target", aura: "gouge" }, { type: "addCombo", n: 1 }] }] },
+      // Sap and Distract do not break Stealth (tooltips), so they do not start the auto attack either.
+      sap: { keepsStealth: true },
+      distract: { keepsStealth: true },
       kick: { notSimulated: false, schools: ["physical"], effects: [{ type: "meleeDamage", min: 80, max: 80, name: "Kick" }] }
     },
     auraOverrides: { gouge: { flags: { breaksOnDamage: true, stunned: true } } }
@@ -8797,7 +8801,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Inner Focus",
       icon: "spell_frost_windwalkon",
       kind: "buff",
-      mods: () => [set("cost", 0, (ctx) => !!ctx.ability && ctx.ability.id !== "inner_focus"), add("critChance", 0.25, (ctx) => !ctx.periodic && !!ctx.ability && ctx.ability.id !== "inner_focus")],
+      mods: () => [set("cost", 0, (ctx) => !!ctx.ability && ctx.ability.id !== "inner_focus" && ctx.ability.kind !== "item")],
+      // the crit: ctx.innerFocus, in priest.js
       desc: () => "Your next spell costs no mana and has 25% more critical chance."
     },
     power_infusion: { id: "power_infusion", name: "Power Infusion", icon: "spell_holy_powerinfusion", kind: "buff", duration: 15, mods: () => [mult("damageMult", 1.2, spellDamage), mult("healMult", 1.2)], desc: () => "Spell damage and healing increased by 20%." },
@@ -9008,10 +9013,12 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         if (a.data.used >= 20 + 4 * game.rank("improved_inner_fire")) removeAura(game, a, "consumed");
       });
       const p = () => game.player;
-      on("cast:success", ({ ability }) => {
-        if (ability.id === "inner_focus") return;
+      on("cast:success", ({ ability, ctx }) => {
+        if (ability.id === "inner_focus" || ability.kind === "item") return;
         const a = findAura(game.player, "inner_focus");
-        if (a) removeAura(game, a, "consumed");
+        if (!a) return;
+        if (ctx) ctx.innerFocus = true;
+        removeAura(game, a, "consumed");
       });
       on("unitDamaged", ({ unit }) => {
         const pom = findAura(unit, "prayer_of_mending", p());
@@ -9046,7 +9053,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       holy_precision: { mods: (r) => [add("hitChance", 0.06 * r, (ctx) => hasSchool(ctx, "holy"))] },
       mental_strength: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, int: a.int * (1 + 0.02 * r) }) }] },
       mental_agility: { mods: (r) => [mult("cost", 1 - [0.03, 0.07, 0.1][r - 1], (ctx) => isAbility(ctx, "smite", "holy_fire") || instant(ctx))] },
-      inner_focus: { teaches: "inner_focus" },
+      inner_focus: { teaches: "inner_focus", mods: () => [add("critChance", 0.25, (ctx) => !!ctx.innerFocus && !ctx.periodic)] },
+      // the crit of the spell Inner Focus was spent on
       meditation: { mods: (r) => [add("regenWhileCasting", [0.17, 0.33, 0.5][r - 1])] },
       penance: { teaches: "penance" },
       power_infusion: { teaches: "power_infusion" },
@@ -10269,8 +10277,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       natures_majesty: { mods: (r) => [add("critChance", 0.02 * r)] },
       natures_reach: { mods: (r) => [mult("range", 1 + 0.1 * r, balanceSpell), add("hitChance", 0.02 * r, balanceSpell)] },
       improved_entangling_roots: { mods: (r) => [mult("damageMult", 1 + 0.25 * r, (ctx) => isAbility(ctx, "entangling_roots"))] },
-      natures_splendor: { mods: () => [] },
-      // read by Moonfire and Insect Swarm (one more tick each)
+      // Moonfire and Insect Swarm read it (one more tick each); Rejuvenation 3 sec and Regrowth 6 sec longer (more ticks).
+      natures_splendor: { mods: () => [add("auraDuration", 3, (ctx) => ctx.auraId === "rejuvenation"), add("auraDuration", 6, (ctx) => ctx.auraId === "regrowth")] },
       insect_swarm: { teaches: "insect_swarm" },
       vengeance: { mods: (r) => [mult("critBonusMult", 1 + 0.2 * r, (ctx) => arcaneOrNature(ctx) && !ctx.melee)] },
       improved_starfire: { mods: (r) => [add("castTime", -0.1 * r, (ctx) => isAbility(ctx, "starfire"))] },
@@ -10317,7 +10325,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
           return g.form() === "bear" ? n * 4.6 : n;
         })]
       },
-      feral_swiftness: { mods: (r) => [add("dodgeChance", 0.02 * r, (ctx, g) => feral(g))] },
+      feral_swiftness: { mods: (r) => [add("dodgeChance", 0.02 * r, (ctx, g) => feral(g)), mult("runSpeed", 1 + 0.15 * r, (ctx, g) => g.form() === "cat")] },
       natural_reaction: {
         mods: (r) => [add("dodgeChance", 0.01 * r)],
         listen(game, r, on) {
