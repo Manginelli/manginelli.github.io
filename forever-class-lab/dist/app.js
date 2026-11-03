@@ -2008,10 +2008,11 @@
       this.emit("target", this.player.target);
     }
     // Clicking an enemy targets it and starts the auto attack (melee classes), like a right click in WoW.
+    // In Stealth or Prowl it only selects: the auto attack would break it before the opener (the opener starts it).
     engage(e) {
       this.setTarget(e);
       const w = weaponsOf(this);
-      if (this.player.target && (w.main || w.ranged)) this.player.autoAttack = true;
+      if (this.player.target && (w.main || w.ranged) && !isStealthed(this.player)) this.player.autoAttack = true;
     }
     stopAttack() {
       this.player.autoAttack = false;
@@ -8018,6 +8019,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     voidwalker: { id: "voidwalker", name: "Voidwalker", icon: "spell_shadow_summonvoidwalker", color: "#5a5ad8", speed: 2, min: 35, max: 45, crit: 0.05 }
   };
   var INFERNAL = { id: "infernal", name: "Infernal", icon: "spell_shadow_summoninfernal", color: "#7ac03a", speed: 2, min: 160, max: 210, crit: 0.05 };
+  var LIFE_DRAINS = ["drain_life", "siphon_life", "death_coil"];
   var SHARD_CHANCE = 0.1;
   var DRAINS = ["drain_life", "drain_soul", "wrack"];
   var AFFLICTION_EFFECTS = ["corruption", "bane_of_agony", "bane_of_doom", "siphon_life", "curse_of_the_elements", "wrack"];
@@ -8142,6 +8144,10 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       const p = () => game.player;
       on("damage", (ev) => {
         if (isPlayer5(game, ev) && isAbility(ev.ctx, "drain_soul") && ev.res.amount > 0 && game.rng() < SHARD_CHANCE) p().reagents.soul_shard = (p().reagents.soul_shard || 0) + 1;
+      });
+      on("damage", (ev) => {
+        const ab = ev.ctx.ability;
+        if (isPlayer5(game, ev) && ab && LIFE_DRAINS.includes(ab.id) && ev.res.amount > 0) healPlayer(game, ev.res.amount, { name: ab.name, icon: ab.icon, self: true });
       });
       on("cast:success", ({ ability }) => {
         if (ability.id === "shadow_bolt") {
@@ -11066,8 +11072,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var shaman = {
     id: "shaman",
     name: "Shaman",
-    roles: ["dps", "tank", "healer"],
-    // the tests it can take; Tank: the Shaman can tank in Forever (Rockbiter, Spirit Weapons, a shield)
+    // The tests it can take. No Tank test for now: the Shaman can tank in Forever (Rockbiter, Spirit Weapons, a shield),
+    // but the lab still lacks its tank gear (armor, defense, block) and threat (Earth Shock, Lightning Shield).
+    roles: ["dps", "healer"],
     icon: "classicon_shaman",
     color: "#0070de",
     resource: "mana",
