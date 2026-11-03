@@ -4062,7 +4062,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
         lethality: 5,
         improved_eviscerate: 3,
         improved_sinister_strike: 2,
-        puncturing_wounds: 3,
+        deflection: 3,
         precision: 3,
         endurance: 2,
         improved_sprint: 2,
@@ -4074,7 +4074,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
         aggression: 3,
         adrenaline_rush: 1
       },
-      bar: ["sinister_strike", "eviscerate", "backstab", "slice_and_dice", "rupture", "adrenaline_rush", "blade_flurry", "thistle_tea", "expose_armor", "vanish", "garrote", "stealth"]
+      bar: ["sinister_strike", "eviscerate", "slice_and_dice", "rupture", "adrenaline_rush", "blade_flurry", "thistle_tea", "expose_armor", "vanish", "garrote", "stealth"]
     },
     {
       id: "subtlety",
