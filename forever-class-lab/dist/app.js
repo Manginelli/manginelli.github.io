@@ -1904,6 +1904,11 @@
         return true;
       }
       if (ab.shapeshift && this.form() === ab.shapeshift) return this.leaveForm();
+      const own2 = ab.cancelsAura && p.auras.find((a) => a.id === ab.cancelsAura);
+      if (own2) {
+        removeAura(this, own2, "cancelled");
+        return true;
+      }
       if (waits.length && !ab.nextSwing) {
         const wait = Math.max(...waits);
         if (!fromQueue && wait <= QW) {
@@ -2803,6 +2808,8 @@
       cost: 15,
       cooldown: 300,
       target: "self",
+      cancelsAura: "ice_block",
+      // pressing it again ends it early
       effects: [{ type: "applyAura", to: "self", aura: "ice_block" }],
       text: "You become encased in a block of ice, protecting you from all physical attacks and spells for 10 sec, but during that time you cannot attack, move, or cast spells."
     }
@@ -3411,7 +3418,8 @@
             }
           });
         },
-        mods: () => [{ key: "treatAsFrozen", fn: (v, ctx) => v || !!ctx.fof }]
+        // A channel (Blizzard) gets it on its first tick only (ctx.tick counts from 1).
+        mods: () => [{ key: "treatAsFrozen", fn: (v, ctx) => v || !!ctx.fof && !(ctx.tick > 1) }]
       },
       winters_chill: {
         listen(game, r, on) {
