@@ -799,6 +799,8 @@
     game.totems.push(t);
     o.lastTotems = { ...o.lastTotems || {}, [def.element]: def.id };
     game.emit("totem:place", { totem: t });
+    const reach = def.attack ? def.attack.range : def.pulse ? def.pulse.radius : null;
+    if (reach != null && !game.enemies.some((e) => !e.dead && dist(t, e) - e.radius <= reach)) game.emit("error", `No enemy within ${reach} yards of your ${def.name}`);
     return t;
   }
   function removeTotem(game, t, reason = "expired") {
@@ -10860,7 +10862,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       target: "self",
       cost: 375,
       cooldown: 10,
-      usable: (g) => totemOf(g, "fire") ? null : "Requires an active Fire totem",
+      usable: (g) => {
+        const t = totemOf(g, "fire");
+        return !t ? "Requires an active Fire totem" : g.enemies.some((e) => !e.dead && dist(t, e) - e.radius <= 10) ? null : "No enemy within 10 yards of your Fire totem";
+      },
       effects: [{ type: "aoeDamage", center: (g) => totemOf(g, "fire"), radius: 10, min: 232, max: 259, coef: 0.143, name: "Fire Nova" }],
       text: "Instantly inflicts 232 to 259 fire damage to enemies within 10 yd of your active Fire totem."
     },
@@ -11234,7 +11239,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       points: "31/9/11",
       gearRole: "caster",
       blurb: "Searing Totem down, Flame Shock up, Lightning Bolt as the main spell (2 sec casts with Elemental Alacrity, more crits with Call of Thunder), Earth Shock when Flame Shock has time left. Elemental Fury doubles the crit bonus, Lightning Overload adds free half bolts and Lightning Mastery speeds a burst. Water Shield gives mana back on crits.",
-      options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon" },
+      options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon", call_of_the_elements_earth: "none", call_of_the_elements_air: "none" },
       talents: {
         convection: 5,
         concussion: 5,
@@ -11262,7 +11267,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       points: "8/34/9",
       gearRole: "melee",
       blurb: "A two-hander with Windfury Weapon, Strength of Earth and Grace of Air totems. Stormstrike on cooldown, then Earth Shock into its 20%; Flurry speeds swings after crits and Maelstrom Weapon turns the hits into instant Lightning Bolts. Rage of the Farseer for 30% attack speed. Mental Dexterity turns Intellect into attack power.",
-      options: { mainHand: "two_hand_mace", offHand: "none", imbue: "windfury_weapon" },
+      options: { mainHand: "two_hand_mace", offHand: "none", imbue: "windfury_weapon", call_of_the_elements_air: "grace_of_air_totem" },
       talents: {
         concussion: 5,
         elemental_devastation: 3,
@@ -11282,7 +11287,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         mindfulness: 3,
         natural_grace: 1
       },
-      bar: ["stormstrike", "flame_shock", "frost_shock", "lightning_bolt", "searing_totem", "rage_of_the_farseer", "strength_of_earth_totem", "mana_spring_totem", "magma_totem", "fire_nova", "call_of_the_elements", "major_mana_potion"]
+      bar: ["stormstrike", "flame_shock", "earth_shock", "lightning_bolt", "searing_totem", "rage_of_the_farseer", "strength_of_earth_totem", "mana_spring_totem", "magma_totem", "fire_nova", "call_of_the_elements", "major_mana_potion"]
     },
     {
       id: "restoration",
@@ -11290,8 +11295,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       points: "0/5/46",
       gearRole: "caster",
       scenario: "raid-healing",
-      blurb: "A healer build for the Healing test: Riptide on the tank, Chain Heal into hurt groups (25% more on a Riptide target), Healing Wave for big heals and Lesser Healing Wave when it is urgent; Nature's Swiftness for an instant one. Water Shield, Mana Spring and Mana Tide Totem keep the mana up, Healing Stream Totem heals your party.",
-      options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon" },
+      blurb: "A healer build for the Healing test: Riptide on the tank, Chain Heal into hurt groups (25% more on a Riptide target), Healing Wave for big heals and Lesser Healing Wave when it is urgent; Nature's Swiftness for an instant one. Water Shield and Mana Tide Totem keep the mana up; Mana Spring or Healing Stream is your one water totem.",
+      options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon", call_of_the_elements_earth: "none", call_of_the_elements_fire: "none", call_of_the_elements_water: "healing_stream_totem", call_of_the_elements_air: "none" },
       talents: {
         ancestral_knowledge: 5,
         improved_healing_wave: 5,
@@ -11822,7 +11827,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     auras: Object.fromEntries(Object.entries(DEBUFFS).map(([type, d]) => [d.id, debuffAura(type, d)])),
     setup(game, opts = {}) {
       const ally = (id, name, cls, color, role, x, y) => ({ id, kind: "ally", name, cls, color, role, party: 1, x, y, radius: 0.6, maxHp: T.hp[role], hp: T.hp[role], auras: [], dead: false, immortal: !!opts.immortal, mainTank: role === "tank" });
-      const allies = [ally("tank", "Warrior (tank)", "warrior", "#c79c6e", "tank", 36.6, 20), ally("mage", "Mage", "mage", "#69ccf0", "dps", 22, 27)];
+      const allies = [ally("tank", "Warrior (tank)", "warrior", "#c79c6e", "tank", 36.6, 20), ally("mage", "Mage", "mage", "#69ccf0", "dps", 27, 24)];
       const boss = {
         id: "boss",
         kind: "enemy",
