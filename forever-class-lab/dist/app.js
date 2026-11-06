@@ -1234,7 +1234,7 @@
       const goal = engaged && !ranged ? { x: t.x - Math.cos(t.facing || 0) * (t.radius + pet.radius + 0.6), y: t.y - Math.sin(t.facing || 0) * (t.radius + pet.radius + 0.6) } : { x: o.x - 1.2, y: o.y + 1.2 };
       const d = Math.hypot(goal.x - pet.x, goal.y - pet.y);
       if (d > 0.05 && !pet.casting) {
-        const step = Math.min(d, PET_SPEED * h2);
+        const step = Math.min(d, PET_SPEED * applyMods(game, "petRunSpeed", 1, { caster: pet, pet: true, petKind: pet.def.id }) * h2);
         pet.x += (goal.x - pet.x) / d * step;
         pet.y += (goal.y - pet.y) / d * step;
       }
@@ -1771,8 +1771,10 @@
       d = Math.atan2(Math.sin(d), Math.cos(d));
       return Math.abs(d) <= degrees * Math.PI / 360;
     }
+    // In combat: damage dealt or taken in the last 5 sec, or an effect that puts you in combat (modifier 'forceCombat':
+    // Bloodrage, Enrage).
     inCombat() {
-      return this.meter.last != null && this.time - this.meter.last < 5;
+      return this.meter.last != null && this.time - this.meter.last < 5 || applyMods(this, "forceCombat", false, { caster: this.player });
     }
     cooldownLeft(ab) {
       const c = this.player.cooldowns[ab.cooldownGroup || ab.id];
@@ -1859,7 +1861,7 @@
       if (p.dead) return "You are dead";
       if (!this.isKnown(ab)) return "You have not learned that spell";
       if (applyMods(this, "noActions", false, ctx)) return "Can't do that right now";
-      if (ab.harmful && (ab.schools || []).includes("physical") && applyMods(this, "noAttack", false, ctx)) return "Can't attack while protected";
+      if (ab.harmful && ((ab.schools || []).includes("physical") || ab.range === "melee") && applyMods(this, "noAttack", false, ctx)) return "Can't attack while protected";
       if (req.mainHand) {
         const w = weaponsOf(this).main;
         if (!w || !req.mainHand.includes(w.type)) return `Requires ${req.mainHand.map((t) => WEAPON_NAMES[t] || t).join(" or ")}`;
@@ -1871,6 +1873,10 @@
       if (req.formNot && req.formNot.includes(this.form())) return `Can't do that while in ${this.formName(this.form())}`;
       if (req.stealth && !isStealthed(p) && !applyMods(this, "ignoreStealthRequirement", false, ctx)) return "You must be stealthed";
       if (req.notInCombat && this.inCombat()) return "You are in combat";
+      if (ab.usableFirst) {
+        const why = ab.usableFirst(this, ctx);
+        if (why) return why;
+      }
       if (ctx.allyMode) {
         const t = ctx.target;
         if (!t || t.dead) return "Your target is dead";
@@ -3811,6 +3817,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       gcd: false,
       keepsStealth: true,
       requires: { notInCombat: true },
+      cancelsAura: "stealth",
+      // pressing it again leaves Stealth
       usable: (g) => g.player.auras.some((a) => a.id === "stealth") ? "You are already stealthed" : null,
       effects: [{ type: "applyAura", to: "self", aura: "stealth" }],
       text: "Allows the rogue to sneak around, but reduces your speed by 30%. Lasts until cancelled. (Here: until you attack. You cannot stealth in combat.)"
@@ -3893,7 +3901,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       cooldown: 600,
       talent: "preparation",
       keepsStealth: true,
-      effects: [{ type: "resetCooldowns", filter: () => true }],
+      effects: [{ type: "resetCooldowns", filter: (ab) => ab.kind !== "item" }],
+      // Rogue abilities only, not Thistle Tea
       text: "When activated, this ability immediately finishes the cooldown on your other Rogue abilities."
     },
     {
@@ -3940,13 +3949,32 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
     talents: new Set(trees2.flatMap((t) => t.talents.map((x) => x.id))),
     forms: {},
     overrides: {
-      gouge: { notSimulated: false, schools: ["physical"], builder: true, effects: [{ type: "meleeDamage", min: 75, max: 75, name: "Gouge", onHit: [{ type: "applyAura", to: "target", aura: "gouge" }, { type: "addCombo", n: 1 }] }] },
+      gouge: { notSimulated: false, schools: ["physical"], builder: true, effects: [{ type: "meleeDamage", min: 75, max: 75, name: "Gouge", onHit: [{ type: "applyAura", to: "target", aura: "gouge" }, { type: "addCombo", n: 1 }] }, { type: "custom", run: (g) => g.stopAttack() }] },
+      // "stops your attack": a swing would break it
       // Sap and Distract do not break Stealth (tooltips), so they do not start the auto attack either.
+      // Sprint (+70% speed for 15 sec, keeps Stealth) and Evasion (+50% dodge for 15 sec); Improved Sprint can clear slows.
+      sprint: {
+        notSimulated: false,
+        keepsStealth: true,
+        effects: [
+          { type: "applyAura", to: "self", aura: "sprint" },
+          { type: "custom", run: (g) => {
+            if (g.rng() < 0.5 * g.rank("improved_sprint")) {
+              for (const a of g.player.auras.slice()) if (a.def.kind === "debuff" && (a.def.chill || (a.def.flags || {}).rooted)) removeAura(g, a, "cleared");
+            }
+          } }
+        ]
+      },
+      evasion: { notSimulated: false, keepsStealth: true, effects: [{ type: "applyAura", to: "self", aura: "evasion" }] },
       sap: { keepsStealth: true },
       distract: { keepsStealth: true },
       kick: { notSimulated: false, schools: ["physical"], effects: [{ type: "meleeDamage", min: 80, max: 80, name: "Kick" }] }
     },
-    auraOverrides: { gouge: { flags: { breaksOnDamage: true, stunned: true } } }
+    auraOverrides: {
+      gouge: { flags: { breaksOnDamage: true, stunned: true } },
+      sprint: { mods: () => [mult("runSpeed", 1.7)], desc: () => "Movement speed increased by 70%." },
+      evasion: { mods: () => [add("dodgeChance", 0.5)], desc: () => "Dodge chance increased by 50%." }
+    }
   });
 
   // src/classes/rogue/auras.js
@@ -4041,7 +4069,8 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       icon: "ability_warrior_riposte",
       kind: "debuff",
       duration: 30,
-      sourceMods: (a) => [add("targetArmor", -(a.data.armor || 0))],
+      // Not on top of the raid's Sunder Armor (the dummy and the boss carry it): the two do not stack, as in the game.
+      sourceMods: (a) => [add("targetArmor", -(a.data.armor || 0), (ctx) => !(ctx.target && ctx.target.raidDebuffs || []).includes("sunder_armor"))],
       desc: (a) => `Armor reduced by ${a.data.armor || 0}.`
     },
     death_mark: {
@@ -4401,10 +4430,20 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
           });
         }
       },
-      venom: {},
-      // after Shank (afterShank)
+      // Setup: a chance to add a combo point to the attacker after dodging its attack (the Rogue has no test where it is
+      // attacked, but a boss that hits would set it off).
+      setup: { listen(game, r, on) {
+        on("hitTaken", ({ res, attacker }) => {
+          if (res.outcome === "dodge" && attacker && game.rng() < 0.15 * r) addCombo(game, attacker, 1);
+        });
+      } },
+      venom: { mods: () => [] },
+      // read after Shank (afterShank); the empty mods mark it as simulated
       /* ---------- Combat ---------- */
       lightning_reflexes: { mods: (r) => [add("dodgeChance", 0.01 * r)] },
+      endurance: { mods: (r) => [mult("cooldown", 1 - 0.3 * r, (ctx) => isAbility(ctx, "sprint", "evasion"))] },
+      improved_sprint: { mods: () => [] },
+      // read by Sprint (spellbook.js): a chance to clear slows and roots
       deflection: { mods: (r) => [add("parryChance", 0.02 * r)] },
       coup_de_grace: { mods: (r) => [mult("damageMult", 1 + [0.07, 0.13, 0.2][r - 1], (ctx) => isAbility(ctx, "eviscerate"))] },
       // Death Mark's part: applyDeathMark
@@ -4423,12 +4462,12 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       precision: { mods: (r) => [add("hitChance", 0.01 * r, (ctx) => !!ctx.melee)] },
       flawless_execution: { mods: () => [add("cost", -15, (ctx) => isAbility(ctx, "eviscerate"))] },
       dual_wield_specialization: { mods: (r) => [mult("damageMult", 1 + 0.25 * r, (ctx) => !!ctx.melee && ctx.hand === "off")] },
-      composure: {},
-      // in Poised (mods)
+      composure: { mods: () => [] },
+      // read by Poised (mods)
       flash_of_steel: { mods: (r) => [add("cooldown", -0.4 * r, (ctx) => isAbility(ctx, "shank"))] },
       // its Energy: afterShank
-      boot_knife: {},
-      // afterShank
+      boot_knife: { mods: () => [] },
+      // read after Shank (afterShank)
       blade_flurry: { teaches: "blade_flurry" },
       hack_and_slash: {
         mods: (r) => [
@@ -5123,6 +5162,8 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       duration: 10,
       period: 1,
       onTick: (g) => g.resource.gain(g, g.player, 1 + 0.25 * g.rank("improved_bloodrage")),
+      mods: () => [set("forceCombat", true)],
+      // Bloodrage puts you in combat for its 10 sec (Classic): no rage decay, and no Charge until it ends
       desc: () => "Generating 1 Rage every sec."
     },
     revenge_ready: { id: "revenge_ready", name: "Revenge", icon: "ability_warrior_revenge", kind: "buff", duration: 5, desc: () => "Revenge is usable." },
@@ -5289,7 +5330,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
         bastion: 5,
         shield_slam: 1
       },
-      bar: ["heroic_strike", "revenge", "sunder_armor", "shield_slam", "shield_block", "thunder_clap", "rend", "demoralizing_shout", "taunt", "shield_wall", "last_stand", "bloodrage"]
+      bar: ["heroic_strike", "revenge", "sunder_armor", "shield_slam", "shield_block", "thunder_clap", "charge", "demoralizing_shout", "taunt", "shield_wall", "last_stand", "bloodrage"]
     }
   ];
 
@@ -6039,7 +6080,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       range: 10,
       cooldown: 60,
       talent: "swift_judgement",
-      usable: (g) => g.player.auras.some((a) => a.def.exclusive === "seal") ? null : "You have no Seal active",
+      usableFirst: (g) => g.player.auras.some((a) => a.def.exclusive === "seal") ? null : "You have no Seal active",
+      // before "Out of range"
       effects: [{ type: "custom", run: (g, ctx) => g.cls.judge(g, ctx) }],
       text: "Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal. Refer to individual Seals for Judgement effect. Does not share a cooldown with your Judgement ability."
     },
@@ -6067,7 +6109,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       range: 10,
       cost: basePct(0.06),
       cooldown: 10,
-      usable: (g) => g.player.auras.some((a) => a.def.exclusive === "seal") ? null : "You have no Seal active",
+      usableFirst: (g) => g.player.auras.some((a) => a.def.exclusive === "seal") ? null : "You have no Seal active",
+      // before "Out of range"
       effects: [{ type: "custom", run: (g, ctx) => g.cls.judge(g, ctx) }],
       text: "Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal. Refer to individual Seals for Judgement effect."
     },
@@ -6120,6 +6163,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       seal_of_wisdom: { seal: true },
       seal_of_justice: { seal: true },
       righteous_fury: { notSimulated: false, setsOption: ["righteousFury", "on"] },
+      // Repentance (talent): incapacitates a Humanoid for 6 sec, broken by damage (the enemy type is under Advanced).
+      repentance: { notSimulated: false, harmful: true, schools: ["holy"], usable: (g, ctx) => (ctx.target || {}).creatureType === "humanoid" ? null : "Only works on Humanoids (Enemy type, under Advanced)", effects: [{ type: "applyAura", to: "target", aura: "repentance", spellHit: true }] },
       purify: cure(["poison", "disease"]),
       cleanse: cure(["poison", "disease", "magic"]),
       holy_light: { ...heal, effects: [{ type: "heal", min: 1495, max: 1665, coef: 0.714 }] },
@@ -6139,6 +6184,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       }
     },
     auraOverrides: {
+      repentance: { flags: { breaksOnDamage: true, stunned: true }, desc: () => "Incapacitated. Any damage will awaken the target." },
       righteous_fury: {
         notSimulated: false,
         // 1.60.1.70707: 33% more threat from everything, and Holy attacks 90% more on top. ESTIMATE: the two add up
@@ -6779,8 +6825,9 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
           add("castTime", -0.2 * r, (ctx) => isAbility(ctx, "hammer_of_wrath"))
         ]
       },
-      unsealed_wrath: { mods: () => [] }
+      unsealed_wrath: { mods: () => [] },
       // read by the Seals (listen above, unsealedWrath)
+      repentance: { teaches: "repentance" }
     }
   };
 
@@ -7542,6 +7589,11 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       });
     },
     talents: {
+      // Pet talents: Bestial Swiftness moves the pet 30% faster; the others need a pet that takes damage or dies, which
+      // never happens in the lab (inert: the reason shows in the tooltip).
+      bestial_swiftness: { mods: () => [mult("petRunSpeed", 1.3)] },
+      endurance_training: { inert: "the pet never takes damage in the lab, so its health and armor never matter." },
+      improved_revive_pet: { inert: "the pet never dies in the lab, so there is no Revive Pet." },
       /* ---------- Beast Mastery ---------- */
       deadly_aspects: {
         listen(game, r, on) {
@@ -8024,6 +8076,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       cost: basePct3(0.05),
       talent: "bane_of_havoc",
       effects: [{ type: "applyAura", to: "target", aura: "bane_of_havoc" }],
+      tipNote: () => "It copies the damage you deal to other enemies, so it needs a second one: choose 5 dummies in the test bar.",
       text: "Afflicts the target for 5 min, causing 15% of all damage done by the Warlock to other targets to also be dealt to the cursed target. Bane of Havoc is limited to 1 target, and only one Bane per Warlock can be active on any one target."
     }
   ];
@@ -8379,6 +8432,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       });
     },
     talents: {
+      demonic_energies: { inert: "your demon never takes damage and has no mana in the lab, so neither part matters." },
       /* ---------- Affliction ---------- */
       improved_life_tap: { mods: () => [] },
       // read by Life Tap above
@@ -8856,7 +8910,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cost: basePct4(0.4),
       cooldown: 1.5,
       talent: "shadowform",
-      usable: (g) => g.form() === "shadow" ? "You are already in Shadowform" : null,
+      shapeshift: "shadow",
+      // pressing it again leaves Shadowform
       effects: [{ type: "setForm", aura: "shadowform" }],
       text: "Assume Shadowform, increasing your Shadow damage by 10%, reducing the Mana cost of all Shadow spells by 50%, increasing the critical strike damage bonus of your Shadow spells by 100%, and reducing Physical damage taken by you by 15%."
     },
@@ -8931,7 +8986,16 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         ]
       }),
       prayer_of_healing: heal2({ effects: [{ type: "party", radius: 40, effects: [{ type: "heal", min: 631, max: 667, coef: 0.286 }] }] }),
-      prayer_of_mending: heal2({ effects: [{ type: "applyAura", to: "target", aura: "prayer_of_mending", charges: 5 }] }),
+      // One Prayer of Mending per Priest: a new one takes the old one off whoever has it.
+      prayer_of_mending: heal2({ effects: [
+        { type: "custom", run: (g) => {
+          for (const u of raidMembers(g)) {
+            const a = findAura(u, "prayer_of_mending", g.player);
+            if (a) removeAura(g, a, "replaced");
+          }
+        } },
+        { type: "applyAura", to: "target", aura: "prayer_of_mending", charges: 5 }
+      ] }),
       divine_grace: heal2({
         race: "human",
         usable: (g) => {
@@ -9158,6 +9222,19 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var isHeal = (ab) => !!ab && (ab.tags || []).includes("heal");
   var instant = (ctx) => !!ctx.ability && !ctx.ability.castTime && !ctx.ability.channel && (ctx.ability.harmful || isHeal(ctx.ability));
   var DIRECT_HEALS = ["flash_heal", "lesser_heal", "heal", "greater_heal", "penance"];
+  function noHealsInShadowform(list) {
+    for (const ab of list) {
+      if (!(ab.tags || []).includes("heal") || ab.id === "power_word_shield") continue;
+      if (ab.dual) {
+        const u = ab.usable;
+        ab.usable = (g, ctx) => ctx.allyMode && g.form() === "shadow" ? "Can't heal in Shadowform" : u ? u(g, ctx) : null;
+        continue;
+      }
+      const req = ab.requires || (ab.requires = {});
+      req.formNot = [.../* @__PURE__ */ new Set([...req.formNot || [], "shadow"])];
+    }
+    return list;
+  }
   var priest = {
     id: "priest",
     name: "Priest",
@@ -9188,7 +9265,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     trees: trees7,
     talentHistory: talentHistory6,
     // earlier trees, so older build links still open (talent-history.js)
-    abilities: [...abilities7, ...extra7.abilities],
+    abilities: noHealsInShadowform([...abilities7, ...extra7.abilities]),
     // the rest of the spellbook: spellbook.js
     auras: { ...auras7, ...extra7.auras },
     gearPresets: gearPresets7,
@@ -9720,6 +9797,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       cooldown: 10,
       gcd: false,
       requires: { form: ["cat"], notInCombat: true },
+      cancelsAura: "prowl",
+      // pressing it again leaves Prowl
       usable: (g) => findAura(g.player, "prowl") ? "You are already prowling" : null,
       effects: [{ type: "applyAura", to: "self", aura: "prowl" }],
       text: "Allows the Druid to prowl around, but reduces your movement speed by 30%. Lasts until cancelled."
@@ -10034,7 +10113,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     auraOverrides: {
       // Thorns: 18 Nature damage to each attacker that hits you in melee (druid.js), which also makes threat.
       thorns: { notSimulated: false, desc: () => "Causes 18 Nature damage to attackers when hit." },
-      mark_of_the_wild: { notSimulated: false, mods: () => [{ key: "attributes", fn: (a) => ({ str: a.str + 16, agi: a.agi + 16, sta: a.sta + 16, int: a.int + 16, spi: a.spi + 16 }) }], desc: () => "All attributes increased by 16." },
+      // +385 armor and +16 to every attribute (tooltip); the resistances are not simulated (no magic resistance in the lab).
+      mark_of_the_wild: { notSimulated: false, mods: () => [{ key: "attributes", fn: (a) => ({ str: a.str + 16, agi: a.agi + 16, sta: a.sta + 16, int: a.int + 16, spi: a.spi + 16 }) }, add("armor", 385)], desc: () => "Armor increased by 385 and all attributes by 16." },
       abolish_poison: cureAura(["poison"], 2),
       regrowth: { notSimulated: false, kind: "buff", hot: true, period: 3, duration: 21, desc: (a) => `Healing ${Math.round(a.data.perTick || 0)} every 3 sec.` },
       dash: { notSimulated: false, mods: (a, g) => [mult("runSpeed", g.form() === "cat" ? 1.6 : 1)], desc: () => "Movement speed increased by 60% in Cat Form." },
@@ -10057,6 +10137,13 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       }
     }
   });
+  for (const ab of extra8.abilities) {
+    if (!ab.cost || ab.powerType || ab.shapeshift || ab.requires && ab.requires.form) continue;
+    ab.powerType = "mana";
+    if (/Castable while shapeshifted/i.test(ab.text)) continue;
+    const req = ab.requires || (ab.requires = {});
+    req.formNot = [.../* @__PURE__ */ new Set([...req.formNot || [], "cat", "bear"])];
+  }
   extra8.auras.rejuvenation = { id: "rejuvenation", name: "Rejuvenation", icon: "spell_nature_rejuvenation", kind: "buff", hot: true, period: 3, duration: 12, desc: (a) => `Healing ${Math.round(a.data.perTick || 0)} every 3 sec.` };
   extra8.auras.regrowth = extra8.auras.regrowth || { id: "regrowth", name: "Regrowth", icon: "spell_nature_resistnature", kind: "buff", hot: true, period: 3, duration: 21, desc: (a) => `Healing ${Math.round(a.data.perTick || 0)} every 3 sec.` };
   extra8.auras.wild_growth = { id: "wild_growth", name: "Wild Growth", icon: "ability_druid_flourish", kind: "buff", hot: true, hotShape: "decay", period: 1, duration: 7, desc: () => "Healing every sec, more at first." };
@@ -10119,9 +10206,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       icon: "spell_nature_forceofnature",
       kind: "buff",
       flags: { form: "moonkin" },
-      mods: () => [add("critChance", 0.03)],
-      // Moonkin Aura, the Druid included (all critical strikes since 1.60.1.70707)
-      desc: () => "Critical strike chance increased by 3% (Moonkin Aura). Omen of Clarity's chance doubled."
+      mods: () => [add("critChance", 0.03), mult("itemArmor", 4.6)],
+      // Moonkin Aura, the Druid included (all critical strikes since 1.60.1.70707); armor from items +360%
+      desc: () => "Critical strike chance increased by 3% (Moonkin Aura). Armor from items increased by 360%. Omen of Clarity's chance doubled."
     },
     /* ---------- buffs ---------- */
     prowl: {
@@ -10153,7 +10240,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       period: 1,
       onTick: (g) => g.gainPower("rage", 2),
       // ESTIMATE: "16% of base armor" read as 16% of all armor in Dire Bear Form (the client has no split).
-      mods: (a, g) => [mult("armor", g.form() === "bear" ? 0.84 : 1)],
+      // "Considered in combat for the duration" (tooltip): no rage decay while it lasts, even before the pull.
+      mods: (a, g) => [mult("armor", g.form() === "bear" ? 0.84 : 1), set("forceCombat", true)],
       desc: () => "Gaining 2 Rage every sec. Armor reduced by 16%."
     },
     innervate: {
@@ -11443,7 +11531,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       if (im !== "none") game.applyPermanent(game.player, im);
     },
     startBuffs(game) {
-      return [game.mainTree() === "restoration" && game.rank("water_shield") ? "water_shield" : "lightning_shield"];
+      return [game.rank("water_shield") ? "water_shield" : "lightning_shield"];
     },
     mods() {
       return [
@@ -11598,6 +11686,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
           on("cast:success", ({ ability }) => {
             if (ability.id === "stormstrike" && game.rng() < 0.5 * r) applyAura(game, game.player, auras9.improved_stormstrike, { source: game.player });
           });
+          on("hitTaken", ({ res }) => {
+            if ((res.outcome === "dodge" || res.outcome === "parry") && game.rng() < 0.5 * r) delete game.player.cooldowns.stormstrike;
+          });
         }
       },
       maelstrom_weapon: {
@@ -11628,7 +11719,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       purification: { mods: (r) => [mult("healMult", 1 + 0.02 * r)] },
       riptide: { teaches: "riptide" },
       mindfulness: { mods: (r) => [add("regenWhileCasting", [0.17, 0.33, 0.5][r - 1])] },
-      totemic_focus: { mods: (r) => [mult("cost", 1 - 0.05 * r, (ctx) => !!ctx.ability && (ctx.ability.tags || []).includes("totem"))] },
+      // The Calls cost what their totems cost, already lowered: not lowered a second time.
+      totemic_focus: { mods: (r) => [mult("cost", 1 - 0.05 * r, (ctx) => !!ctx.ability && (ctx.ability.tags || []).includes("totem") && !CALLS.includes(ctx.ability.id))] },
       restorative_totems: { mods: (r) => [mult("totemHeal", 1 + 0.1 * r, (ctx) => ctx.totemId === "healing_stream_totem")] },
       // and Mana Spring (auras.js)
       water_shield: { teaches: "water_shield" },
@@ -11856,7 +11948,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         enemies: [boss],
         allies,
         playerParty: 1,
-        playerStart: { x: 18, y: 17 },
+        playerStart: { x: 28, y: 18 },
+        // within 10 yd of the tank and the Mage (Holy Nova)
         rules: { infiniteMana: !!opts.infiniteMana, immortal: !!opts.immortal },
         state: { debuffs: opts.debuffs !== false, pullAt: 3, pulled: false, swingIn: 0, specialIn: 8, waveIn: 12, fireballIn: 6, debuffIn: 7 }
       };
@@ -12204,8 +12297,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     ${req}
     ${reason && rank < t.max ? `<div class="tt-req">${esc(reason)}</div>` : ""}
     ${broken ? '<div class="tt-req">Lost a requirement in the new talent trees: it does not count until you fix the tree, or remove it.</div>' : ""}
+    ${(game.cls.talents[t.id] || {}).teaches ? `<div class="tt-sub">The talent shows the spell's first rank; at level 60 you have its highest rank, the one in the Spellbook.</div>` : ""}
     ${notesLine(t.notes)}
-    ${simulated ? "" : '<div class="tt-notsim">Not simulated in the lab</div>'}
+    ${simulated ? "" : `<div class="tt-notsim">Not simulated in the lab${(game.cls.talents[t.id] || {}).inert ? `: ${esc(game.cls.talents[t.id].inert)}` : ""}</div>`}
     <div class="tt-hint">${TOUCH ? "Tap to add or remove a point (the switch above the trees)." : "Left click to learn. Right click to unlearn."}</div>`;
   }
   function auraTip(game, a) {
@@ -14254,7 +14348,12 @@ ${ctx.link}`;
       }
       if (!ab.setsOption || !this.game.isKnown(ab)) return;
       const [k, v] = ab.setsOption;
-      if (this.options[k] !== v) this.setOption(k, v);
+      if (this.options[k] === v) {
+        const def = (this.cls.options || {})[k];
+        if (def && def.values.includes("none")) this.setOption(k, "none");
+        return;
+      }
+      this.setOption(k, v);
     }
     /* ---------- page ---------- */
     mount() {
