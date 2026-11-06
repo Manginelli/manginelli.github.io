@@ -10901,8 +10901,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       tree: "elemental_combat",
       ...spell5(nature2),
       cost: 495,
-      castTime: 2,
+      castTime: 2.5,
       cooldown: 6,
+      // 2.5 sec: the launch realms do not send the notes' 2 sec
       effects: [{ type: "chain", targets: 3, radius: 10, falloff: 0.7, min: 495, max: 552, coef: 0.571 }],
       text: "Hurls a lightning bolt at the enemy, dealing 495 to 552 Nature damage and then jumping to additional nearby enemies. Each jump reduces the damage by 30%. Affects 3 total targets."
     },
