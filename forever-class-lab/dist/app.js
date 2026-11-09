@@ -107,11 +107,11 @@
     crushingMult: 1.5,
     enemyCritMult: 2,
     rageFromDamageTaken: 2.5,
+    // rage = 2.5 x damage taken / 230.6 at level 60 (Classic; how Forever counts the damage: resources.js)
     // Hit cap against a level 63 boss (a test can put the player on it: game.rules.hitCapped): 9% for weapon attacks
     // (8% plus the 1% that does nothing), 15% for spells (16% down to the 1% that always misses).
     hitCapMelee: 0.09,
     hitCapSpell: 0.15
-    // rage = 2.5 x damage taken / 230.6 at level 60 (Classic)
   };
   var byLevelDiff = (table, diff) => table[Math.max(0, Math.min(table.length - 1, diff))];
   function spellMiss(levelDiff3) {
@@ -182,8 +182,13 @@
       crit: d.crit + (gear.crit || 0),
       // one crit chance for physical and spells (WoW: Forever)
       hit: gear.hit || 0,
+      expertise: gear.expertise || 0,
+      // WoW: Forever: takes as much from the target's dodge and parry chance
       haste: gear.haste || 0,
-      sp: gear.sp || 0,
+      // Bonus healing (WoW: Forever healing gear): heals get all of it, spell damage a third. sp is the spell power for
+      // damage (a third of it included); healExtra is what heals add on top (healing.js).
+      sp: (gear.sp || 0) + (gear.heal || 0) / 3,
+      healExtra: (gear.heal || 0) * 2 / 3,
       mp5: gear.mp5 || 0,
       // mana every 5 sec that ignores the five second rule
       spSchool: gear.spSchool || {}
@@ -266,6 +271,14 @@
     }
   };
   var RAGE_CONVERSION = 230.6;
+  var RAGE_PER_SPEED = { main: 3.46, off: 1.73, twoHand: 4.5 };
+  var RAGE_ARMOR_BASELINE = 0.4;
+  var rageFromSwing = (weapon, hand, crit2) => {
+    if (!weapon || hand === "ranged") return 0;
+    const k = weapon.twoHand ? RAGE_PER_SPEED.twoHand : hand === "off" ? RAGE_PER_SPEED.off : RAGE_PER_SPEED.main;
+    return k * weapon.speed * (crit2 ? 2 : 1);
+  };
+  var LANDED = /* @__PURE__ */ new Set(["hit", "crit", "glance"]);
   var rage = {
     id: "rage",
     label: "Rage",
@@ -287,12 +300,13 @@
     gain(game, u, n) {
       u.power = Math.min(100, u.power + n);
     },
-    onWhiteHit(game, u, res, hand) {
-      if (res.amount <= 0) return;
+    onWhiteHit(game, u, res, hand, weapon) {
+      if (!res || !LANDED.has(res.outcome)) return;
       const ctx = { caster: game.player, hand };
-      this.gain(game, u, 7.5 * res.amount / RAGE_CONVERSION * applyMods(game, "rageFromHit", 1, ctx));
+      this.gain(game, u, rageFromSwing(weapon, hand, res.outcome === "crit") * applyMods(game, "rageFromHit", 1, ctx));
     },
-    // Taking damage: 2.5 x damage / 230.6 (Classic). Modifier 'rageFromDamageTaken'.
+    // Taking damage: 2.5 x damage / 230.6 (Classic), on the amount defense.js counts for rage (res.rageAmount: before
+    // armor and absorbs, with the armor baseline). Modifier 'rageFromDamageTaken'.
     onDamageTaken(game, u, amount) {
       this.gain(game, u, RULES.rageFromDamageTaken * amount / RAGE_CONVERSION * applyMods(game, "rageFromDamageTaken", 1, { caster: game.player }));
     },
@@ -475,7 +489,7 @@
     let miss = byLevelDiff(RULES.meleeMiss, diff);
     if (spec.white && !ctx.ranged && weaponsOf(game).off && !game.player.nextSwing) miss += 0.19;
     miss = spec.noMiss ? 0 : Math.max(0, miss - hit2);
-    const lessAvoid = applyMods(game, "avoidanceReduction", 0, ctx);
+    const lessAvoid = applyMods(game, "avoidanceReduction", s.expertise || 0, ctx);
     const stunned = isStunned(t);
     const dodge = spec.noDodge || stunned || ctx.ranged ? 0 : Math.max(0, byLevelDiff(RULES.meleeDodge, diff) - lessAvoid);
     const parry = spec.noParry || stunned || ctx.behind || ctx.ranged ? 0 : Math.max(0, byLevelDiff(RULES.meleeParry, diff) - lessAvoid);
@@ -521,7 +535,7 @@
     const ctx = { castId: ++game.castSeq, caster: p, target, ability: null, schools: ["physical"], tags: ["auto"], extra: !!label };
     const name = label || (hand === "main" ? "Main Hand" : hand === "off" ? "Off Hand" : "Auto Shot");
     const res = meleeHit(game, ctx, { white: true, hand, name });
-    if (game.resource.onWhiteHit) game.resource.onWhiteHit(game, p, res, hand);
+    if (game.resource.onWhiteHit) game.resource.onWhiteHit(game, p, res, hand, weaponsOf(game)[hand]);
     game.emit("swing", { hand, ctx, res });
     return res;
   }
@@ -574,7 +588,7 @@
   }
   function healingPower(game, ctx) {
     const c = { ...ctx, heal: true };
-    return applyMods(game, "healingPower", spellPower(game, c), c);
+    return applyMods(game, "healingPower", spellPower(game, c) + (game.stats().healExtra || 0), c);
   }
   function absorbOn(game, unit, amount, schools = ["physical"]) {
     let left = amount;
@@ -1306,13 +1320,17 @@
       if (outcome === "crit") amount *= RULES.enemyCritMult;
       if (outcome === "crushing") amount *= RULES.crushingMult;
       res.raw = amount;
+      const taken = applyMods(game, "damageTaken", 1, ctx);
+      let forRage = amount * (schools.includes("physical") ? 1 - RAGE_ARMOR_BASELINE : 1) * taken;
       if (schools.includes("physical")) amount *= 1 - armorReduction(game.stats().armor, attacker.level || RULES.maxLevel);
-      amount *= applyMods(game, "damageTaken", 1, ctx);
+      amount *= taken;
       if (outcome === "block") {
         res.blocked = Math.min(amount, game.stats().blockValue);
         amount -= res.blocked;
+        forRage = Math.max(0, forRage - res.blocked);
       }
       amount = Math.max(0, Math.round(amount));
+      res.rageAmount = forRage;
       res.absorbed = absorb(game, amount, schools);
       res.amount = amount - res.absorbed;
     }
@@ -1330,9 +1348,10 @@
       return 0;
     }
     let n = Math.round(amount * applyMods(game, "damageTaken", 1, { caster: p, attacker, schools, incoming: true }));
+    const rageAmount = n;
     const absorbed = absorb(game, n, schools);
     n -= absorbed;
-    takeDamage(game, { outcome: "hit", amount: n, blocked: 0, absorbed, raw: amount }, attacker, { name, nonMelee: true });
+    takeDamage(game, { outcome: "hit", amount: n, blocked: 0, absorbed, raw: amount, rageAmount }, attacker, { name, nonMelee: true });
     return n;
   }
   function takeDamage(game, res, attacker, spec) {
@@ -1353,7 +1372,8 @@
       p.hp = 1;
       game.emit("wouldDie", { unit: p });
     }
-    if (res.amount > 0 && game.resource.onDamageTaken) game.resource.onDamageTaken(game, p, res.amount);
+    const forRage = res.rageAmount != null ? res.rageAmount : res.amount;
+    if (forRage > 0 && !p.dead && game.resource.onDamageTaken) game.resource.onDamageTaken(game, p, forRage);
     if (res.amount > 0 && p.hp > 0) game.pushback();
     if (!(spec && spec.nonMelee)) game.emit("hitTaken", { attacker, res, spec: spec || {} });
     if (res.amount > 0) game.emit("unitDamaged", { unit: p, amount: res.amount, name });
@@ -4281,6 +4301,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
       { k: "ap", label: "Attack power", step: 10, max: 1e3, note: "From gear, on top of Strength and Agility." },
       { k: "crit", label: "Crit %", step: 0.5, max: 30, pct: true },
       { k: "hit", label: "Hit %", step: 1, max: 20, pct: true },
+      { k: "expertise", label: "Expertise %", step: 0.5, max: 15, pct: true, note: "Reduces the chance for your attacks to be dodged or parried by this much. A raid boss dodges 6.5% and, from the front, parries 14%." },
       { k: "haste", label: "Haste %", step: 1, max: 30, pct: true, note: "No Forever gear has haste yet (beta). Only racials and buffs." },
       { k: "wdps", label: "Main hand DPS", step: 1, max: 90 },
       { k: "odps", label: "Off hand DPS", step: 1, max: 90 }
@@ -5401,6 +5422,7 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
       { k: "ap", label: "Attack power", step: 10, max: 1e3, note: "From gear, on top of Strength." },
       { k: "crit", label: "Crit %", step: 0.5, max: 30, pct: true },
       { k: "hit", label: "Hit %", step: 1, max: 20, pct: true },
+      { k: "expertise", label: "Expertise %", step: 0.5, max: 15, pct: true, note: "Reduces the chance for your attacks to be dodged or parried by this much. A raid boss dodges 6.5% and, from the front, parries 14%." },
       { k: "haste", label: "Haste %", step: 1, max: 30, pct: true, note: "No Forever gear has haste yet (beta). Only racials and buffs." },
       { k: "wdps2h", label: "Two-hander DPS", step: 1, max: 120 },
       { k: "wdps", label: "One-hander DPS", step: 1, max: 90, note: "Main hand when it is a one-handed weapon." },
@@ -6340,10 +6362,10 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     melee4("preraid", "Pre-raid", "Best dungeon gear before raids.", { str: 130, agi: 70, sta: 130, int: 90, spi: 40, ap: 100, sp: 40, crit: 0.04, hit: 0.05, mp5: 5, haste: 0, wdps2h: 62, wdps: 48, block: 60, armor: 3600 }),
     melee4("mc", "Molten Core", "Tier 1 level gear.", { str: 165, agi: 80, sta: 160, int: 120, spi: 50, ap: 150, sp: 60, crit: 0.05, hit: 0.06, mp5: 8, haste: 0, wdps2h: 72, wdps: 55, block: 80, armor: 4300 }),
     melee4("bwl", "Blackwing Lair", "Tier 2 level gear.", { str: 200, agi: 90, sta: 190, int: 150, spi: 60, ap: 200, sp: 80, crit: 0.06, hit: 0.08, mp5: 10, haste: 0, wdps2h: 83, wdps: 64, block: 100, armor: 4900 }),
-    healer("fresh", "Fresh 60", "Quest and dungeon plate and mail for healing.", { str: 40, agi: 20, sta: 110, int: 140, spi: 50, sp: 150, crit: 0.01, mp5: 6, armor: 3800, wdps: 38, block: 30 }),
-    healer("preraid", "Pre-raid", "Best dungeon healing gear before raids.", { str: 50, agi: 30, sta: 140, int: 200, spi: 60, sp: 340, crit: 0.02, mp5: 12, armor: 4400, wdps: 45, block: 40 }),
-    healer("mc", "Molten Core", "Tier 1 level healing gear.", { str: 60, agi: 30, sta: 170, int: 240, spi: 70, sp: 460, crit: 0.03, mp5: 18, armor: 5200, wdps: 52, block: 50 }),
-    healer("bwl", "Blackwing Lair", "Tier 2 level healing gear.", { str: 70, agi: 40, sta: 200, int: 280, spi: 80, sp: 600, crit: 0.04, mp5: 24, armor: 5800, wdps: 60, block: 60 }),
+    healer("fresh", "Fresh 60", "Quest and dungeon plate and mail for healing.", { str: 40, agi: 20, sta: 110, int: 140, spi: 50, heal: 150, crit: 0.01, mp5: 6, armor: 3800, wdps: 38, block: 30 }),
+    healer("preraid", "Pre-raid", "Best dungeon healing gear before raids.", { str: 50, agi: 30, sta: 140, int: 200, spi: 60, heal: 340, crit: 0.02, mp5: 12, armor: 4400, wdps: 45, block: 40 }),
+    healer("mc", "Molten Core", "Tier 1 level healing gear.", { str: 60, agi: 30, sta: 170, int: 240, spi: 70, heal: 460, crit: 0.03, mp5: 18, armor: 5200, wdps: 52, block: 50 }),
+    healer("bwl", "Blackwing Lair", "Tier 2 level healing gear.", { str: 70, agi: 40, sta: 200, int: 280, spi: 80, heal: 600, crit: 0.04, mp5: 24, armor: 5800, wdps: 60, block: 60 }),
     tank2("fresh", "Fresh 60", "Quest and dungeon plate with a shield.", { str: 70, agi: 40, sta: 210, int: 90, spi: 20, ap: 0, sp: 40, crit: 0.01, hit: 0.02, mp5: 3, armor: 4800, defense: 15, wdps: 40, block: 35 }),
     tank2("preraid", "Pre-raid", "Best dungeon tank gear before raids.", { str: 90, agi: 50, sta: 290, int: 120, spi: 20, ap: 0, sp: 90, crit: 0.02, hit: 0.03, mp5: 6, armor: 6200, defense: 30, wdps: 46, block: 55 }),
     tank2("mc", "Molten Core", "Tier 1 level tank gear.", { str: 110, agi: 60, sta: 370, int: 150, spi: 20, ap: 0, sp: 140, crit: 0.03, hit: 0.04, mp5: 9, armor: 7300, defense: 45, wdps: 53, block: 75 }),
@@ -6545,8 +6567,10 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       { k: "block", label: "Shield block value", step: 5, max: 300, note: "Damage a block stops (plus Strength / 20)." },
       { k: "ap", label: "Attack power", step: 10, max: 1e3, note: "From gear, on top of Strength." },
       { k: "sp", label: "Spell power", step: 10, max: 1e3, note: "Holy damage: Seals, Judgements, Holy Shock, Consecration." },
+      { k: "heal", label: "Bonus healing", step: 10, max: 1500, note: "Increases healing done by up to this much and damage done by up to a third of it, for all magical spells and effects." },
       { k: "crit", label: "Crit %", step: 0.5, max: 30, pct: true },
       { k: "hit", label: "Hit %", step: 1, max: 20, pct: true },
+      { k: "expertise", label: "Expertise %", step: 0.5, max: 15, pct: true, note: "Reduces the chance for your attacks to be dodged or parried by this much. A raid boss dodges 6.5% and, from the front, parries 14%." },
       { k: "mp5", label: "Mana per 5 sec", step: 1, max: 60 },
       { k: "haste", label: "Haste %", step: 1, max: 30, pct: true, note: "No Forever gear has haste yet (beta). Only racials and buffs." },
       { k: "wdps2h", label: "Two-hander DPS", step: 1, max: 120 },
@@ -6568,6 +6592,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
         ["Intellect", f.int(s.int)],
         ["Attack power", f.int(s.ap)],
         ["Spell power", f.int(s.sp)],
+        ...s.healExtra ? [["Healing power", f.int(s.sp + s.healExtra)]] : [],
         ["Mana", f.int(s.maxMana)],
         ["Crit chance", f.pct(s.crit)],
         ["Hit chance", f.pct(s.hit)],
@@ -7472,6 +7497,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       { k: "ap", label: "Attack power", step: 10, max: 1e3, note: "From gear; counts for melee and ranged." },
       { k: "crit", label: "Crit %", step: 0.5, max: 30, pct: true },
       { k: "hit", label: "Hit %", step: 1, max: 20, pct: true },
+      { k: "expertise", label: "Expertise %", step: 0.5, max: 15, pct: true, note: "Reduces the chance for your attacks to be dodged or parried by this much. A raid boss dodges 6.5% and, from the front, parries 14%." },
       { k: "mp5", label: "Mana per 5 sec", step: 1, max: 60 },
       { k: "haste", label: "Haste %", step: 1, max: 30, pct: true, note: "No Forever gear has haste yet (beta). Only racials and buffs." },
       { k: "rdps", label: "Ranged weapon DPS", step: 1, max: 90, note: `Plus ${AMMO_DPS} DPS from ammunition (estimate).` },
@@ -8307,7 +8333,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     duration: 10,
     desc: (a) => `Your demon's next ${a.charges} attack${a.charges === 1 ? "" : "s"} on this target deal extra damage.`
   };
-  var LANDED = /* @__PURE__ */ new Set(["hit", "crit", "glance", "block", "crushing"]);
+  var LANDED2 = /* @__PURE__ */ new Set(["hit", "crit", "glance", "block", "crushing"]);
   var isPlayer5 = (game, ev) => ev.ctx.caster === game.player;
   var own = (ctx) => !ctx.pet;
   var treeOf = (ctx) => ctx.ability && ctx.ability.tree || null;
@@ -8516,7 +8542,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
           on("damage", (ev) => {
             const { ctx, res } = ev, t = ctx.target;
             if (!t || t.dead) return;
-            if (isPlayer5(game, ev) && isAbility(ctx, "searing_pain") && LANDED.has(res.outcome)) {
+            if (isPlayer5(game, ev) && isAbility(ctx, "searing_pain") && LANDED2.has(res.outcome)) {
               applyAura(game, t, BRAND, { source: game.player, charges: 2 * r });
               return;
             }
@@ -8525,7 +8551,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
             const brand = findAura(t, "demonic_brand", game.player);
             if (!brand) return;
             useCharge(game, brand);
-            if (!LANDED.has(res.outcome)) return;
+            if (!LANDED2.has(res.outcome)) return;
             const sp = 0.78 * game.stats().sp, fire3 = pet.def.id === "imp";
             petHit(game, pet, t, { id: "demonic_brand", name: "Demonic Brand", icon: BRAND.icon, spell: true, schools: [fire3 ? "fire" : "shadow"], min: 65 + sp, max: 68 + sp, coef: 0 });
           });
@@ -9274,6 +9300,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       { k: "int", label: "Intellect", step: 5, max: 600 },
       { k: "spi", label: "Spirit", step: 5, max: 500 },
       { k: "sp", label: "Spell power", step: 10, max: 1200 },
+      { k: "heal", label: "Bonus healing", step: 10, max: 1500, note: "Increases healing done by up to this much and damage done by up to a third of it, for all magical spells and effects." },
       { k: "crit", label: "Crit %", step: 0.5, max: 30, pct: true },
       { k: "hit", label: "Hit %", step: 1, max: 20, pct: true },
       { k: "mp5", label: "Mana per 5 sec", step: 1, max: 60 },
@@ -9290,6 +9317,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         ["Spirit", f.int(s.spi)],
         ["Mana", f.int(s.maxMana)],
         ["Spell power", f.int(s.sp)],
+        ...s.healExtra ? [["Healing power", f.int(s.sp + s.healExtra)]] : [],
         ["Crit chance", f.pct(s.crit)],
         ["Hit chance", f.pct(s.hit)]
       ];
@@ -10525,8 +10553,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       { k: "int", label: "Intellect", step: 5, max: 600 },
       { k: "spi", label: "Spirit", step: 5, max: 500 },
       { k: "sp", label: "Spell power", step: 10, max: 1200 },
+      { k: "heal", label: "Bonus healing", step: 10, max: 1500, note: "Increases healing done by up to this much and damage done by up to a third of it, for all magical spells and effects." },
       { k: "crit", label: "Crit %", step: 0.5, max: 30, pct: true },
       { k: "hit", label: "Hit %", step: 1, max: 20, pct: true },
+      { k: "expertise", label: "Expertise %", step: 0.5, max: 15, pct: true, note: "Reduces the chance for your attacks to be dodged or parried by this much. A raid boss dodges 6.5% and, from the front, parries 14%." },
       { k: "mp5", label: "Mana per 5 sec", step: 1, max: 60 },
       { k: "haste", label: "Haste %", step: 1, max: 30, pct: true, note: "No Forever gear has haste yet (beta). Only racials and buffs." }
     ],
@@ -10541,6 +10571,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         ["Mana", f.int(s.maxMana)],
         ["Attack power", f.int(ap)],
         ["Spell power", f.int(s.sp)],
+        ...s.healExtra ? [["Healing power", f.int(s.sp + s.healExtra)]] : [],
         ["Attack crit", f.pct(meleeCrit(s) + s.crit)],
         ["Spell crit", f.pct(spellCrit(s) + s.crit)],
         ["Hit chance", f.pct(s.hit)]
@@ -11495,8 +11526,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       { k: "int", label: "Intellect", step: 5, max: 600 },
       { k: "spi", label: "Spirit", step: 5, max: 500 },
       { k: "sp", label: "Spell power", step: 10, max: 1200 },
+      { k: "heal", label: "Bonus healing", step: 10, max: 1500, note: "Increases healing done by up to this much and damage done by up to a third of it, for all magical spells and effects." },
       { k: "crit", label: "Crit %", step: 0.5, max: 30, pct: true },
       { k: "hit", label: "Hit %", step: 1, max: 20, pct: true },
+      { k: "expertise", label: "Expertise %", step: 0.5, max: 15, pct: true, note: "Reduces the chance for your attacks to be dodged or parried by this much. A raid boss dodges 6.5% and, from the front, parries 14%." },
       { k: "mp5", label: "Mana per 5 sec", step: 1, max: 60 },
       { k: "haste", label: "Haste %", step: 1, max: 30, pct: true, note: "No Forever gear has haste yet (beta). Only racials and buffs." },
       { k: "wdps2h", label: "Two-hander DPS", step: 1, max: 120 },
@@ -11519,6 +11552,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         ["Mana", f.int(s.maxMana)],
         ["Attack power", f.int(s.ap)],
         ["Spell power", f.int(s.sp)],
+        ...s.healExtra ? [["Healing power", f.int(s.sp + s.healExtra)]] : [],
         ["Attack crit", f.pct(meleeCrit2(s) + s.crit)],
         ["Spell crit", f.pct(spellCrit2(s) + s.crit)],
         ["Hit chance", f.pct(s.hit)],
