@@ -129,14 +129,14 @@
   function applyMods(game, key, value, ctx = {}) {
     let v = value;
     for (const m of game.talentMods) if (m.key === key) v = m.fn(v, ctx, game);
-    const caster3 = ctx.caster || game.player;
-    if (caster3) for (const a of caster3.auras) {
+    const caster4 = ctx.caster || game.player;
+    if (caster4) for (const a of caster4.auras) {
       if (!a.def.mods) continue;
       for (const m of a.def.mods(a, game)) if (m.key === key) v = m.fn(v, ctx, game, a);
     }
     const target = ctx.target;
-    if (target && target !== caster3) for (const a of target.auras) {
-      if (!a.def.sourceMods || a.source !== caster3) continue;
+    if (target && target !== caster4) for (const a of target.auras) {
+      if (!a.def.sourceMods || a.source !== caster4) continue;
       for (const m of a.def.sourceMods(a, game)) if (m.key === key) v = m.fn(v, ctx, game, a);
     }
     return v;
@@ -388,8 +388,8 @@
     return res;
   }
   function periodicHit(game, aura2) {
-    const dot = aura2.dot, caster3 = aura2.source, target = aura2.unit;
-    const ctx = { caster: caster3, target, ability: aura2.data.ability || null, aura: aura2, schools: aura2.def.schools || [], tags: aura2.def.tags || [], periodic: true, castId: aura2.data.castId };
+    const dot = aura2.dot, caster4 = aura2.source, target = aura2.unit;
+    const ctx = { caster: caster4, target, ability: aura2.data.ability || null, aura: aura2, schools: aura2.def.schools || [], tags: aura2.def.tags || [], periodic: true, castId: aura2.data.castId };
     ctx.frozen = isFrozen(target);
     let amount = dot.amount ? dot.amount(game, aura2) : aura2.data.perTick || 0;
     if (!dot.fixed) amount *= applyMods(game, "damageMult", 1, ctx);
@@ -3089,9 +3089,7 @@
   // src/classes/mage/presets.js
   var gearPresets = [
     { id: "fresh", name: "Fresh 60", blurb: "Quest and dungeon greens and blues.", gear: { int: 100, spi: 45, sta: 80, sp: 120, crit: 0.01, hit: 0.01, haste: 0 } },
-    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon gear before raids.", gear: { int: 160, spi: 55, sta: 120, sp: 330, crit: 0.03, hit: 0.06, haste: 0 } },
-    { id: "mc", name: "Molten Core", blurb: "Tier 1 level gear.", gear: { int: 195, spi: 60, sta: 150, sp: 440, crit: 0.04, hit: 0.08, haste: 0 } },
-    { id: "bwl", name: "Blackwing Lair", blurb: "Tier 2 level gear.", gear: { int: 225, spi: 70, sta: 170, sp: 580, crit: 0.05, hit: 0.1, haste: 0 } }
+    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon, quest and crafted gear before raids.", gear: { int: 142, spi: 4, sta: 84, sp: 375, crit: 0.04, hit: 0, haste: 0, armor: 613, spSchool: { fire: 24, frost: 40 } } }
   ];
   var builds = [
     {
@@ -4124,9 +4122,7 @@ Mace: Your attacks ignore ${3 * n}% of your target's armor.`;
   // src/classes/rogue/presets.js
   var gearPresets2 = [
     { id: "fresh", name: "Fresh 60", blurb: "Quest and dungeon greens and blues.", gear: { agi: 90, str: 40, sta: 80, ap: 0, crit: 0.01, hit: 0.01, haste: 0, wdps: 38, odps: 34 } },
-    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon gear before raids.", gear: { agi: 170, str: 70, sta: 120, ap: 120, crit: 0.03, hit: 0.04, haste: 0, wdps: 48, odps: 44 } },
-    { id: "mc", name: "Molten Core", blurb: "Tier 1 level gear.", gear: { agi: 210, str: 85, sta: 150, ap: 180, crit: 0.04, hit: 0.06, haste: 0, wdps: 55, odps: 50 } },
-    { id: "bwl", name: "Blackwing Lair", blurb: "Tier 2 level gear.", gear: { agi: 250, str: 100, sta: 170, ap: 250, crit: 0.05, hit: 0.08, haste: 0, wdps: 64, odps: 57 } }
+    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon, quest and crafted gear before raids.", gear: { agi: 230, str: 34, sta: 68, ap: 142, crit: 0.06, hit: 0.109, parry: 0.01, haste: 0, wdps: 46, odps: 46, armor: 1036 } }
   ];
   var builds2 = [
     {
@@ -5254,13 +5250,9 @@ Sword: Your successful melee attacks have a ${n}% chance to trigger an extra att
   var tank = (tier, name, blurb, gear) => ({ id: `${tier}_tank`, tier, role: "tank", name, blurb, gear: { haste: 0, wdps2h: 0, odps: 0, ...gear } });
   var gearPresets3 = [
     dps("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { str: 80, agi: 50, sta: 90, ap: 0, crit: 0.01, hit: 0.01, haste: 0, wdps2h: 50, wdps: 38, odps: 34, block: 30, armor: 2800 }),
-    dps("preraid", "Pre-raid", "Best dungeon gear before raids.", { str: 130, agi: 90, sta: 130, ap: 100, crit: 0.04, hit: 0.05, haste: 0, wdps2h: 62, wdps: 48, odps: 44, block: 60, armor: 3600 }),
-    dps("mc", "Molten Core", "Tier 1 level gear.", { str: 170, agi: 110, sta: 160, ap: 160, crit: 0.05, hit: 0.06, haste: 0, wdps2h: 72, wdps: 55, odps: 50, block: 80, armor: 4300 }),
-    dps("bwl", "Blackwing Lair", "Tier 2 level gear.", { str: 210, agi: 130, sta: 190, ap: 220, crit: 0.06, hit: 0.08, haste: 0, wdps2h: 83, wdps: 64, odps: 58, block: 100, armor: 4900 }),
+    dps("preraid", "Pre-raid", "Best dungeon, quest and crafted gear before raids.", { str: 196, agi: 69, sta: 114, ap: 110, crit: 0.08, hit: 0.089, parry: 0.01, haste: 0, wdps2h: 59, wdps: 46, odps: 46, block: 60, armor: 3788 }),
     tank("fresh", "Fresh 60", "Quest and dungeon plate with a shield.", { str: 70, agi: 50, sta: 220, ap: 0, crit: 0.01, hit: 0.02, armor: 4800, defense: 15, wdps: 40, block: 35 }),
-    tank("preraid", "Pre-raid", "Best dungeon tank gear before raids.", { str: 100, agi: 70, sta: 300, ap: 30, crit: 0.02, hit: 0.03, armor: 6200, defense: 30, wdps: 46, block: 55 }),
-    tank("mc", "Molten Core", "Tier 1 level tank gear.", { str: 120, agi: 90, sta: 380, ap: 50, crit: 0.03, hit: 0.04, armor: 7300, defense: 45, wdps: 53, block: 75 }),
-    tank("bwl", "Blackwing Lair", "Tier 2 level tank gear.", { str: 140, agi: 110, sta: 460, ap: 70, crit: 0.04, hit: 0.05, armor: 8300, defense: 60, wdps: 62, block: 95 })
+    tank("preraid", "Pre-raid", "Best dungeon, quest and crafted tank gear before raids.", { str: 104, agi: 55, sta: 226, ap: 22, crit: 0.01, hit: 0, dodge: 0.08, parry: 0.02, armor: 6032, defense: 61, wdps: 41, block: 55 })
   ];
   var builds3 = [
     {
@@ -6354,22 +6346,16 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
 
   // src/classes/paladin/presets.js
   var gearRoles2 = { melee: "Melee", tank: "Tank", healer: "Healer" };
-  var melee4 = (id, name, blurb, gear) => ({ id, tier: id, role: "melee", name, blurb, gear: { armor: 0, defense: 0, ...gear } });
+  var melee4 = (tier, name, blurb, gear) => ({ id: tier, tier, role: "melee", name, blurb, gear: { defense: 0, heal: 0, ...gear } });
   var healer = (tier, name, blurb, gear) => ({ id: `${tier}_healer`, tier, role: "healer", name, blurb, gear: { ap: 0, hit: 0, haste: 0, wdps2h: 0, defense: 0, ...gear } });
-  var tank2 = (tier, name, blurb, gear) => ({ id: `${tier}_tank`, tier, role: "tank", name, blurb, gear: { haste: 0, wdps2h: 0, ...gear } });
+  var tank2 = (tier, name, blurb, gear) => ({ id: `${tier}_tank`, tier, role: "tank", name, blurb, gear: { haste: 0, wdps2h: 0, heal: 0, ...gear } });
   var gearPresets4 = [
     melee4("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { str: 80, agi: 40, sta: 90, int: 60, spi: 30, ap: 0, sp: 0, crit: 0.01, hit: 0.01, mp5: 0, haste: 0, wdps2h: 50, wdps: 38, block: 30, armor: 2800 }),
-    melee4("preraid", "Pre-raid", "Best dungeon gear before raids.", { str: 130, agi: 70, sta: 130, int: 90, spi: 40, ap: 100, sp: 40, crit: 0.04, hit: 0.05, mp5: 5, haste: 0, wdps2h: 62, wdps: 48, block: 60, armor: 3600 }),
-    melee4("mc", "Molten Core", "Tier 1 level gear.", { str: 165, agi: 80, sta: 160, int: 120, spi: 50, ap: 150, sp: 60, crit: 0.05, hit: 0.06, mp5: 8, haste: 0, wdps2h: 72, wdps: 55, block: 80, armor: 4300 }),
-    melee4("bwl", "Blackwing Lair", "Tier 2 level gear.", { str: 200, agi: 90, sta: 190, int: 150, spi: 60, ap: 200, sp: 80, crit: 0.06, hit: 0.08, mp5: 10, haste: 0, wdps2h: 83, wdps: 64, block: 100, armor: 4900 }),
-    healer("fresh", "Fresh 60", "Quest and dungeon plate and mail for healing.", { str: 40, agi: 20, sta: 110, int: 140, spi: 50, heal: 150, crit: 0.01, mp5: 6, armor: 3800, wdps: 38, block: 30 }),
-    healer("preraid", "Pre-raid", "Best dungeon healing gear before raids.", { str: 50, agi: 30, sta: 140, int: 200, spi: 60, heal: 340, crit: 0.02, mp5: 12, armor: 4400, wdps: 45, block: 40 }),
-    healer("mc", "Molten Core", "Tier 1 level healing gear.", { str: 60, agi: 30, sta: 170, int: 240, spi: 70, heal: 460, crit: 0.03, mp5: 18, armor: 5200, wdps: 52, block: 50 }),
-    healer("bwl", "Blackwing Lair", "Tier 2 level healing gear.", { str: 70, agi: 40, sta: 200, int: 280, spi: 80, heal: 600, crit: 0.04, mp5: 24, armor: 5800, wdps: 60, block: 60 }),
+    melee4("preraid", "Pre-raid", "Best dungeon, quest and crafted gear before raids.", { str: 200, agi: 70, sta: 114, int: 4, spi: 10, ap: 110, sp: 0, crit: 0.08, hit: 0.079, parry: 0.01, mp5: 0, haste: 0, wdps2h: 59, wdps: 46, block: 60, armor: 3788 }),
+    healer("fresh", "Fresh 60", "Quest and dungeon plate and mail for healing.", { str: 40, agi: 20, sta: 110, int: 140, spi: 50, sp: 0, heal: 150, crit: 0.01, mp5: 6, armor: 3800, wdps: 38, block: 30 }),
+    healer("preraid", "Pre-raid", "Best dungeon, quest and crafted healing gear before raids.", { str: 4, agi: 4, sta: 62, int: 118, spi: 105, sp: 29, heal: 719, crit: 0, mp5: 5, armor: 3834, wdps: 15, block: 40 }),
     tank2("fresh", "Fresh 60", "Quest and dungeon plate with a shield.", { str: 70, agi: 40, sta: 210, int: 90, spi: 20, ap: 0, sp: 40, crit: 0.01, hit: 0.02, mp5: 3, armor: 4800, defense: 15, wdps: 40, block: 35 }),
-    tank2("preraid", "Pre-raid", "Best dungeon tank gear before raids.", { str: 90, agi: 50, sta: 290, int: 120, spi: 20, ap: 0, sp: 90, crit: 0.02, hit: 0.03, mp5: 6, armor: 6200, defense: 30, wdps: 46, block: 55 }),
-    tank2("mc", "Molten Core", "Tier 1 level tank gear.", { str: 110, agi: 60, sta: 370, int: 150, spi: 20, ap: 0, sp: 140, crit: 0.03, hit: 0.04, mp5: 9, armor: 7300, defense: 45, wdps: 53, block: 75 }),
-    tank2("bwl", "Blackwing Lair", "Tier 2 level tank gear.", { str: 130, agi: 70, sta: 450, int: 180, spi: 20, ap: 0, sp: 190, crit: 0.04, hit: 0.05, mp5: 12, armor: 8300, defense: 60, wdps: 62, block: 95 })
+    tank2("preraid", "Pre-raid", "Best dungeon, quest and crafted tank gear before raids.", { str: 108, agi: 59, sta: 217, int: 0, spi: 5, ap: 22, sp: 0, crit: 0.01, hit: 0, dodge: 0.08, parry: 0.02, mp5: 0, armor: 6032, defense: 61, wdps: 41, block: 55 })
   ];
   var builds4 = [
     {
@@ -6615,7 +6601,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       const s = activeSeal(game), t = ctx.target;
       if (!s || !t) return;
       ctx.judgedSeal = s.id;
-      const hit2 = (name, min, max, coef) => spellHit(game, { ...spellCtx(game, t, `judgement_${s.id}`, name, "spell_holy_righteousfury", ["judgement"]), castId: ctx.castId }, { min, max, coef, name });
+      const hit2 = (name, min, max, coef) => meleeHit(game, { ...spellCtx(game, t, `judgement_${s.id}`, name, "spell_holy_righteousfury", ["judgement"]), castId: ctx.castId }, { hand: "ranged", min, max, spCoef: coef, name });
       if (s.id === "seal_of_righteousness") hit2("Judgement of Righteousness", 170, 186, 0.429);
       else if (s.id === "seal_of_command") {
         const k = isStunned(t) ? 2 : 1;
@@ -7011,11 +6997,12 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       harmful: true,
       target: "enemy",
       range: 35,
-      cost: 190,
+      cost: basePct2(0.11),
       cooldown: 6,
       cooldownGroup: "arcane_shot",
       talent: "summon_hawk",
       startsAttack: true,
+      // 11% of base mana
       effects: [{ type: "custom", run: (g, ctx) => g.cls.summonHawk(g, ctx) }],
       text: "Command a hawk to dive-bomb your targeted enemy, dealing 110 Physical damage and continuing its assault for 18 sec. Only 2 hawks can be active at once. Summon Hawk shares its cooldown with Arcane Shot."
     },
@@ -7084,7 +7071,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       schools: ["arcane"],
       ...shot,
       speed: 45,
-      cost: 190,
+      cost: basePct2(0.11),
       cooldown: 6,
       cooldownGroup: "arcane_shot",
       notes: true,
@@ -7342,9 +7329,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   // src/classes/hunter/presets.js
   var gearPresets5 = [
     { id: "fresh", name: "Fresh 60", blurb: "Quest and dungeon greens and blues.", gear: { agi: 90, str: 20, sta: 80, int: 30, spi: 20, ap: 30, crit: 0.01, hit: 0.01, mp5: 0, haste: 0, rdps: 38, wdps2h: 45, wdps: 35, odps: 32 } },
-    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon gear before raids.", gear: { agi: 170, str: 30, sta: 120, int: 50, spi: 20, ap: 120, crit: 0.03, hit: 0.05, mp5: 2, haste: 0, rdps: 46, wdps2h: 58, wdps: 46, odps: 42 } },
-    { id: "mc", name: "Molten Core", blurb: "Tier 1 level gear.", gear: { agi: 210, str: 35, sta: 150, int: 70, spi: 20, ap: 170, crit: 0.04, hit: 0.06, mp5: 4, haste: 0, rdps: 52, wdps2h: 68, wdps: 54, odps: 48 } },
-    { id: "bwl", name: "Blackwing Lair", blurb: "Tier 2 level gear.", gear: { agi: 250, str: 40, sta: 180, int: 90, spi: 20, ap: 240, crit: 0.05, hit: 0.08, mp5: 6, haste: 0, rdps: 60, wdps2h: 80, wdps: 63, odps: 57 } }
+    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon, quest and crafted gear before raids.", gear: { agi: 236, str: 42, sta: 93, int: 55, spi: 9, ap: 38, rap: 51, crit: 0.08, hit: 0.049, parry: 0.01, mp5: 0, haste: 0, rdps: 52, wdps2h: 59, wdps: 46, odps: 46, armor: 2139 } }
   ];
   var builds5 = [
     {
@@ -7438,7 +7423,18 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   var PETS = {
     cat: { id: "cat", name: "Cat (pet)", icon: "ability_hunter_pet_cat", color: "#c9a46b", speed: 2, min: 60, max: 80, crit: 0.05, special: { id: "claw", name: "Claw (pet)", icon: "ability_druid_rake", every: 4.5, min: 54, max: 76 } }
   };
-  var HAWK = { id: "hawk", name: "Hawk", icon: "ability_hunter_animalhandler", color: "#e8dcc0", speed: 2, min: 30, max: 36, crit: 0.05, firstHit: { id: "summon_hawk", name: "Summon Hawk", icon: "ability_hunter_animalhandler", min: 108, max: 112 } };
+  var HAWK = {
+    id: "hawk",
+    name: "Hawk",
+    icon: "ability_hunter_animalhandler",
+    color: "#e8dcc0",
+    speed: 2,
+    min: 54,
+    max: 65,
+    crit: 0.05,
+    /* about 80% more since a hotfix (was 30 to 36) */
+    firstHit: { id: "summon_hawk", name: "Summon Hawk", icon: "ability_hunter_animalhandler", min: 108, max: 112 }
+  };
   var isPlayer4 = (game, ev) => ev.ctx.caster === game.player;
   var landedRes4 = (res) => res && (res.outcome === "hit" || res.outcome === "crit" || res.outcome === "glance");
   var isMeleeAbility = (ab) => !!ab && ab.range === "melee";
@@ -7949,9 +7945,11 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       talent: "wrack",
       drain: true,
       effects: [{ type: "applyAura", to: "target", aura: "wrack" }],
-      // 86 per second at level 60 (launch client; was 36) and twice the spell damage, 0.286 per second (launch notes).
-      channel: { duration: 6, ticks: 6, beam: true, tick: [{ type: "damage", min: 86, max: 86, coef: 0.286, binary: true, name: "Wrack" }] },
-      text: "Tears the target apart from within, inflicting 86 Shadow damage every 1 sec and increasing the damage they take from your other Shadow damage over time effects by 10% for 6 sec."
+      // 60 per second at level 60 (client 1.60.1.70938; was 86). ESTIMATE: the spell damage stays
+      // 0.286 per second (launch notes). While it channels, the Warlock's Corruption, Siphon Life and Bane of Agony on the
+      // target run twice as fast (warlock.js).
+      channel: { duration: 6, ticks: 6, beam: true, tick: [{ type: "damage", min: 60, max: 60, coef: 0.286, binary: true, name: "Wrack" }] },
+      text: "Tears the target apart from within for 6 sec, inflicting 60 Shadow damage every 1 sec. While channeling, your Siphon Life, Corruption, and Bane of Agony effects on the target deal their periodic damage 100% faster."
     },
     {
       id: "death_coil",
@@ -8177,8 +8175,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
       icon: "ability_deathknight_hemorrhagicfever",
       kind: "debuff",
       duration: 6,
-      sourceMods: () => [mult("damageMult", 1.1, (ctx) => !!ctx.periodic && hasSchool(ctx, "shadow"))],
-      desc: () => "Damage taken from the Warlock's other Shadow damage over time effects increased by 10%."
+      desc: () => "The Warlock's Siphon Life, Corruption and Bane of Agony deal their damage 100% faster while Wrack is channeled."
     },
     improved_shadow_bolt: {
       id: "improved_shadow_bolt",
@@ -8222,10 +8219,8 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
 
   // src/classes/warlock/presets.js
   var gearPresets6 = [
-    { id: "fresh", name: "Fresh 60", blurb: "Quest and dungeon greens and blues.", gear: { int: 100, spi: 45, sta: 90, sp: 120, crit: 0.01, hit: 0.01, haste: 0 } },
-    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon gear before raids.", gear: { int: 150, spi: 60, sta: 140, sp: 330, crit: 0.03, hit: 0.06, haste: 0 } },
-    { id: "mc", name: "Molten Core", blurb: "Tier 1 level gear.", gear: { int: 180, spi: 70, sta: 170, sp: 440, crit: 0.04, hit: 0.08, haste: 0 } },
-    { id: "bwl", name: "Blackwing Lair", blurb: "Tier 2 level gear.", gear: { int: 210, spi: 80, sta: 200, sp: 580, crit: 0.05, hit: 0.1, haste: 0 } }
+    { id: "fresh", name: "Fresh 60", blurb: "Quest and dungeon greens and blues.", gear: { int: 100, spi: 45, sta: 100, sp: 120, crit: 0.01, hit: 0.01, haste: 0 } },
+    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon, quest and crafted gear before raids.", gear: { int: 142, spi: 4, sta: 84, sp: 375, crit: 0.04, hit: 0, haste: 0, armor: 613, spSchool: { fire: 24, shadow: 87 } } }
   ];
   var builds6 = [
     {
@@ -8323,7 +8318,7 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
   var LIFE_DRAINS = ["drain_life", "siphon_life", "death_coil"];
   var SHARD_CHANCE = 0.1;
   var DRAINS = ["drain_life", "drain_soul", "wrack"];
-  var AFFLICTION_EFFECTS = ["corruption", "bane_of_agony", "bane_of_doom", "siphon_life", "curse_of_the_elements", "wrack"];
+  var AFFLICTION_EFFECTS = ["corruption", "bane_of_agony", "siphon_life"];
   var PANDEMIC = ["corruption", "bane_of_agony", "bane_of_doom", "drain_soul", "drain_life", "siphon_life", "wrack"];
   var BRAND = {
     id: "demonic_brand",
@@ -8443,6 +8438,19 @@ Supposed numbers: the beta client shows 0 for all three (build 1.60.1.70707). Th
     },
     listen(game, on) {
       const p = () => game.player;
+      on("channel:tick", ({ ability, ctx }) => {
+        if (ability.id !== "wrack" || !ctx.target) return;
+        for (const a of ctx.target.auras) if (a.source === p() && AFFLICTION_EFFECTS.includes(a.id)) {
+          a.nextTick -= 1;
+          a.expires -= 1;
+        }
+      });
+      on("channel:end", ({ ability, ctx }) => {
+        if (ability.id === "wrack" && ctx.target) {
+          const w = findAura(ctx.target, "wrack", p());
+          if (w) removeAura(game, w, "expired");
+        }
+      });
       on("damage", (ev) => {
         if (isPlayer5(game, ev) && isAbility(ev.ctx, "drain_soul") && ev.res.amount > 0 && game.rng() < SHARD_CHANCE) p().reagents.soul_shard = (p().reagents.soul_shard || 0) + 1;
       });
@@ -9150,17 +9158,21 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/classes/priest/presets.js
+  var gearRoles3 = { healer: "Healer", caster: "Shadow" };
+  var healer2 = (tier, name, blurb, gear) => ({ id: `${tier}_healer`, tier, role: "healer", name, blurb, gear: { hit: 0, haste: 0, ...gear } });
+  var caster = (tier, name, blurb, gear) => ({ id: tier, tier, role: "caster", name, blurb, gear: { heal: 0, mp5: 0, haste: 0, ...gear } });
   var gearPresets7 = [
-    { id: "fresh", name: "Fresh 60", blurb: "Quest and dungeon greens and blues.", gear: { int: 100, spi: 60, sta: 80, sp: 120, crit: 0.01, hit: 0.01, mp5: 0, haste: 0 } },
-    { id: "preraid", name: "Pre-raid", blurb: "Best dungeon gear before raids.", gear: { int: 150, spi: 90, sta: 120, sp: 320, crit: 0.02, hit: 0.06, mp5: 5, haste: 0 } },
-    { id: "mc", name: "Molten Core", blurb: "Tier 1 level gear.", gear: { int: 180, spi: 110, sta: 150, sp: 430, crit: 0.03, hit: 0.08, mp5: 8, haste: 0 } },
-    { id: "bwl", name: "Blackwing Lair", blurb: "Tier 2 level gear.", gear: { int: 210, spi: 130, sta: 180, sp: 570, crit: 0.04, hit: 0.1, mp5: 10, haste: 0 } }
+    healer2("fresh", "Fresh 60", "Quest and dungeon greens and blues for healing.", { int: 100, spi: 60, sta: 80, sp: 0, heal: 150, crit: 0.01, mp5: 0 }),
+    healer2("preraid", "Pre-raid", "Best dungeon, quest and crafted healing gear before raids.", { int: 104, spi: 88, sta: 72, sp: 40, heal: 721, crit: 0, mp5: 17, armor: 603 }),
+    caster("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { int: 100, spi: 60, sta: 80, sp: 120, crit: 0.01, hit: 0.01 }),
+    caster("preraid", "Pre-raid", "Best dungeon, quest and crafted gear before raids.", { int: 142, spi: 4, sta: 84, sp: 375, crit: 0.04, hit: 0, haste: 0, armor: 613, spSchool: { shadow: 87 } })
   ];
   var builds7 = [
     {
       id: "discipline",
       name: "Discipline",
       points: "31/20/0",
+      gearRole: "healer",
       scenario: "raid-healing",
       blurb: "A shield healer for the Healing test: Power Word: Shield on whoever is about to be hit (Soul Warding takes the cooldown away), Penance on a friend, Flash Heal and Greater Heal; Renewed Hope crits on shielded targets and Divine Aegis turns crits into more shields. Inner Focus and Power Infusion for the hard moments.",
       options: { race: "dwarf" },
@@ -9189,6 +9201,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       id: "holy",
       name: "Holy",
       points: "18/33/0",
+      gearRole: "healer",
       scenario: "raid-healing",
       blurb: "A healer build for the Healing test: Renew and Prayer of Mending on the tank, Greater Heal and Heal for big heals (Divine Fury makes them faster), Flash Heal when it is urgent, Prayer of Healing on a hurt party. Spiritual Guidance and Spiritual Healing add healing; Litany of Light gives mana back for mixing heals.",
       options: { race: "dwarf" },
@@ -9218,6 +9231,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       id: "shadow_magic",
       name: "Shadow",
       points: "17/0/34",
+      gearRole: "caster",
       blurb: "Shadowform for 10% more damage, half-cost spells and 200% crits. Keep Shadow Word: Pain and Devouring Plague up, Mind Blast and Shadow Word: Death on cooldown, Mind Flay in between; Shadow Weaving stacks up to 10% more.",
       options: { race: "undead" },
       talents: {
@@ -9295,6 +9309,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     // the rest of the spellbook: spellbook.js
     auras: { ...auras7, ...extra7.auras },
     gearPresets: gearPresets7,
+    gearRoles: gearRoles3,
     builds: builds7,
     gearFields: [
       { k: "int", label: "Intellect", step: 5, max: 600 },
@@ -9914,8 +9929,9 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       weaponStrike: true,
       opener: true,
       requires: { form: ["cat"], stealth: true, behind: true },
-      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 4.35, flat: 343, onHit: [builder2(1)] }],
-      text: "Ravage the target, causing 435% damage plus 343 to the target. Must be prowling and behind the target. Awards 1 combo points."
+      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 4.35, flat: 98, onHit: [builder2(1)] }],
+      // plus 98: the corrected tooltip (the 343 shown before was never dealt)
+      text: "Ravage the target, causing 435% damage plus 98 to the target. Must be prowling and behind the target. Awards 1 combo points."
     },
     {
       id: "pounce",
@@ -10337,23 +10353,20 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   }
 
   // src/classes/druid/presets.js
-  var gearRoles3 = { cat: "Cat", bear: "Bear", caster: "Caster" };
-  var cat2 = (tier, name, blurb, gear) => ({ id: `${tier}_cat`, tier, role: "cat", name, blurb, gear: { sp: 0, mp5: 0, haste: 0, defense: 0, ...gear } });
-  var bear2 = (tier, name, blurb, gear) => ({ id: `${tier}_bear`, tier, role: "bear", name, blurb, gear: { sp: 0, mp5: 0, haste: 0, ...gear } });
-  var caster = (tier, name, blurb, gear) => ({ id: `${tier}_caster`, tier, role: "caster", name, blurb, gear: { str: 0, agi: 0, ap: 0, haste: 0, defense: 0, ...gear } });
+  var gearRoles4 = { cat: "Cat", bear: "Bear", caster: "Caster", healer: "Healer" };
+  var cat2 = (tier, name, blurb, gear) => ({ id: `${tier}_cat`, tier, role: "cat", name, blurb, gear: { sp: 0, heal: 0, mp5: 0, haste: 0, defense: 0, ...gear } });
+  var bear2 = (tier, name, blurb, gear) => ({ id: `${tier}_bear`, tier, role: "bear", name, blurb, gear: { sp: 0, heal: 0, mp5: 0, haste: 0, ...gear } });
+  var caster2 = (tier, name, blurb, gear) => ({ id: `${tier}_caster`, tier, role: "caster", name, blurb, gear: { str: 0, agi: 0, ap: 0, heal: 0, haste: 0, defense: 0, wdps: 45, ...gear } });
+  var healer3 = (tier, name, blurb, gear) => ({ id: `${tier}_healer`, tier, role: "healer", name, blurb, gear: { str: 0, agi: 0, ap: 0, hit: 0, haste: 0, defense: 0, wdps: 45, ...gear } });
   var gearPresets8 = [
-    cat2("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { str: 40, agi: 90, sta: 90, int: 30, spi: 20, ap: 60, crit: 0.01, hit: 0.01, armor: 1300 }),
-    cat2("preraid", "Pre-raid", "Best dungeon gear before raids.", { str: 70, agi: 150, sta: 130, int: 50, spi: 30, ap: 250, crit: 0.03, hit: 0.05, armor: 1700 }),
-    cat2("mc", "Molten Core", "Tier 1 level gear.", { str: 90, agi: 190, sta: 160, int: 60, spi: 40, ap: 350, crit: 0.04, hit: 0.06, armor: 2e3 }),
-    cat2("bwl", "Blackwing Lair", "Tier 2 level gear.", { str: 110, agi: 230, sta: 190, int: 70, spi: 40, ap: 450, crit: 0.05, hit: 0.08, armor: 2300 }),
-    bear2("fresh", "Fresh 60", "Quest and dungeon leather for tanking.", { str: 50, agi: 100, sta: 160, int: 40, spi: 20, ap: 100, crit: 0.01, hit: 0.01, armor: 1900, defense: 10 }),
-    bear2("preraid", "Pre-raid", "Best dungeon tank gear before raids.", { str: 80, agi: 170, sta: 240, int: 50, spi: 30, ap: 280, crit: 0.03, hit: 0.04, armor: 2500, defense: 20 }),
-    bear2("mc", "Molten Core", "Tier 1 level tank gear.", { str: 100, agi: 220, sta: 300, int: 60, spi: 40, ap: 380, crit: 0.04, hit: 0.05, armor: 2900, defense: 30 }),
-    bear2("bwl", "Blackwing Lair", "Tier 2 level tank gear.", { str: 120, agi: 260, sta: 360, int: 70, spi: 40, ap: 480, crit: 0.05, hit: 0.06, armor: 3300, defense: 40 }),
-    caster("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { int: 100, spi: 60, sta: 80, sp: 120, crit: 0.01, hit: 0.01, mp5: 0, armor: 700 }),
-    caster("preraid", "Pre-raid", "Best dungeon gear before raids.", { int: 150, spi: 80, sta: 110, sp: 300, crit: 0.02, hit: 0.05, mp5: 5, armor: 900 }),
-    caster("mc", "Molten Core", "Tier 1 level gear.", { int: 180, spi: 100, sta: 140, sp: 420, crit: 0.03, hit: 0.07, mp5: 8, armor: 1100 }),
-    caster("bwl", "Blackwing Lair", "Tier 2 level gear.", { int: 210, spi: 120, sta: 170, sp: 560, crit: 0.04, hit: 0.09, mp5: 10, armor: 1300 })
+    cat2("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { str: 40, agi: 90, sta: 90, int: 30, spi: 20, ap: 60, crit: 0.01, hit: 0.01, armor: 1300, wdps: 40 }),
+    cat2("preraid", "Pre-raid", "Best dungeon, quest and crafted gear before raids.", { str: 38, agi: 226, sta: 98, int: 4, spi: 24, ap: 142, crit: 0.04, hit: 0.079, armor: 1036, wdps: 58 }),
+    bear2("fresh", "Fresh 60", "Quest and dungeon leather for tanking.", { str: 50, agi: 100, sta: 160, int: 40, spi: 20, ap: 100, crit: 0.01, hit: 0.01, armor: 1900, defense: 10, wdps: 40 }),
+    bear2("preraid", "Pre-raid", "Best dungeon, quest and crafted tank gear before raids.", { str: 111, agi: 153, sta: 225, int: 0, spi: 20, ap: 22, crit: 0, hit: 0.01, dodge: 0.08, armor: 1098, defense: 9, wdps: 58 }),
+    caster2("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { int: 100, spi: 60, sta: 80, sp: 120, crit: 0.01, hit: 0.01, mp5: 0, armor: 700 }),
+    caster2("preraid", "Pre-raid", "Best dungeon, quest and crafted gear before raids.", { int: 155, spi: 35, sta: 65, sp: 387, spSchool: { fire: 24, nature: 10 }, crit: 0.01, hit: 0, mp5: 0, armor: 1078 }),
+    healer3("fresh", "Fresh 60", "Quest and dungeon greens and blues for healing.", { int: 100, spi: 60, sta: 80, sp: 0, heal: 150, crit: 0.01, mp5: 0, armor: 700 }),
+    healer3("preraid", "Pre-raid", "Best dungeon, quest and crafted healing gear before raids.", { int: 105, spi: 90, sta: 91, sp: 29, heal: 708, spSchool: { nature: 24 }, crit: 0, mp5: 5, armor: 1106 })
   ];
   var builds8 = [
     {
@@ -10448,7 +10461,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       id: "restoration",
       name: "Restoration",
       points: "11/0/40",
-      gearRole: "caster",
+      gearRole: "healer",
       scenario: "raid-healing",
       blurb: "A healer build for the Healing test, in caster form: Rejuvenation and Regrowth on the tank and whoever is hurt (Bloom heals once more when they run out), Swiftmend to cash a heal over time in at once, Wild Growth on a hurt party, Healing Touch for big heals (instant with Nature's Swiftness), Tranquility when the whole raid is low, Innervate for mana. Gift of Nature adds 10% healing.",
       options: { form: "none" },
@@ -10488,9 +10501,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var bleeding = (ctx) => !!ctx.target && ctx.target.auras.some((a) => (a.def.tags || []).includes("bleed"));
   var landedRes5 = (res) => res && (res.outcome === "hit" || res.outcome === "crit" || res.outcome === "glance");
   var BLOOM = { id: "bloom", name: "Bloom", icon: "inv_misc_herb_felblossom", schools: ["nature"], tags: ["heal"] };
-  var PAWS = {
-    cat: { type: "paws", family: "paws", name: "Cat paws", speed: 1, min: 38, max: 52, twoHand: false, ranged: false, ammo: 0 },
-    bear: { type: "paws", family: "paws", name: "Bear paws", speed: 2.5, min: 95, max: 130, twoHand: false, ranged: false, ammo: 0 }
+  var PAW_SPEED = { cat: 1, bear: 2.5 };
+  var paws = (form, dps2) => {
+    const sp = PAW_SPEED[form], avg = (dps2 || 45) * sp;
+    return { type: "paws", family: "paws", name: form === "cat" ? "Cat paws" : "Bear paws", speed: sp, min: Math.round(avg * 0.85), max: Math.round(avg * 1.15), twoHand: false, ranged: false, ammo: 0 };
   };
   var OMEN_CHANCE = 0.1;
   var OMEN_COOLDOWN = 10;
@@ -10530,7 +10544,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     // Paws in Cat and Bear Form; no weapon attacks in caster or Moonkin Form.
     weapons(game) {
       const f = game.form();
-      return PAWS[f] ? { main: PAWS[f], off: null } : {};
+      return PAW_SPEED[f] ? { main: paws(f, (game.loadout.gear || {}).wdps), off: null } : {};
     },
     // Form bar beside the action bar (press a form again to return to caster form).
     stanceBar: { label: "Forms", abilities: ["dire_bear_form", "cat_form", "moonkin_form"] },
@@ -10541,7 +10555,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     // the rest of the spellbook: spellbook.js
     auras: { ...auras8, ...extra8.auras },
     gearPresets: gearPresets8,
-    gearRoles: gearRoles3,
+    gearRoles: gearRoles4,
     builds: builds8,
     gearFields: [
       { k: "agi", label: "Agility", step: 5, max: 600 },
@@ -10549,7 +10563,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       { k: "sta", label: "Stamina", step: 5, max: 700 },
       { k: "armor", label: "Armor", step: 50, max: 6e3, note: "From items. Dire Bear Form multiplies it by 4.6. Agility adds 2 per point." },
       { k: "defense", label: "Defense skill", step: 1, max: 150, note: "From gear, on top of 300. Against a raid boss (315 attack skill) each point is 0.04% more miss and dodge and 0.04% less crit." },
-      { k: "ap", label: "Attack power", step: 10, max: 1200, note: "From gear, including the feral attack power of the weapon." },
+      { k: "ap", label: "Attack power", step: 10, max: 1200 },
+      { k: "wdps", label: "Weapon DPS", step: 1, max: 90, note: "In Cat and Bear Form your attacks deal the DPS of your weapon." },
       { k: "int", label: "Intellect", step: 5, max: 600 },
       { k: "spi", label: "Spirit", step: 5, max: 500 },
       { k: "sp", label: "Spell power", step: 10, max: 1200 },
@@ -11029,11 +11044,12 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       harmful: true,
       schools: ["physical"],
       cost: basePct6(0.08),
-      cooldown: 6,
+      cooldown: 8,
       weaponStrike: true,
       talent: "stormstrike",
-      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1.5, normalized: true, onHit: [{ type: "applyAura", to: "target", aura: "stormstrike" }] }],
-      text: "Instantly strike for 150% weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."
+      // 100% and 8 sec (was 150% and 6 sec)
+      effects: [{ type: "weaponDamage", hand: "main", weaponPct: 1, normalized: true, onHit: [{ type: "applyAura", to: "target", aura: "stormstrike" }] }],
+      text: "Instantly strike for 100% weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."
     },
     {
       id: "rage_of_the_farseer",
@@ -11283,10 +11299,10 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       duration: 30,
       maxStacks: 5,
       mods: (a, g) => {
-        const k = 1 - Math.min(1, 0.04 * g.rank("maelstrom_weapon") * a.stacks);
+        const k = 1 - Math.min(1, 0.2 * a.stacks);
         return [mult("castTime", k, (ctx) => isAbility(ctx, "lightning_bolt")), mult("cost", k, (ctx) => isAbility(ctx, "lightning_bolt"))];
       },
-      desc: (a, g) => `Your next Lightning Bolt has ${Math.min(100, 4 * g.rank("maelstrom_weapon") * a.stacks)}% less cast time and mana cost.`
+      desc: (a) => `Your next Lightning Bolt has ${Math.min(100, 20 * a.stacks)}% less cast time and mana cost.`
     },
     rage_of_the_farseer: { id: "rage_of_the_farseer", name: "Rage of the Farseer", icon: "spell_nature_bloodlust", kind: "buff", duration: 25, mods: () => [mult("attackSpeed", 1.3)], desc: () => "Attack speed increased by 30%." },
     improved_stormstrike: { id: "improved_stormstrike", name: "Improved Stormstrike", icon: "spell_shaman_improvedstormstrike", kind: "buff", duration: 15, mods: () => [add("regenWhileCasting", 0.5)], desc: () => "50% of your mana regeneration continues while casting." },
@@ -11339,18 +11355,17 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/classes/shaman/presets.js
-  var gearRoles4 = { melee: "Melee", caster: "Caster" };
-  var melee6 = (tier, name, blurb, gear) => ({ id: `${tier}_melee`, tier, role: "melee", name, blurb, gear: { sp: 0, haste: 0, ...gear } });
-  var caster2 = (tier, name, blurb, gear) => ({ id: `${tier}_caster`, tier, role: "caster", name, blurb, gear: { str: 0, agi: 0, ap: 0, haste: 0, wdps2h: 50, wdps: 40, ...gear } });
+  var gearRoles5 = { melee: "Melee", caster: "Caster", healer: "Healer" };
+  var melee6 = (tier, name, blurb, gear) => ({ id: `${tier}_melee`, tier, role: "melee", name, blurb, gear: { sp: 0, heal: 0, haste: 0, ...gear } });
+  var caster3 = (tier, name, blurb, gear) => ({ id: `${tier}_caster`, tier, role: "caster", name, blurb, gear: { str: 0, agi: 0, ap: 0, heal: 0, haste: 0, wdps2h: 50, wdps: 40, ...gear } });
+  var healer4 = (tier, name, blurb, gear) => ({ id: `${tier}_healer`, tier, role: "healer", name, blurb, gear: { str: 0, agi: 0, ap: 0, hit: 0, haste: 0, wdps2h: 50, wdps: 40, ...gear } });
   var gearPresets9 = [
     melee6("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { str: 80, agi: 50, sta: 90, int: 50, spi: 20, ap: 30, crit: 0.01, hit: 0.01, mp5: 0, wdps2h: 50, wdps: 38 }),
-    melee6("preraid", "Pre-raid", "Best dungeon gear before raids.", { str: 130, agi: 80, sta: 130, int: 70, spi: 30, ap: 120, crit: 0.03, hit: 0.05, mp5: 3, wdps2h: 62, wdps: 48 }),
-    melee6("mc", "Molten Core", "Tier 1 level gear.", { str: 160, agi: 100, sta: 160, int: 90, spi: 40, ap: 180, crit: 0.04, hit: 0.06, mp5: 5, wdps2h: 72, wdps: 55 }),
-    melee6("bwl", "Blackwing Lair", "Tier 2 level gear.", { str: 190, agi: 120, sta: 190, int: 110, spi: 40, ap: 240, crit: 0.05, hit: 0.08, mp5: 6, wdps2h: 83, wdps: 64 }),
-    caster2("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { int: 100, spi: 50, sta: 90, sp: 120, crit: 0.01, hit: 0.01, mp5: 2 }),
-    caster2("preraid", "Pre-raid", "Best dungeon gear before raids.", { int: 150, spi: 60, sta: 120, sp: 300, crit: 0.02, hit: 0.05, mp5: 6 }),
-    caster2("mc", "Molten Core", "Tier 1 level gear.", { int: 180, spi: 70, sta: 150, sp: 420, crit: 0.03, hit: 0.07, mp5: 9 }),
-    caster2("bwl", "Blackwing Lair", "Tier 2 level gear.", { int: 210, spi: 80, sta: 180, sp: 560, crit: 0.04, hit: 0.09, mp5: 12 })
+    melee6("preraid", "Pre-raid", "Best dungeon, quest and crafted gear before raids.", { str: 148, agi: 98, sta: 111, int: 36, spi: 0, ap: 150, sp: 33, crit: 0.08, hit: 0.049, parry: 0.01, mp5: 0, wdps2h: 59, wdps: 46, armor: 2156 }),
+    caster3("fresh", "Fresh 60", "Quest and dungeon greens and blues.", { int: 100, spi: 50, sta: 90, sp: 120, crit: 0.01, hit: 0.01, mp5: 2 }),
+    caster3("preraid", "Pre-raid", "Best dungeon, quest and crafted gear before raids.", { int: 115, spi: 10, sta: 59, sp: 384, spSchool: { fire: 24 }, crit: 0.01, hit: 0.02, mp5: 0, armor: 2146 }),
+    healer4("fresh", "Fresh 60", "Quest and dungeon greens and blues for healing.", { int: 100, spi: 50, sta: 90, sp: 0, heal: 150, crit: 0.01, mp5: 2 }),
+    healer4("preraid", "Pre-raid", "Best dungeon, quest and crafted healing gear before raids.", { int: 68, spi: 57, sta: 97, sp: 29, heal: 736, crit: 0, mp5: 9, armor: 2118 })
   ];
   var builds9 = [
     {
@@ -11386,8 +11401,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       name: "Enhancement",
       points: "8/34/9",
       gearRole: "melee",
-      blurb: "A two-hander with Windfury Weapon, Strength of Earth and Grace of Air totems. Stormstrike on cooldown, then Earth Shock into its 20%; Flurry speeds swings after crits and Maelstrom Weapon turns the hits into instant Lightning Bolts. Rage of the Farseer for 30% attack speed. Mental Dexterity turns Intellect into attack power.",
-      options: { mainHand: "two_hand_mace", offHand: "none", imbue: "windfury_weapon", call_of_the_elements_air: "grace_of_air_totem" },
+      blurb: "A two-hander with Windfury Weapon, Strength of Earth and Windfury totems. Stormstrike on cooldown, then Earth Shock into its 20%; Flurry speeds swings after crits and Maelstrom Weapon turns the hits into instant Lightning Bolts. Rage of the Farseer for 30% attack speed. Mental Dexterity turns Intellect into attack power.",
+      options: { mainHand: "two_hand_mace", offHand: "none", imbue: "windfury_weapon" },
       talents: {
         concussion: 5,
         elemental_devastation: 3,
@@ -11413,7 +11428,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       id: "restoration",
       name: "Restoration",
       points: "0/5/46",
-      gearRole: "caster",
+      gearRole: "healer",
       scenario: "raid-healing",
       blurb: "A healer build for the Healing test: Riptide on the tank, Chain Heal into hurt groups (25% more on a Riptide target), Healing Wave for big heals and Lesser Healing Wave when it is urgent; Nature's Swiftness for an instant one. Water Shield and Mana Tide Totem keep the mana up; Mana Spring or Healing Stream is your one water totem.",
       options: { mainHand: "mace", offHand: "shield", imbue: "flametongue_weapon", call_of_the_elements_earth: "none", call_of_the_elements_fire: "none", call_of_the_elements_water: "healing_stream_totem", call_of_the_elements_air: "none" },
@@ -11462,7 +11477,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   var EW = (g, list) => list[g.rank("elemental_weapons")];
   var ftDamage = (w, lo, hi) => lo + (hi - lo) * clamp((w.speed - 1.2) / 2.8, 0, 1);
   var FROSTBRAND_PPM = 9;
-  var MAELSTROM_PPM_PER_RANK = 4;
+  var MAELSTROM_PPM = [6, 7, 8, 9, 10];
   var WATER_SHIELD_GAP = 3.5;
   var meleeCrit2 = (s) => 0.017 + s.agi / 20 / 100;
   var spellCrit2 = (s) => 0.022 + s.int / 59.5 / 100;
@@ -11517,7 +11532,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     auras: { ...auras9, ...extra9.auras },
     totems,
     gearPresets: gearPresets9,
-    gearRoles: gearRoles4,
+    gearRoles: gearRoles5,
     builds: builds9,
     gearFields: [
       { k: "str", label: "Strength", step: 5, max: 600 },
@@ -11583,30 +11598,24 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
         const w = weaponsOf(game).main, t = ev.ctx.target;
         if (!w || !t || t.dead) return;
         if (imbueOn(game, "flametongue_weapon")) {
-          const n2 = ftDamage(w, 35, 112) * (1 + EW(game, [0, 0.05, 0.1, 0.15]));
-          spellHit(game, procCtx(game, t, "flametongue_attack", "Flametongue Attack", "spell_fire_flametounge", ["fire"]), { min: n2, max: n2, coef: 0.1, name: "Flametongue Attack" });
+          const n = ftDamage(w, 35, 112) * (1 + EW(game, [0, 0.05, 0.1, 0.15]));
+          spellHit(game, procCtx(game, t, "flametongue_attack", "Flametongue Attack", "spell_fire_flametounge", ["fire"]), { min: n, max: n, coef: 0.1, name: "Flametongue Attack" });
         } else if (findAura(p(), "flametongue_totem")) {
-          const n2 = ftDamage(w, 17, 55);
-          spellHit(game, procCtx(game, t, "flametongue_totem_attack", "Flametongue Totem", "spell_nature_guardianward", ["fire"]), { min: n2, max: n2, coef: 0.05, name: "Flametongue Totem" });
+          const n = ftDamage(w, 17, 55);
+          spellHit(game, procCtx(game, t, "flametongue_totem_attack", "Flametongue Totem", "spell_nature_guardianward", ["fire"]), { min: n, max: n, coef: 0.05, name: "Flametongue Totem" });
         }
         if (imbueOn(game, "frostbrand_weapon") && game.rng() < FROSTBRAND_PPM * w.speed / 60) {
-          const n2 = 169 * (1 + EW(game, [0, 0.05, 0.1, 0.15]));
-          spellHit(game, procCtx(game, t, "frostbrand_attack", "Frostbrand Attack", "spell_frost_frostbrand", ["frost"]), { min: n2, max: n2, coef: 0.1, name: "Frostbrand Attack" });
+          const n = 169 * (1 + EW(game, [0, 0.05, 0.1, 0.15]));
+          spellHit(game, procCtx(game, t, "frostbrand_attack", "Frostbrand Attack", "spell_frost_frostbrand", ["frost"]), { min: n, max: n, coef: 0.1, name: "Frostbrand Attack" });
         }
         if (p().extraAttackAp) return;
-        let n = 0, ap = 0;
-        if (imbueOn(game, "windfury_weapon")) {
-          if (game.rng() < 0.2) {
-            n = 2;
-            ap = 333 * (1 + EW(game, [0, 0.13, 0.27, 0.4]));
-          }
-        } else if (findAura(p(), "windfury_totem") && game.rng() < 0.2) {
-          n = 1;
-          ap = 246;
+        const procs = [];
+        if (imbueOn(game, "windfury_weapon") && game.rng() < 0.2) procs.push([2, 333 * (1 + EW(game, [0, 0.13, 0.27, 0.4]))]);
+        if (findAura(p(), "windfury_totem") && game.rng() < 0.2) procs.push([1, 246]);
+        for (const [n, ap] of procs) {
+          p().extraAttackAp = ap;
+          for (let i = 0; i < n && !t.dead; i++) swing(game, "main", t, "Windfury Attack");
         }
-        if (!n) return;
-        p().extraAttackAp = ap;
-        for (let i = 0; i < n && !t.dead; i++) swing(game, "main", t, "Windfury Attack");
         p().extraAttackAp = 0;
       });
       on("cast:success", ({ ability, ctx }) => {
@@ -11699,7 +11708,8 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       spirit_weapons: { mods: () => [set("canParry", true), mult("threatMult", 0.7, (ctx, g) => !findAura(g.player, "rockbiter_weapon")), mult("threatMult", 1.3, (ctx, g) => !!findAura(g.player, "rockbiter_weapon"))] },
       thundering_strikes: { mods: (r) => [add("critChance", 0.01 * r)] },
       ancestral_knowledge: { mods: (r) => [{ key: "attributes", fn: (a) => ({ ...a, int: a.int * (1 + 0.02 * r) }) }] },
-      mental_dexterity: { mods: (r) => [add("attackPower", (ctx, g) => g.stats().int * [0.5, 1, 1.5][r - 1])] },
+      mental_dexterity: { mods: (r) => [add("attackPower", (ctx, g) => g.stats().int * [0.33, 0.66, 1][r - 1])] },
+      // was 50/100/150%
       elemental_weapons: { mods: () => [] },
       // read by the imbues (auras.js and the procs above)
       shamanistic_focus: { mods: () => [mult("cost", 0.55, isShock)] },
@@ -11731,7 +11741,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
           on("damage", (ev) => {
             if (!isPlayer8(game, ev) || ev.periodic || !ev.ctx.melee || !landedRes6(ev.res)) return;
             const w = weaponsOf(game).main;
-            if (w && game.rng() < MAELSTROM_PPM_PER_RANK * r * w.speed / 60) applyAura(game, game.player, auras9.maelstrom_weapon, { source: game.player });
+            if (w && game.rng() < MAELSTROM_PPM[r - 1] * w.speed / 60) applyAura(game, game.player, auras9.maelstrom_weapon, { source: game.player });
           });
         }
       },
@@ -11817,7 +11827,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/scenarios/raid-boss.js
-  var BOSS = { name: "Molten Core boss", min: 1500, max: 2e3, hp: 1e6 };
+  var BOSS = { name: "Generic raid boss", min: 1300, max: 1700, hp: 1e6 };
   var ROGUE_TPS = 340;
   var HEALER_HPS = 330;
   var raidBoss = {
@@ -11835,7 +11845,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
     },
     setup(game, opts = {}) {
       const arena = { width: 60, height: 40 };
-      const cx = 40, cy = 20, rogue2 = opts.threatBot !== false, healer2 = opts.healer !== false;
+      const cx = 40, cy = 20, rogue2 = opts.threatBot !== false, healer5 = opts.healer !== false;
       const boss = {
         id: "boss",
         kind: "enemy",
@@ -11873,7 +11883,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       const allies = [];
       const bot = rogue2 ? ally("rogue", "Rogue", "rogue", "#fff569", "dps", cx + 2.6, cy, 4600, { mitigation: 0.7, swingEvery: 1.6 }) : null;
       if (bot) allies.push(bot);
-      if (healer2) allies.push(ally("priest", "Priest (healer)", "priest", "#ffffff", "healer", cx - 20, cy + 9, 4100, { healEvery: 2.5 }));
+      if (healer5) allies.push(ally("priest", "Priest (healer)", "priest", "#ffffff", "healer", cx - 20, cy + 9, 4100, { healEvery: 2.5 }));
       return {
         arena,
         enemies: [boss],
@@ -11912,7 +11922,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
   };
 
   // src/scenarios/raid-healing.js
-  var T = { swing: [1e3, 1250], wave: [350, 450], fireball: [350, 500], dot: 70, tankArmor: 8904, hp: { tank: 8500, dps: 3900 } };
+  var T = { swing: [900, 1125], wave: [315, 405], fireball: [315, 450], dot: 63, tankArmor: 8904, hp: { tank: 8500, dps: 3900 } };
   var armorMultOf = (u) => (u.auras || []).reduce((k, a) => k * (a.data && a.data.armorMult || 1), 1);
   var DEBUFFS = {
     magic: { id: "molten_flame", name: "Molten Flame", icon: "spell_fire_incinerate", schools: ["fire"] },
@@ -12908,7 +12918,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       h("summary", {}, "Advanced: gear and enemy type"),
       h("h3", { class: "label" }, "Gear level"),
       presets,
-      h("p", { class: "hint" }, "Presets are approximate stand-ins for each gear tier. Move any slider to make it your own."),
+      h("p", { class: "hint" }, "Pre-raid adds up a real list of WoW: Forever items (some still carry their Classic numbers); Fresh 60 is an approximate stand-in. Move any slider to make it your own."),
       fields,
       ...advOpts.childNodes.length ? [
         h("h3", { class: "label" }, "Enemy type"),
@@ -12917,7 +12927,7 @@ Targets that die while Devouring Plague is active spreads it, jumping to 2 nearb
       ] : []
     );
     root.append(
-      h("p", { class: "hint" }, `Gear: ${cur ? `${cur.name} level` : "custom"}. Everyone starts with Molten Core level gear, the first raid of the game.`),
+      h("p", { class: "hint" }, `Gear: ${cur ? `${cur.name} level` : "custom"}. Everyone starts with pre-raid gear: no raid is open in WoW: Forever yet.`),
       ...opts.childNodes.length ? [h("h3", { class: "label" }, "Options"), opts] : [],
       ...totemBar ? [h("h3", { class: "label" }, "Totem bar"), h("p", { class: "hint" }, "The totems each call sets down at once."), totemBar] : [],
       h("h3", { class: "label" }, "Character sheet"),
@@ -13974,7 +13984,8 @@ ${ctx.link}`;
 
   // src/ui/app.js
   var COMMON = { abilities: consumableAbilities, auras: consumableAuras };
-  var DEFAULT_GEAR = "mc";
+  var DEFAULT_GEAR = "preraid";
+  var OLD_TIERS = /^(mc|bwl)(?=_|$)/;
   var TOUCH2 = typeof matchMedia === "function" && matchMedia("(hover: none) and (pointer: coarse)").matches || /[?&]touch=1\b/.test(location.search);
   var App = class {
     constructor() {
@@ -14032,7 +14043,7 @@ ${ctx.link}`;
         const bar = q.get("b").split(".");
         this.bar = KEYS.map((_, i) => ids.has(bar[i]) ? bar[i] : null);
       }
-      const g = q.get("g");
+      const g = (q.get("g") || "").replace(OLD_TIERS, "preraid") || null;
       const bySpec = (cls.builds || []).find((b) => encodeBuild(cls.trees, b.talents) === encodeBuild(cls.trees, this.talents));
       const preset = g && (cls.gearPresets.find((p) => p.id === g) || gearPresetFor(cls.gearPresets, g, bySpec && bySpec.gearRole));
       if (preset) {
