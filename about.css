@@ -8,6 +8,8 @@
 .ab-prose p:last-child { margin-bottom: 0; }
 .ab-prose .dim { color: var(--dim); }
 .ab-more { margin-top: 4px; }
+.ab-prose b { font-weight: 600; color: var(--text); }
+.ab-prose .ab-thesis { margin-bottom: 22px; font-size: clamp(20px, 2.1vw, 23px); line-height: 1.45; color: var(--flavor); }
 .ab-more a { color: var(--text); text-underline-offset: 3px; }
 
 /* 1. Hello: a portrait in a black frame with name and city, like a character on a select screen.
